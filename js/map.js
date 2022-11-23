@@ -76,6 +76,8 @@ let map = new mapboxgl.Map({
   antialias: true,
 });
 
+map.addControl(new mapboxgl.NavigationControl());
+
 map.on("load", () => {
   // when map loads, do...
   drawBoundary(map, DUMMY_DATA.area1, DUMMY_DATA.area2);
