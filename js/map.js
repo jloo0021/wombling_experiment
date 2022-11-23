@@ -51,24 +51,36 @@ function drawBoundary(map, area1, area2) {
   map.addLayer(boundary);
 }
 
+/**
+ * Adds buildings as in part 2 of the tute
+ * @param {} map
+ */
+function addBuildings(map) {
+  map.addLayer({
+    id: "newBuildings",
+    source: {
+      type: "vector",
+      url: "mapbox://jloo0021.cg8ftjxl",
+    },
+    "source-layer": "Development_Activity_Model_Fo-6hmt84",
+    type: "fill-extrusion",
+    paint: {
+      "fill-extrusion-height": {
+        type: "identity",
+        property: "bldhgt_ahd",
+      },
+    },
+  });
+}
+
 //mapbox token (taken from existing project)
 const MAPBOX_TOKEN =
-  "pk.eyJ1IjoibmR1bzAwMDMiLCJhIjoiY2tnNHlucmF3MHA4djJ6czNkaHRycmo1OCJ9.xfU4SWH35W5BYtJP8VnTEA";
-
-const DUMMY_DATA = {
-  area1: {
-    population: 1000,
-  },
-  area2: {
-    population: 2000,
-  },
-};
+  "pk.eyJ1IjoiamxvbzAwMjEiLCJhIjoiY2xhdWF1MWVjMDRocTN4cHJ3aWtmcHV6cCJ9.l-bVNNGH2FRP3TJrMZfi4w";
 
 let map = new mapboxgl.Map({
   container: "map",
-  // center: [144.9631, -37.9631], // long lat of melb
-  center: [145.2, -37.817], // long lat of east side melb
-  zoom: 14,
+  center: [144.965, -37.815],
+  zoom: 15,
   style: "mapbox://styles/mapbox/light-v11",
   accessToken: MAPBOX_TOKEN,
   pitch: 45,
@@ -80,5 +92,5 @@ map.addControl(new mapboxgl.NavigationControl());
 
 map.on("load", () => {
   // when map loads, do...
-  drawBoundary(map, DUMMY_DATA.area1, DUMMY_DATA.area2);
+  addBuildings(map);
 });
