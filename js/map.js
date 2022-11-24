@@ -56,21 +56,32 @@ function drawBoundary(map, area1, area2) {
  * @param {} map
  */
 function addBuildings(map) {
-  map.addLayer({
-    id: "newBuildings",
-    source: {
-      type: "vector",
-      url: "mapbox://jloo0021.cg8ftjxl",
-    },
-    "source-layer": "Development_Activity_Model_Fo-6hmt84",
-    type: "fill-extrusion",
-    paint: {
-      "fill-extrusion-height": {
-        type: "identity",
-        property: "bldhgt_ahd",
+  // used to colour buildings by status
+  let statusNames = ["APPLIED", "APPROVED", "UNDER CONSTRUCTION", "COMPLETED"];
+  let statusColors = ["#08519c", "#6baed6", "#c6dbef", "#999999"];
+
+  for (let i = 0; i < statusNames.length; i++) {
+    let statusName = statusNames[i];
+    let statusColor = statusColors[i];
+    map.addLayer({
+      id: statusName,
+      source: {
+        type: "vector",
+        url: "mapbox://jloo0021.cg8ftjxl",
       },
-    },
-  });
+      "source-layer": "Development_Activity_Model_Fo-6hmt84",
+      type: "fill-extrusion",
+      paint: {
+        "fill-extrusion-height": {
+          type: "identity",
+          property: "bldhgt_ahd",
+        },
+        "fill-extrusion-color": statusColor,
+        "fill-extrusion-opacity": 0.7,
+      },
+      filter: ["==", "status", statusName], // data is filtered so that each loop doesn't fill all the data
+    });
+  }
 }
 
 //mapbox token (taken from existing project)
