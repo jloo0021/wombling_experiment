@@ -52,6 +52,42 @@ function drawBoundary(map, area1, area2) {
 }
 
 /**
+ * Create buttons that filter layers. These buttons are appended to a nav element
+ */
+function createButtons(name, colour) {
+  let link = document.createElement("a"); // create a hyperlink HTML element
+  link.href = "#";
+  link.className = "active";
+  link.textContent = name;
+  link.style.backgroundColor = colour;
+  link.onclick = function (e) {
+    let clickedLayer = this.textContent;
+    e.preventDefault();
+    e.stopPropagation();
+    let visibility = map.getLayoutProperty(clickedLayer, "visibility");
+    // make layer visible / not visible when clicked.
+    // ** hard coded to combine the currentbuildings with completed buildings **
+    if (clickedLayer == "COMPLETED" && visibility === "visible") {
+      map.setLayoutProperty(clickedLayer, "visibility", "none");
+      map.setLayoutProperty("currentbuildings", "visibility", "none");
+      this.className = "";
+    } else if (visibility === "visible") {
+      map.setLayoutProperty(clickedLayer, "visibility", "none");
+      this.className = "";
+    } else if (clickedLayer == "COMPLETED") {
+      map.setLayoutProperty(clickedLayer, "visibility", "visible");
+      map.setLayoutProperty("currentbuildings", "visibility", "visible");
+      this.className = "active";
+    } else {
+      this.className = "active";
+      map.setLayoutProperty(clickedLayer, "visibility", "visible");
+    }
+  };
+  let layers = document.getElementById("button"); // get HTML nav element that contains the layer filter buttons
+  layers.appendChild(link);
+}
+
+/**
  * Adds buildings as in part 2 of the tute
  * @param {} map
  */
@@ -143,6 +179,8 @@ function addBuildings(map) {
       map.getCanvas().style.cursor = ""; // remove cursor style
       popup.remove();
     });
+
+    createButtons(statusName, statusColor); // create buttons to filter layers
   }
 }
 
