@@ -56,10 +56,33 @@ function drawBoundary(map, area1, area2) {
  * @param {} map
  */
 function addBuildings(map) {
+  // add source for current buildings
+  map.addSource("buildingSource", {
+    type: "vector",
+    url: "mapbox://mapbox.mapbox-streets-v7",
+  });
+
+  // add the current buildings layer
+  map.addLayer({
+    id: "currentbuildings",
+    source: "buildingSource",
+    "source-layer": "building",
+    type: "fill-extrusion",
+    paint: {
+      "fill-extrusion-color": "#999999",
+      "fill-extrusion-height": {
+        type: "identity",
+        property: "height",
+      },
+      "fill-extrusion-opacity": 0.7,
+    },
+  });
+
   // used to colour buildings by status
   let statusNames = ["APPLIED", "APPROVED", "UNDER CONSTRUCTION", "COMPLETED"];
   let statusColors = ["#08519c", "#6baed6", "#c6dbef", "#999999"];
 
+  // colour layers by status
   for (let i = 0; i < statusNames.length; i++) {
     let statusName = statusNames[i];
     let statusColor = statusColors[i];
