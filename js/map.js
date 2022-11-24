@@ -56,6 +56,12 @@ function drawBoundary(map, area1, area2) {
  * @param {} map
  */
 function addBuildings(map) {
+  // used for creating popups on hover
+  let popup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false,
+  });
+
   // add source for current buildings
   map.addSource("buildingSource", {
     type: "vector",
@@ -103,6 +109,39 @@ function addBuildings(map) {
         "fill-extrusion-opacity": 0.7,
       },
       filter: ["==", "status", statusName], // data is filtered so that each loop doesn't fill all the data
+    });
+
+    // adding automatic popup open/close
+    map.on("mouseenter", statusName, (e) => {
+      // when mouse enters statusName layer, event is triggered and this runs...
+      map.getCanvas().style.cursor = "pointer"; // change cursor style to pointer
+      popup
+        .setLngLat(e.lngLat) // set the coordinates of the popup
+
+        // add a bunch of info to the popup based on the event data
+        .setHTML(
+          e.features[0].properties.status +
+            ": " +
+            e.features[0].properties.address +
+            "<br> Expected Height: " +
+            e.features[0].properties.bldhgt_ahd + // building height
+            "m / " +
+            e.features[0].properties.num_floors +
+            " storeys <br> Proposed Use: " +
+            e.features[0].properties.land_use_1 +
+            ", " +
+            e.features[0].properties.land_use_2 +
+            ", " +
+            e.features[0].properties.land_use_3
+        )
+
+        .addTo(map);
+    });
+
+    // remove popup when mouse leaves layer
+    map.on("mouseleave", statusName, () => {
+      map.getCanvas().style.cursor = ""; // remove cursor style
+      popup.remove();
     });
   }
 }
