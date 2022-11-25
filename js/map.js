@@ -1,68 +1,8 @@
-/**
- * Draws a boundary between two areas on the map
- * @param {*} map
- * @param {*} area1
- * @param {*} area2
- */
-function drawBoundary(map, area1, area2) {
-  // map is the mapbox map object that we're working on
-  // area1 and area2 are 2 different SAs (this will likely change depending on what the existing code looks like)
-
-  console.log("drawBoundary called");
-
-  // source defines the data
-  let source = {
-    type: "geojson",
-    data: {
-      type: "Feature",
-      properties: {
-        color: "gray",
-        height: 1000,
-        base_height: 0,
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          [
-            // dummy data, would have to get this from the areas somehow
-            [145.23, -37.816],
-            [145.177, -37.819],
-          ],
-        ],
-      },
-    },
-  };
-
-  map.addSource("boundarySource", source);
-
-  // layer defines how to display the source
-  let boundary = {
-    id: "boundary", // this needs to be unique
-    type: "fill-extrusion",
-    source: source,
-    paint: {
-      "fill-extrusion-color": ["get", "color"],
-      "fill-extrusion-height": ["get", "height"],
-      "fill-extrusion-base": ["get", "base_height"],
-      "fill-extrusion-opacity": 0.5,
-    },
-  };
-
-  map.addLayer(boundary);
-}
+import { drawBoundary } from "./boundaries.js";
 
 //mapbox token (taken from existing project)
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoibmR1bzAwMDMiLCJhIjoiY2tnNHlucmF3MHA4djJ6czNkaHRycmo1OCJ9.xfU4SWH35W5BYtJP8VnTEA";
-
-const DUMMY_DATA = {
-  area1: {
-    population: 1000,
-  },
-  area2: {
-    population: 2000,
-  },
-};
 
 let map = new mapboxgl.Map({
   container: "map",
@@ -78,5 +18,5 @@ let map = new mapboxgl.Map({
 
 map.on("load", () => {
   // when map loads, do...
-  drawBoundary(map, DUMMY_DATA.area1, DUMMY_DATA.area2);
+  drawBoundary(map);
 });
