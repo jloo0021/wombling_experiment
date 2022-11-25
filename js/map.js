@@ -16,6 +16,8 @@ let map = new mapboxgl.Map({
   antialias: true,
 });
 
+map.addControl(new mapboxgl.NavigationControl());
+
 map.on("load", () => {
   // when map loads, do...
   drawBoundary(map);
