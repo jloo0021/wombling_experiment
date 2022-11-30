@@ -1,5 +1,8 @@
 import { drawBoundary } from "./boundaries.js";
-import geoJsonData from "../dummy.geojson" assert { type: "json" }; // dummy data based on liveability geojson, with some coordinates manually converted using epsg.io
+// import geoJsonData from "../dummy.geojson" assert { type: "json" }; // dummy data based on liveability geojson, with some coordinates manually converted using epsg.io
+// import geoJsonData from "../aus_sa1_2021_simplified.geojson" assert { type: "json" };
+import geoJsonData from "../test.geojson" assert { type: "json" };
+console.log(geoJsonData);
 
 //mapbox token (taken from existing project)
 const MAPBOX_TOKEN =

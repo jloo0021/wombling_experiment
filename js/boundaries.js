@@ -64,7 +64,7 @@ export function drawBoundary(map, sourceData) {
       // "fill-extrusion-base": ["get", "base_height"],
       // "fill-extrusion-opacity": 0.5,
       "fill-extrusion-color": "gray",
-      "fill-extrusion-height": 100,
+      "fill-extrusion-height": 1000,
       // "fill-extrusion-height": ["get", "womble_scaled"], // need to somehow "get" this property and then manipulate it to create a scaled height0
       "fill-extrusion-opacity": 0.5,
     },
