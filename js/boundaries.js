@@ -18,14 +18,9 @@ function processData(sourceData) {
   // iterates over each set of properties and calculates the a feature's boundary height
   // this assumes each feature has a womble_scaled property
   turf.propEach(sourceData, function (currentProperties, featureIndex) {
-    if (
-      sourceData.features[featureIndex].properties.hasOwnProperty(
-        "womble_scaled"
-      )
-    ) {
-      sourceData.features[featureIndex].properties.height =
-        sourceData.features[featureIndex].properties.womble_scaled *
-        HEIGHT_MULTIPLIER;
+    if (currentProperties.hasOwnProperty("womble_scaled")) {
+      currentProperties.height =
+        currentProperties.womble_scaled * HEIGHT_MULTIPLIER;
     }
   });
 
