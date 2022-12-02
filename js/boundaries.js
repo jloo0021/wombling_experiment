@@ -13,8 +13,22 @@
  * Processes the source data so that it can be drawn using mapbox API
  */
 function processData(sourceData) {
-  // sourceData.features[0].geometry.type = "Polygon";
-  // console.log(sourceData);
+  const HEIGHT_MULTIPLIER = 50000; // used to determine the height of the boundary based on womble value
+
+  // iterates over each set of properties and calculates the a feature's boundary height
+  // this assumes each feature has a womble_scaled property
+  turf.propEach(sourceData, function (currentProperties, featureIndex) {
+    if (
+      sourceData.features[featureIndex].properties.hasOwnProperty(
+        "womble_scaled"
+      )
+    ) {
+      sourceData.features[featureIndex].properties.height =
+        sourceData.features[featureIndex].properties.womble_scaled *
+        HEIGHT_MULTIPLIER;
+    }
+  });
+
   return turf.buffer(sourceData, 0.01, { units: "meters" }); // turns lines into polygons that can be extruded
 }
 
@@ -64,7 +78,7 @@ export function drawBoundary(map, sourceData) {
       // "fill-extrusion-base": ["get", "base_height"],
       // "fill-extrusion-opacity": 0.5,
       "fill-extrusion-color": "gray",
-      "fill-extrusion-height": 1000,
+      "fill-extrusion-height": ["get", "height"],
       // "fill-extrusion-height": ["get", "womble_scaled"], // need to somehow "get" this property and then manipulate it to create a scaled height0
       "fill-extrusion-opacity": 0.5,
     },
