@@ -13,7 +13,7 @@
  * Processes the source data so that it can be drawn using mapbox API
  */
 function processData(sourceData) {
-  const HEIGHT_MULTIPLIER = 50000; // used to determine the height of the boundary based on womble value
+  const HEIGHT_MULTIPLIER = 5000; // used to determine the height of the boundary based on womble value
 
   // iterates over each set of properties and calculates the a feature's boundary height
   // this assumes each feature has a womble_scaled property
@@ -21,6 +21,9 @@ function processData(sourceData) {
     if (currentProperties.hasOwnProperty("womble_scaled")) {
       currentProperties.height =
         currentProperties.womble_scaled * HEIGHT_MULTIPLIER;
+    } else {
+      // THIS IS JUST TO TEST DATA THAT HAS NO WOMBLE VALUE. TODO: DELETE LATER
+      currentProperties.height = Math.random() * HEIGHT_MULTIPLIER;
     }
   });
 
@@ -36,7 +39,7 @@ export function drawBoundary(map, sourceData) {
 
   console.log("drawBoundary called");
 
-  // source defines the data
+  // source defines the data to be drawn
   let source = {
     type: "geojson",
     // data: {
@@ -75,7 +78,7 @@ export function drawBoundary(map, sourceData) {
       "fill-extrusion-color": "gray",
       "fill-extrusion-height": ["get", "height"],
       // "fill-extrusion-height": ["get", "womble_scaled"], // need to somehow "get" this property and then manipulate it to create a scaled height0
-      "fill-extrusion-opacity": 0.5,
+      "fill-extrusion-opacity": 1,
     },
   };
 

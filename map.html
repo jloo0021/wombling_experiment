@@ -3,20 +3,23 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Display a map on a webpage</title>
+    <title>Wombling Project</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js"></script>
-    <style>
-        body { margin: 0; padding: 0; }
-        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
-    </style>
+    <link rel="stylesheet" type="text/css" href="map.css">
 </head>
 
 
 <body>
     <!-- Map goes in here -->
     <div id="map"></div>
+    <div class="map-overlay top">
+        <div class="map-overlay-inner">
+            <label>Boundary opacity: <span id="slider-value">100%</span></label>
+            <input id="slider" type="range" min="0" max="100" step="0" value="100">
+        </div>
+    </div>
 
     <!-- Included so that we can use buffer to transform lines into polygons that can be extruded -->
     <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script> 
