@@ -10,9 +10,53 @@
 //   .then((data) => console.log(data));
 
 /**
+ * Transforms geojson coordinates from one projection to another.
+ * Uses proj4js to make the transformation
+ * @param {*} sourceProjectionDef proj4js projection definition that we are tranforming from
+ * @param {*} destProjectionDef proj4js projection definition that we are tranforming to
+ * @param {*} geoJson
+ */
+function reprojectGeoJson(sourceProjectionDef, destProjectionDef, geoJson) {
+  // iterate over each coordinate pair in the geojson
+  turf.coordEach(
+    geoJson,
+    function (currentCoord, coordIndex, featureIndex, multiFeatureIndex) {
+      // the current line string, i.e. an array containing 2 coordinate pairs [[x1, y1], [x2, y2]]
+      let currentLine =
+        geoJson.features[featureIndex].geometry.coordinates[multiFeatureIndex];
+
+      // the index of the coordinate pair we're currently looking at (within the current line)
+      let lineCoordIndex = currentLine.findIndex((coord) => {
+        return coord == currentCoord;
+      });
+
+      // transform the current coordinates to wgs84 and overwrite the corresponding coordinates in the geojson source data
+      currentLine[lineCoordIndex] = proj4(
+        sourceProjectionDef,
+        destProjectionDef,
+        currentCoord
+      );
+    }
+  );
+  return geoJson;
+}
+
+/**
  * Processes the source data so that it can be drawn using mapbox API
  */
 function processData(sourceData) {
+  // define the EPSG:7845 CRS. This is taken from https://epsg.io/7845. The projection can now be referenced using proj4("EPSG:7845")
+  proj4.defs(
+    "EPSG:7845",
+    "+proj=lcc +lat_0=0 +lon_0=134 +lat_1=-18 +lat_2=-36 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs"
+  );
+
+  sourceData = reprojectGeoJSON(
+    proj4("EPSG:7845"),
+    proj4("EPSG:4326"),
+    sourceData
+  );
+
   const HEIGHT_MULTIPLIER = 5000; // used to determine the height of the boundary based on womble value
 
   // iterates over each set of properties and calculates the a feature's boundary height
@@ -63,6 +107,7 @@ export function drawBoundary(map, sourceData) {
     data: processData(sourceData),
   };
 
+  console.log(source.data);
   map.addSource("boundarySource", source);
 
   // layer defines how to display the source
@@ -76,7 +121,8 @@ export function drawBoundary(map, sourceData) {
       // "fill-extrusion-base": ["get", "base_height"],
       // "fill-extrusion-opacity": 0.5,
       "fill-extrusion-color": "gray",
-      "fill-extrusion-height": ["get", "height"],
+      // "fill-extrusion-height": ["get", "height"],
+      "fill-extrusion-height": 1000,
       // "fill-extrusion-height": ["get", "womble_scaled"], // need to somehow "get" this property and then manipulate it to create a scaled height0
       "fill-extrusion-opacity": 1,
     },
