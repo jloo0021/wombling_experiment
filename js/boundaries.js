@@ -71,7 +71,9 @@ function processData(sourceData) {
     }
   });
 
-  return turf.buffer(sourceData, 0.01, { units: "meters" }); // turns lines into polygons that can be extruded
+  // turns lines into polygons that can be extruded
+  // buffer of at least 1 meter is required to see boundaries at small zoom levels
+  return turf.buffer(sourceData, 1, { units: "meters" });
 }
 
 /**
@@ -121,8 +123,7 @@ export function drawBoundary(map, sourceData) {
       // "fill-extrusion-base": ["get", "base_height"],
       // "fill-extrusion-opacity": 0.5,
       "fill-extrusion-color": "gray",
-      // "fill-extrusion-height": ["get", "height"],
-      "fill-extrusion-height": 1000,
+      "fill-extrusion-height": ["get", "height"],
       // "fill-extrusion-height": ["get", "womble_scaled"], // need to somehow "get" this property and then manipulate it to create a scaled height0
       "fill-extrusion-opacity": 1,
     },
