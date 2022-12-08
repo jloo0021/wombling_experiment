@@ -27,7 +27,9 @@ function processData(sourceData) {
     }
   });
 
-  return turf.buffer(sourceData, 0.01, { units: "meters" }); // turns lines into polygons that can be extruded
+  // turns lines into polygons that can be extruded
+  // buffer of at least 1 meter is required to see boundaries at small zoom levels
+  return turf.buffer(sourceData, 1, { units: "meters" });
 }
 
 /**
