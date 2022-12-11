@@ -10,59 +10,19 @@
 //   .then((data) => console.log(data));
 
 /**
- * Processes the source data so that it can be drawn using mapbox API
- */
-function processData(sourceData) {
-  const HEIGHT_MULTIPLIER = 5000; // used to determine the height of the boundary based on womble value
-
-  // iterates over each set of properties and calculates the a feature's boundary height
-  // this assumes each feature has a womble_scaled property
-  turf.propEach(sourceData, function (currentProperties, featureIndex) {
-    if (currentProperties.hasOwnProperty("womble_scaled")) {
-      currentProperties.height =
-        currentProperties.womble_scaled * HEIGHT_MULTIPLIER;
-    } else {
-      // THIS IS JUST TO TEST DATA THAT HAS NO WOMBLE VALUE. TODO: DELETE LATER
-      currentProperties.height = Math.random() * HEIGHT_MULTIPLIER;
-    }
-  });
-
-  // turns lines into polygons that can be extruded
-  // buffer of at least 1 meter is required to see boundaries at small zoom levels
-  return turf.buffer(sourceData, 1, { units: "meters" });
-}
-
-/**
  * Draws a boundary between two areas on the map
  * @param {*} map
  */
 export function drawBoundary(map, sourceData) {
   // map is the mapbox map object that we're working on
+  const HEIGHT_MULTIPLIER = 1000;
 
   console.log("drawBoundary called");
 
   // source defines the data to be drawn
   let source = {
     type: "geojson",
-    // data: {
-    //   type: "Feature",
-    //   properties: {
-    //     color: "gray",
-    //     height: 1000,
-    //     base_height: 0,
-    //   },
-    //   geometry: {
-    //     type: "Polygon",
-    //     coordinates: [
-    //       [
-    //         // dummy data, would have to get this from the areas somehow
-    //         [145.23, -37.816],
-    //         [145.177, -37.819],
-    //       ],
-    //     ],
-    //   },
-    // },
-    data: processData(sourceData),
+    data: sourceData,
   };
 
   map.addSource("boundarySource", source);
@@ -78,8 +38,13 @@ export function drawBoundary(map, sourceData) {
       // "fill-extrusion-base": ["get", "base_height"],
       // "fill-extrusion-opacity": 0.5,
       "fill-extrusion-color": "gray",
-      "fill-extrusion-height": ["get", "height"],
-      // "fill-extrusion-height": ["get", "womble_scaled"], // need to somehow "get" this property and then manipulate it to create a scaled height0
+
+      // multiplies each features womble scaled property with the height multiplier. see mapbox expressions for details
+      "fill-extrusion-height": [
+        "*",
+        ["get", "womble_scaled"],
+        HEIGHT_MULTIPLIER,
+      ],
       "fill-extrusion-opacity": 1,
     },
   };
