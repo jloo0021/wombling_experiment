@@ -27,17 +27,27 @@ export function drawBoundary(map, sourceData) {
 
   map.addSource("boundarySource", source);
 
+  // colors to use for the categories
+const colors = ['#be87b9', '#dcc2dc', '#ebedec', '#b5bcd7']
+
   // layer defines how to display the source
   let boundary = {
     id: "boundary", // this needs to be unique
     type: "fill-extrusion",
     source: source,
     paint: {
-      // "fill-extrusion-color": ["get", "color"],
+      "fill-extrusion-color": ["case",
+      [">=", ["to-number", ["get", 'womble_scaled']], 1],
+      colors[0],
+      [">=", ["to-number", ["get", 'womble_scaled']], 0.6],
+      colors[3],
+      [">=", ["to-number", ["get", 'womble_scaled']], 0.3],
+      colors[2],
+      colors[1]],
       // "fill-extrusion-height": ["get", "height"],
       // "fill-extrusion-base": ["get", "base_height"],
       // "fill-extrusion-opacity": 0.5,
-      "fill-extrusion-color": "gray",
+      // "fill-extrusion-color": "gray",
 
       // multiplies each features womble scaled property with the height multiplier. see mapbox expressions for details
       "fill-extrusion-height": [
