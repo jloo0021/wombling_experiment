@@ -16,12 +16,32 @@
     <div id="map"></div>
     <div class="map-overlay top">
         <div class="map-overlay-inner">
-            <label>Boundary opacity: <span id="slider-value">100%</span></label>
-            <input id="slider" type="range" min="0" max="100" step="0" value="100">
+            <label>Boundary opacity: <span id="transparency-slider-value">100%</span></label>
+            <input id="transparency-slider" type="range" min="0" max="100" step="0" value="100">
+
+            <!-- Placeholder examples, in reality, would be filled dynamically based on user's indicators file -->
+            <div id="womble-indicators">
+                Womble Indicators:
+                <label>Indicator 1: <span id="slider-display-1">x%</span></label>
+                <input id="slider1" type="range" min="0" max="100" step="0.01" value="20">
+
+                <label>Indicator 2: <span id="slider-display-2">x%</span></label>
+                <input id="slider2" type="range" min="0" max="100" step="0.01" value="20">
+
+                <label>Indicator 3: <span id="slider-display-3">x%</span></label>
+                <input id="slider3" type="range" min="0" max="100" step="0.01" value="20">
+
+                <label>Indicator 4: <span id="slider-display-4">x%</span></label>
+                <input id="slider4" type="range" min="0" max="100" step="0.01" value="20">
+
+                <label>Indicator 5: <span id="slider-display-5">x%</span></label>
+                <input id="slider5" type="range" min="0" max="100" step="0.01" value="20">
+            </div>
         </div>
     </div>
     <script src="js/boundaries.js" type="module"></script>
     <script src="js/map.js" type="module"></script>
+    <script src="js/sliders.js" type="module"></script>
 </body>
 
 </html>

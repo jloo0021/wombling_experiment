@@ -7,8 +7,8 @@ const MAPBOX_TOKEN =
   "pk.eyJ1IjoibmR1bzAwMDMiLCJhIjoiY2tnNHlucmF3MHA4djJ6czNkaHRycmo1OCJ9.xfU4SWH35W5BYtJP8VnTEA";
 
 // elements for the transparency slider
-let slider = document.getElementById("slider");
-let sliderValue = document.getElementById("slider-value");
+let slider = document.getElementById("transparency-slider");
+let sliderValue = document.getElementById("transparency-slider-value");
 
 let map = new mapboxgl.Map({
   container: "map",
