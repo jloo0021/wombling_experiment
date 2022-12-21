@@ -1,3 +1,4 @@
+import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
 import { drawBoundary } from "./boundaries.js";
 import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 console.log(geoJsonData);
@@ -7,8 +8,16 @@ const MAPBOX_TOKEN =
   "pk.eyJ1IjoibmR1bzAwMDMiLCJhIjoiY2tnNHlucmF3MHA4djJ6czNkaHRycmo1OCJ9.xfU4SWH35W5BYtJP8VnTEA";
 
 // elements for the transparency slider
-let slider = document.getElementById("transparency-slider");
-let sliderValue = document.getElementById("transparency-slider-value");
+let transparencySlider = document.getElementById("transparency-slider");
+let transparencySliderValue = document.getElementById(
+  "transparency-slider-value"
+);
+
+// buttons for indicator weight sliders (reset, run)
+let resetWeightsButton = document.getElementById("reset-weights-button");
+let runWombleButton = document.getElementById("run-womble-button");
+resetWeightsButton.addEventListener("click", setDefaultWeights);
+runWombleButton.addEventListener("click", wombleCalc);
 
 let map = new mapboxgl.Map({
   container: "map",
@@ -24,12 +33,13 @@ let map = new mapboxgl.Map({
 });
 
 map.addControl(new mapboxgl.NavigationControl());
+createIndicatorSliders(["ind 1", "ind 2", "ind 3", "test", "density", "bla"]); // hardcoded for now, TODO: retrieve user's selected indicators and pass them as args to this function
 
 // when map loads, do...
 map.on("load", () => {
   drawBoundary(map, geoJsonData);
 
-  slider.addEventListener("input", (e) => {
+  transparencySlider.addEventListener("input", (e) => {
     // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here
     map.setPaintProperty(
       "boundary",
@@ -37,6 +47,6 @@ map.on("load", () => {
       parseInt(e.target.value, 10) / 100
     );
     // value indicator
-    sliderValue.textContent = e.target.value + "%";
+    transparencySliderValue.textContent = e.target.value + "%";
   });
 });

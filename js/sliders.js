@@ -1,8 +1,9 @@
-function createIndicatorSliders(indicators) {
-  // indicators is an array of strings, each string is an indicator that the user has selected for the wombling calculation
-
+/**
+ * Creates the indicator weight sliders for the user to adjust the weights for the womble calculation.
+ * @param {*} indicators array of strings, each string is an indicator that the user has selected for the wombling calculation
+ */
+export function createIndicatorSliders(indicators) {
   let wombleDiv = document.getElementById("womble-indicators"); // the element that all the sliders will be contained in
-  const DEFAULT_WEIGHT = 100 / indicators.length; // all sliders should start off equally weighted
 
   // create the HTML elements required for each slider
   for (let i = 0; i < indicators.length; i++) {
@@ -18,21 +19,23 @@ function createIndicatorSliders(indicators) {
 
     let sliderContainer = document.createElement("div");
 
+    // indicator name
     let indicatorName = document.createElement("span");
     indicatorName.innerText = `${indicator}: `;
 
+    // slider display value
     let sliderValue = document.createElement("span");
-    sliderValue.innerText = `${DEFAULT_WEIGHT.toFixed(2)}%`; // rounded to 2 decimal places
     sliderValue.setAttribute("id", `slider-display-${i}`);
     sliderValue.setAttribute("slidervalue", ""); // boolean attribute to help us recognise this as a slider value element later
 
+    // slider input
     let sliderInput = document.createElement("input");
     sliderInput.setAttribute("id", `slider-${i}`);
     sliderInput.setAttribute("type", "range");
     sliderInput.setAttribute("min", "0");
     sliderInput.setAttribute("max", "100");
     sliderInput.setAttribute("step", "0.01");
-    sliderInput.setAttribute("value", DEFAULT_WEIGHT);
+    sliderInput.setAttribute("sliderinput", ""); // boolean attribute to help us recognise this as a slider input element later
 
     // append elements accordingly
     sliderContainer.appendChild(indicatorName);
@@ -40,12 +43,16 @@ function createIndicatorSliders(indicators) {
     sliderContainer.appendChild(sliderInput);
     wombleDiv.appendChild(sliderContainer);
   }
+  setDefaultWeights();
   addDependendentSliderBehaviour();
 }
 
-// updates the innerText of the span that displays the value associated with a particular slider element
-// slider is a HTML input element, value is the value it's set to
-// this function is dependent on the slider container structure, where the display value is a sibling element of the input slider element
+/**
+ * Updates the innerText of the span that displays the value associated with a particular slider element.
+ * This function is dependent on the slider container structure, where the display value is a sibling element of the input slider element
+ * @param {*} slider HTML input element to be updated, value is the
+ * @param {*} value number to set the slider value to
+ */
 function updateSliderDisplayValue(slider, value) {
   let container = slider.parentElement;
 
@@ -57,6 +64,9 @@ function updateSliderDisplayValue(slider, value) {
   }
 }
 
+/**
+ * Makes all sliders in the womble sliders div dependent on each other, i.e. if the user moves one slider, the other sliders' values change proportionally such that all slider values sum to 100
+ */
 function addDependendentSliderBehaviour() {
   let wombleDiv = document.getElementById("womble-indicators");
 
@@ -74,7 +84,7 @@ function addDependendentSliderBehaviour() {
     let sliderContainer = wombleDiv.children[i];
     for (let j = 0; j < sliderContainer.childElementCount; j++) {
       let elem = sliderContainer.children[j];
-      if (elem.nodeName == "INPUT") {
+      if (elem.hasAttribute("sliderinput")) {
         sliders.push(elem);
       }
     }
@@ -133,4 +143,48 @@ function addDependendentSliderBehaviour() {
   }
 }
 
-createIndicatorSliders(["ind 1", "ind 2", "ind 3", "test", "density"]);
+/**
+ * Resets the indicator slider weights to default (equally weighted)
+ * Dependent on the current slider container structure, where each container is a div containing a span element for the slider display value and an input element for the slider
+ */
+export function setDefaultWeights() {
+  let wombleDiv = document.getElementById("womble-indicators"); // the element that all the sliders will be contained in
+  let numIndicators = wombleDiv.childElementCount;
+  const MAX = 100;
+  const DEFAULT_WEIGHT = parseFloat((MAX / numIndicators).toFixed(2)); // all sliders should start off equally weighted (rounded to 2 dp)
+  let currentSum = 0; // tracks current sum of the indicator weights; used to help ensure a total sum of 100 by the end
+
+  // loop over each slider container
+  for (let i = 0; i < numIndicators; i++) {
+    let container = wombleDiv.children[i];
+    let sliderValue;
+    let sliderInput;
+
+    // retrieve this container's slider display value and slider input elements
+    for (let j = 0; j < container.childElementCount; j++) {
+      let elem = container.children[j];
+
+      // slider display value
+      if (elem.hasAttribute("slidervalue")) {
+        sliderValue = elem;
+      }
+      // slider input
+      else if (elem.hasAttribute("sliderinput")) {
+        sliderInput = elem;
+      }
+    }
+
+    // set both the indicator display value and the slider input value
+    // make the last indicator have a weight that brings the sum of the weights to 100
+    if (i == numIndicators - 1) {
+      sliderValue.innerText = `${(MAX - currentSum).toFixed(2)}%`;
+      sliderInput.value = MAX - currentSum;
+    } else {
+      // every indicator except the last one can just have the default weight
+      sliderValue.innerText = `${DEFAULT_WEIGHT}%`;
+      sliderInput.value = DEFAULT_WEIGHT;
+      currentSum += DEFAULT_WEIGHT;
+      console.log(currentSum);
+    }
+  }
+}
