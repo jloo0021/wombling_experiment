@@ -19,16 +19,21 @@
             <label>Boundary opacity: <span id="transparency-slider-value">100%</span></label>
             <input id="transparency-slider" type="range" min="0" max="100" step="0" value="100">
 
-            <div id="womble-indicators">
+            <!-- This div contains the sliders for the user's indicator weight inputs. Initially empty until the user selects their indicators -->
+            <div id="womble-indicators-sliders">
                 Womble Indicators:
             </div>
-            <button id="reset-weights-button">Reset</button>
-            <button id="run-womble-button">Run</button>
+
+            <!-- This div contains the reset and run buttons for the indicator sliders. Initially hidden until the user selects their indicators -->
+            <div id="womble-indicators-buttons" hidden>
+                <button id="reset-weights-button">Reset</button>
+                <button id="run-womble-button">Run</button> 
+            </div>
         </div>
     </div>
     <script src="js/boundaries.js" type="module"></script>
     <script src="js/sliders.js" type="module"></script>
-    <script src="js/womble.js"></script>
+    <script src="js/womble.js" type="module"></script>>
     <script src="js/map.js" type="module"></script>
 </body>
 

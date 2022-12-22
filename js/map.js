@@ -1,7 +1,10 @@
 import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
-import { drawBoundary } from "./boundaries.js";
-import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
-console.log(geoJsonData);
+import { initMapBoundaries } from "./boundaries.js";
+import { drawHeights } from "./womble.js";
+// import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
+// import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
+import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84_buffered.geojson" assert { type: "json" };
+// console.log(geoJsonData);
 
 // mapbox token (taken from existing project)
 const MAPBOX_TOKEN =
@@ -12,12 +15,6 @@ let transparencySlider = document.getElementById("transparency-slider");
 let transparencySliderValue = document.getElementById(
   "transparency-slider-value"
 );
-
-// buttons for indicator weight sliders (reset, run)
-let resetWeightsButton = document.getElementById("reset-weights-button");
-let runWombleButton = document.getElementById("run-womble-button");
-resetWeightsButton.addEventListener("click", setDefaultWeights);
-runWombleButton.addEventListener("click", wombleCalc);
 
 let map = new mapboxgl.Map({
   container: "map",
@@ -33,11 +30,36 @@ let map = new mapboxgl.Map({
 });
 
 map.addControl(new mapboxgl.NavigationControl());
-createIndicatorSliders(["ind 1", "ind 2", "ind 3", "test", "density", "bla"]); // hardcoded for now, TODO: retrieve user's selected indicators and pass them as args to this function
+createIndicatorSliders([
+  "dwelling",
+  "person",
+  "urban_liveability_index",
+  "social_infrastructure_mix",
+  "walkability",
+  "local_employment",
+  "closest_pos",
+  "closest_healthy_food",
+]); // hardcoded for now, TODO: retrieve user's selected indicators and pass them as args to this function
+
+// add event listener to the button for resetting indicator weight sliders
+let resetWeightsButton = document.getElementById("reset-weights-button");
+resetWeightsButton.addEventListener("click", setDefaultWeights);
+
+// button for drawing the edge heights based on womble calculation
+// TODO: this event listener should be set in the function that handles the user's choice of boundaries. That function is not written yet, so the boundaries source is hardcoded.
+// we need to pass the user's selected boundaries to the drawHeights function
+let runWombleButton = document.getElementById("run-womble-button");
+runWombleButton.addEventListener("click", () =>
+  drawHeights(map, boundaries_SA1_2016)
+);
+
+// TODO: the run and reset buttons should be unhidden at the end of the function that handles the the user's selection of indicators. That function is not written yet so, for now
+// it is being unhidden manually here
+document.getElementById("womble-indicators-buttons").removeAttribute("hidden");
 
 // when map loads, do...
 map.on("load", () => {
-  drawBoundary(map, geoJsonData);
+  initMapBoundaries(map, boundaries_SA1_2016);
 
   transparencySlider.addEventListener("input", (e) => {
     // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here

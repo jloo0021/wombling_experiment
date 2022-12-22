@@ -10,15 +10,10 @@
 //   .then((data) => console.log(data));
 
 /**
- * Draws a boundary between two areas on the map
- * @param {*} map
+ * Draws a map layer of the user's selected boundaries. No heights or colours are drawn yet.
+ * @param {*} map the mapbox map object that we're working on
  */
-export function drawBoundary(map, sourceData) {
-  // map is the mapbox map object that we're working on
-  const HEIGHT_MULTIPLIER = 1000;
-
-  console.log("drawBoundary called");
-
+export function initMapBoundaries(map, sourceData) {
   // source defines the data to be drawn
   let source = {
     type: "geojson",
@@ -38,16 +33,10 @@ export function drawBoundary(map, sourceData) {
       // "fill-extrusion-base": ["get", "base_height"],
       // "fill-extrusion-opacity": 0.5,
       "fill-extrusion-color": "gray",
-
-      // multiplies each features womble scaled property with the height multiplier. see mapbox expressions for details
-      "fill-extrusion-height": [
-        "*",
-        ["get", "womble_scaled"],
-        HEIGHT_MULTIPLIER,
-      ],
       "fill-extrusion-opacity": 1,
     },
   };
 
   map.addLayer(boundary);
+  console.log("Map boundaries initialised");
 }
