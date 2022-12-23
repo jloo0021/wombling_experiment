@@ -78,6 +78,7 @@ export function drawHeights(map, source) {
   matchExpression.push(0);
   // console.log(matchExpression);
   map.setPaintProperty("boundary", "fill-extrusion-height", matchExpression);
+
   console.log("Heights drawn");
 }
 
@@ -115,23 +116,44 @@ export function calculateWomble(edge) {
     (area) => area["sa1"] == edge["properties"]["sa1_id2"] // TODO: will have to update area code name, hardcoded to sa1_id2 for now
   );
 
+  // if either or both of the areas are undefined it means the indicators csv doesn't have data for that area and therefore we cannot calculate a womble value for that edge
+  if (area1 == undefined || area2 == undefined) {
+    console.log(`Indicators data not found for this edge`);
+    return 0; // TODO: could return null instead, and if womble is null, draw the edge in a different way?
+  }
+
   // actual womble calculation is done here
   for (let i = 0; i < selectedIndicators.length; i++) {
-    // if either or both of the areas are undefined it means the indicators csv doesn't have data for that area and therefore we cannot calculate a womble value for that edge
-    if (area1 == undefined || area2 == undefined) {
-      womble = 0;
+    // if an indicator value is found to not be a number, we can't calculate womble, communicate it to user. TODO: for now it prints to console, but we should print it to somewhere on the page
+    if (
+      isNaN(area1[selectedIndicators[i]]) ||
+      isNaN(area2[selectedIndicators[i]])
+    ) {
+      console.log(
+        `Warning: Indicator value is not a number. Found: ${
+          area1[selectedIndicators[i]]
+        } and ${area2[selectedIndicators[i]]}`
+      );
+      return 0;
     }
-    // otherwise we have data for both areas
-    else {
-      // womble += indicatorWeights[i] * absolute difference of (area1's selectedIndicator[i] value and area2's selectedIndicator[i] value)
-      womble +=
-        indicatorWeights[i] *
-        Math.abs(
-          parseFloat(area1[selectedIndicators[i]]) -
-            parseFloat(area2[selectedIndicators[i]])
-        );
-    }
+
+    // womble += indicatorWeights[i] * absolute difference of (area1's selectedIndicator[i] value and area2's selectedIndicator[i] value)
+    womble +=
+      indicatorWeights[i] *
+      Math.abs(
+        parseFloat(area1[selectedIndicators[i]]) -
+          parseFloat(area2[selectedIndicators[i]])
+      );
   }
 
   return womble;
+}
+
+// TODO: use this function to decide whether or not to use distance weighting once i figure out the specifics of how to implement
+/**
+ * Function that checks whether the user has chosen to use distance weighting
+ */
+function isDistanceWeighted() {
+  let checkbox = document.getElementById("distance-weight-checkbox");
+  return checkbox.checked;
 }
