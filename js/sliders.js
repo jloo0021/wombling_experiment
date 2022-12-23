@@ -149,7 +149,7 @@ function addDependendentSliderBehaviour() {
       for (let j = 0; j < sliders.length; j++) {
         testSum += parseFloat(sliders[j].value);
       }
-      console.log(`sum values: ${testSum}`);
+      console.log(`Sum indicator values: ${testSum}`);
     });
   }
 }
@@ -195,7 +195,6 @@ export function setDefaultWeights() {
       sliderValue.innerText = `${DEFAULT_WEIGHT}%`;
       sliderInput.value = DEFAULT_WEIGHT;
       currentSum += DEFAULT_WEIGHT;
-      console.log(currentSum);
     }
   }
 }

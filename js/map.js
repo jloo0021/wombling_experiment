@@ -6,6 +6,13 @@ import { drawHeights } from "./womble.js";
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84_buffered.geojson" assert { type: "json" };
 // console.log(geoJsonData);
 
+// Could also use fetch instead of import
+// fetch("./boundaries_SA1_2016.geojson")
+//   .then((response) => {
+//     return response.json();
+//   })
+//   .then((data) => console.log(data));
+
 // mapbox token (taken from existing project)
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoibmR1bzAwMDMiLCJhIjoiY2tnNHlucmF3MHA4djJ6czNkaHRycmo1OCJ9.xfU4SWH35W5BYtJP8VnTEA";

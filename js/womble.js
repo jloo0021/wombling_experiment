@@ -14,27 +14,47 @@ export function drawHeights(map, source) {
   // this can be achieved with a 'match' expression
   // idea drawn from: https://docs.mapbox.com/mapbox-gl-js/example/data-join/
 
-  const HEIGHT_MULTIPLIER = 0.1;
+  const HEIGHT_MULTIPLIER = 5000;
   let edges = source["features"]; // get all edges from the source into one array
   let edgeCalculation = []; // output array, where each element is an edge object containing their associated calculated womble value
+  let rawWombleValues = [];
+  let maxWomble = 0; // used to calculate womble_scaled
+
+  // create array of womble values for each edge
+  for (let edge of edges) {
+    let womble = calculateWomble(edge);
+    rawWombleValues.push(womble);
+
+    // keep track of the largest womble value
+    if (womble > maxWomble) {
+      maxWomble = womble;
+    }
+  }
+
+  // handling the case where the max womble is somehow zero, i dont think this should ever happen
+  if (maxWomble == 0) {
+    console.log("Max womble value in this data set is zero");
+    return;
+  }
 
   // create our output calculations array
-  for (let edge of edges) {
+  for (let i = 0; i < edges.length; i++) {
     // create the output "row" then add it to our calculations array
+    let edge = edges[i];
+
     // TODO: the keys are hardcoded here, what happens if the data is using sa2 id's ? have to think of a more dynamic approach. perhaps we specify that the area id's have to be name area_id1 and area_id2
     let output = {
       ogc_fid: edge["properties"]["ogc_fid"],
       sa1_id1: edge["properties"]["sa1_id1"],
       sa1_id2: edge["properties"]["sa1_id2"],
-      womble: calculateWomble(edge), // TODO: replace this with a call to the calculateWomble function once it's complete
+      womble: rawWombleValues[i],
+      womble_scaled: rawWombleValues[i] / maxWomble,
     };
     edgeCalculation.push(output);
   }
 
-  console.log(edgeCalculation);
-
-  // TODO: create a womble_scaled property as well by finding the max womble value and then dividing each womble value by the max
-  // then use womble_scaled to draw the heights
+  // console.log(edgeCalculation);
+  // console.log(maxWomble);
 
   // building a match expression to get each boundary's womble value, using the ogc_fid as the lookup key
   let matchExpression = ["match", ["get", "ogc_fid"]];
@@ -43,8 +63,8 @@ export function drawHeights(map, source) {
   for (let edge of edgeCalculation) {
     let height;
     // if womble value exists for this edge, use it to calculate the edge's height
-    if ("womble" in edge) {
-      height = edge["womble"] * HEIGHT_MULTIPLIER;
+    if ("womble_scaled" in edge) {
+      height = edge["womble_scaled"] * HEIGHT_MULTIPLIER;
     }
     // else set the height to zero (?)
     else {
@@ -58,6 +78,7 @@ export function drawHeights(map, source) {
   matchExpression.push(0);
   // console.log(matchExpression);
   map.setPaintProperty("boundary", "fill-extrusion-height", matchExpression);
+  console.log("Heights drawn");
 }
 
 /**
@@ -85,6 +106,7 @@ export function calculateWomble(edge) {
   let womble = 0;
 
   // find the elements in the indicators csv array that corresponds to the edges neighbouring areas
+  // TODO: for now im using a hardcoded imported json object for the indicators data
   let area1 = indicatorsData.find(
     (area) => area["sa1"] == edge["properties"]["sa1_id1"] // TODO: will have to update area code name, hardcoded to sa1_id1 for now
   );
@@ -98,7 +120,6 @@ export function calculateWomble(edge) {
     // if either or both of the areas are undefined it means the indicators csv doesn't have data for that area and therefore we cannot calculate a womble value for that edge
     if (area1 == undefined || area2 == undefined) {
       womble = 0;
-      break;
     }
     // otherwise we have data for both areas
     else {
@@ -112,6 +133,5 @@ export function calculateWomble(edge) {
     }
   }
 
-  // womble = 0.5; // TODO: DELETE LATER HARDCODED FOR NOW
   return womble;
 }
