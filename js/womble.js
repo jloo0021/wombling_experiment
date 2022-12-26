@@ -77,7 +77,20 @@ export function drawHeights(map, source) {
   // make the fallback value null or zero? it shouldnt really matter since i think ill code it such that all the ids match
   matchExpression.push(0);
   // console.log(matchExpression);
-  map.setPaintProperty("boundary", "fill-extrusion-height", matchExpression);
+
+  // TODO: fix the polygon glitch for this layer, maybe see if there is a way to NOT draw a height for a particular edge
+  let edgesLayer = {
+    id: "edges", // this needs to be unique
+    type: "fill-extrusion",
+    source: "boundarySource",
+    paint: {
+      "fill-extrusion-color": "red",
+      "fill-extrusion-opacity": 1,
+      "fill-extrusion-height": matchExpression,
+    },
+  };
+
+  map.addLayer(edgesLayer);
 
   console.log("Heights drawn");
 }

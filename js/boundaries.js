@@ -18,15 +18,10 @@ export function initMapBoundaries(map, sourceData) {
   // layer defines how to display the source
   let boundary = {
     id: "boundary", // this needs to be unique
-    type: "fill-extrusion",
-    source: source,
+    type: "line",
+    source: "boundarySource",
     paint: {
-      // "fill-extrusion-color": ["get", "color"],
-      // "fill-extrusion-height": ["get", "height"],
-      // "fill-extrusion-base": ["get", "base_height"],
-      // "fill-extrusion-opacity": 0.5,
-      "fill-extrusion-color": "gray",
-      "fill-extrusion-opacity": 1,
+      "line-color": "green",
     },
   };
 
