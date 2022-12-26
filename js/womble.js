@@ -2,21 +2,111 @@ import { retrieveIndicatorSliders } from "./sliders.js";
 import indicatorsData from "../liveability_indicators_sa1_2016.json" assert { type: "json" };
 
 /**
+ * OLD IMPLEMENTATION
+ * Draws the heights of the edges based on their womble values.
+ * Runs when the user presses the "Run" button after selecting their indicator weights.
+ */
+// export function drawHeights(map, source) {
+//   // TODO: maybe move this function to boundaries.js or just keep it idk
+
+//   // outline:
+//   // construct an array that stores edges with their associated womble value as objects
+//   // use setPaintProperty on the boundaries layer to set the extrusion heights based on this constructed array
+//   // this can be achieved with a 'match' expression
+//   // idea drawn from: https://docs.mapbox.com/mapbox-gl-js/example/data-join/
+
+//   const HEIGHT_MULTIPLIER = 5000;
+//   let edges = source["features"]; // get all edges from the source into one array
+//   let edgeCalculation = []; // output array, where each element is an edge object containing their associated calculated womble value
+//   let rawWombleValues = [];
+//   let maxWomble = 0; // used to calculate womble_scaled
+
+//   // create array of womble values for each edge
+//   for (let edge of edges) {
+//     let womble = calculateWomble(edge);
+//     rawWombleValues.push(womble);
+
+//     // keep track of the largest womble value
+//     if (womble > maxWomble) {
+//       maxWomble = womble;
+//     }
+//   }
+
+//   // handling the case where the max womble is somehow zero, i dont think this should ever happen
+//   if (maxWomble == 0) {
+//     console.log("Max womble value in this data set is zero");
+//     return;
+//   }
+
+//   // create our output calculations array
+//   for (let i = 0; i < edges.length; i++) {
+//     // create the output "row" then add it to our calculations array
+//     let edge = edges[i];
+
+//     // TODO: the keys are hardcoded here, what happens if the data is using sa2 id's ? have to think of a more dynamic approach. perhaps we specify that the area id's have to be name area_id1 and area_id2
+//     let output = {
+//       ogc_fid: edge["properties"]["ogc_fid"],
+//       sa1_id1: edge["properties"]["sa1_id1"],
+//       sa1_id2: edge["properties"]["sa1_id2"],
+//       womble: rawWombleValues[i],
+//       womble_scaled: rawWombleValues[i] / maxWomble,
+//     };
+//     edgeCalculation.push(output);
+//   }
+
+//   // console.log(edgeCalculation);
+//   // console.log(maxWomble);
+
+//   // building a match expression to get each boundary's womble value, using the ogc_fid as the lookup key
+//   let matchExpression = ["match", ["get", "ogc_fid"]];
+
+//   // calculate height of each edge and add to the match expression
+//   for (let edge of edgeCalculation) {
+//     let height;
+//     // if womble value exists for this edge, use it to calculate the edge's height
+//     if ("womble_scaled" in edge) {
+//       height = edge["womble_scaled"] * HEIGHT_MULTIPLIER;
+//     }
+//     // else set the height to zero (?)
+//     else {
+//       height = 0;
+//     }
+
+//     matchExpression.push(edge["ogc_fid"], height);
+//   }
+
+//   // make the fallback value null or zero? it shouldnt really matter since i think ill code it such that all the ids match
+//   matchExpression.push(0);
+//   // console.log(matchExpression);
+
+//   // TODO: fix the polygon glitch for this layer, maybe see if there is a way to NOT draw a height for a particular edge
+//   if (map.getLayer("walls")) {
+//     map.setPaintProperty("walls", "fill-extrusion-height", matchExpression);
+//   } else {
+//     let wallsLayer = {
+//       id: "walls", // this needs to be unique
+//       type: "fill-extrusion",
+//       source: "boundarySource",
+//       paint: {
+//         "fill-extrusion-color": "red",
+//         "fill-extrusion-opacity": 1,
+//         "fill-extrusion-height": matchExpression,
+//       },
+//     };
+
+//     map.addLayer(wallsLayer);
+//   }
+
+//   console.log("Heights drawn");
+// }
+
+/*
  * Draws the heights of the edges based on their womble values.
  * Runs when the user presses the "Run" button after selecting their indicator weights.
  */
 export function drawHeights(map, source) {
-  // TODO: maybe move this function to boundaries.js or just keep it idk
-
-  // outline:
-  // construct an array that stores edges with their associated womble value as objects
-  // use setPaintProperty on the boundaries layer to set the extrusion heights based on this constructed array
-  // this can be achieved with a 'match' expression
-  // idea drawn from: https://docs.mapbox.com/mapbox-gl-js/example/data-join/
-
   const HEIGHT_MULTIPLIER = 5000;
   let edges = source["features"]; // get all edges from the source into one array
-  let edgeCalculation = []; // output array, where each element is an edge object containing their associated calculated womble value
   let rawWombleValues = [];
   let maxWomble = 0; // used to calculate womble_scaled
 
@@ -37,66 +127,58 @@ export function drawHeights(map, source) {
     return;
   }
 
-  // create our output calculations array
+  // create the geojson that will be used for the walls source data
+  let wallsData = {
+    type: "FeatureCollection",
+    features: [],
+  };
+
+  // TODO use a deep copy of the edge, currently, this modifies the original source, OR maybe it actually doesn't?? double check
+  // add each edge that has a non-zero womble value to the walls source data
   for (let i = 0; i < edges.length; i++) {
-    // create the output "row" then add it to our calculations array
     let edge = edges[i];
-
-    // TODO: the keys are hardcoded here, what happens if the data is using sa2 id's ? have to think of a more dynamic approach. perhaps we specify that the area id's have to be name area_id1 and area_id2
-    let output = {
-      ogc_fid: edge["properties"]["ogc_fid"],
-      sa1_id1: edge["properties"]["sa1_id1"],
-      sa1_id2: edge["properties"]["sa1_id2"],
-      womble: rawWombleValues[i],
-      womble_scaled: rawWombleValues[i] / maxWomble,
-    };
-    edgeCalculation.push(output);
-  }
-
-  // console.log(edgeCalculation);
-  // console.log(maxWomble);
-
-  // building a match expression to get each boundary's womble value, using the ogc_fid as the lookup key
-  let matchExpression = ["match", ["get", "ogc_fid"]];
-
-  // calculate height of each edge and add to the match expression
-  for (let edge of edgeCalculation) {
-    let height;
-    // if womble value exists for this edge, use it to calculate the edge's height
-    if ("womble_scaled" in edge) {
-      height = edge["womble_scaled"] * HEIGHT_MULTIPLIER;
+    if (rawWombleValues[i] > 0) {
+      edge["properties"]["womble"] = rawWombleValues[i];
+      edge["properties"]["womble_scaled"] = rawWombleValues[i] / maxWomble;
+      wallsData.features.push(edge);
     }
-    // else set the height to zero (?)
-    else {
-      height = 0;
-    }
-
-    matchExpression.push(edge["ogc_fid"], height);
   }
 
-  // make the fallback value null or zero? it shouldnt really matter since i think ill code it such that all the ids match
-  matchExpression.push(0);
-  // console.log(matchExpression);
+  // use this json object as the source for the walls layer
+  let wallsSource = {
+    type: "geojson",
+    data: wallsData,
+  };
 
-  // TODO: fix the polygon glitch for this layer, maybe see if there is a way to NOT draw a height for a particular edge
-  if (map.getLayer("walls")) {
-    map.setPaintProperty("walls", "fill-extrusion-height", matchExpression);
-  } else {
-    let wallsLayer = {
-      id: "walls", // this needs to be unique
-      type: "fill-extrusion",
-      source: "boundarySource",
-      paint: {
-        "fill-extrusion-color": "red",
-        "fill-extrusion-opacity": 1,
-        "fill-extrusion-height": matchExpression,
-      },
-    };
-
-    map.addLayer(wallsLayer);
+  // remove the source if there's an existing one and replace it with our newly made source
+  if (map.getSource("wallsSource")) {
+    map.removeLayer("walls");
+    map.removeSource("wallsSource");
   }
+  map.addSource("wallsSource", wallsSource);
 
-  console.log("Heights drawn");
+  // create and draw the layer
+  let wallsLayer = {
+    id: "walls", // this needs to be unique
+    type: "fill-extrusion",
+    source: "wallsSource",
+    paint: {
+      "fill-extrusion-color": "red",
+      "fill-extrusion-opacity": 1,
+
+      // mapbox expression to multiply each feature's womble property with some constant to calculate the height drawn
+      "fill-extrusion-height": [
+        "*",
+        ["get", "womble_scaled"],
+        HEIGHT_MULTIPLIER,
+      ],
+    },
+  };
+
+  map.addLayer(wallsLayer);
+
+  console.log(source);
+  console.log(wallsSource);
 }
 
 /**

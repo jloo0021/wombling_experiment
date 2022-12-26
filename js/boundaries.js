@@ -18,10 +18,10 @@ export function initMapBoundaries(map, sourceData) {
   // layer defines how to display the source
   let boundary = {
     id: "boundary", // this needs to be unique
-    type: "line",
+    type: "fill",
     source: "boundarySource",
     paint: {
-      "line-color": "green",
+      "fill-color": "green",
     },
   };
 
