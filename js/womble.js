@@ -79,18 +79,22 @@ export function drawHeights(map, source) {
   // console.log(matchExpression);
 
   // TODO: fix the polygon glitch for this layer, maybe see if there is a way to NOT draw a height for a particular edge
-  let edgesLayer = {
-    id: "edges", // this needs to be unique
-    type: "fill-extrusion",
-    source: "boundarySource",
-    paint: {
-      "fill-extrusion-color": "red",
-      "fill-extrusion-opacity": 1,
-      "fill-extrusion-height": matchExpression,
-    },
-  };
+  if (map.getLayer("walls")) {
+    map.setPaintProperty("walls", "fill-extrusion-height", matchExpression);
+  } else {
+    let wallsLayer = {
+      id: "walls", // this needs to be unique
+      type: "fill-extrusion",
+      source: "boundarySource",
+      paint: {
+        "fill-extrusion-color": "red",
+        "fill-extrusion-opacity": 1,
+        "fill-extrusion-height": matchExpression,
+      },
+    };
 
-  map.addLayer(edgesLayer);
+    map.addLayer(wallsLayer);
+  }
 
   console.log("Heights drawn");
 }

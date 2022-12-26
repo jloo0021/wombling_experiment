@@ -71,7 +71,7 @@ map.on("load", () => {
   transparencySlider.addEventListener("input", (e) => {
     // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here
     map.setPaintProperty(
-      "boundary",
+      "walls",
       "fill-extrusion-opacity",
       parseInt(e.target.value, 10) / 100
     );
