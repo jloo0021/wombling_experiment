@@ -144,41 +144,40 @@ export function drawHeights(map, source) {
     }
   }
 
-  // use this json object as the source for the walls layer
-  let wallsSource = {
-    type: "geojson",
-    data: wallsData,
-  };
-
-  // remove the source if there's an existing one and replace it with our newly made source
+  // if walls have already been drawn (i.e. walls source exists), update the source data with the new data
   if (map.getSource("wallsSource")) {
-    map.removeLayer("walls");
-    map.removeSource("wallsSource");
+    map.getSource("wallsSource").setData(wallsData);
   }
-  map.addSource("wallsSource", wallsSource);
+  // else, add the walls source and draw the layer for the first time
+  else {
+    // use the data json object as the source for the walls layer
+    let wallsSource = {
+      type: "geojson",
+      data: wallsData,
+    };
 
-  // create and draw the layer
-  let wallsLayer = {
-    id: "walls", // this needs to be unique
-    type: "fill-extrusion",
-    source: "wallsSource",
-    paint: {
-      "fill-extrusion-color": "red",
-      "fill-extrusion-opacity": 1,
+    map.addSource("wallsSource", wallsSource);
 
-      // mapbox expression to multiply each feature's womble property with some constant to calculate the height drawn
-      "fill-extrusion-height": [
-        "*",
-        ["get", "womble_scaled"],
-        HEIGHT_MULTIPLIER,
-      ],
-    },
-  };
+    // create and draw the layer
+    let wallsLayer = {
+      id: "walls", // this needs to be unique
+      type: "fill-extrusion",
+      source: "wallsSource",
+      paint: {
+        "fill-extrusion-color": "red",
+        "fill-extrusion-opacity": 1,
 
-  map.addLayer(wallsLayer);
+        // mapbox expression to multiply each feature's womble property with some constant to calculate the height drawn
+        "fill-extrusion-height": [
+          "*",
+          ["get", "womble_scaled"],
+          HEIGHT_MULTIPLIER,
+        ],
+      },
+    };
 
-  console.log(source);
-  console.log(wallsSource);
+    map.addLayer(wallsLayer);
+  }
 }
 
 /**
