@@ -100,11 +100,13 @@ import indicatorsData from "../liveability_indicators_sa1_2016.json" assert { ty
 //   console.log("Heights drawn");
 // }
 
-/*
+/**
  * Draws the heights of the edges based on their womble values.
  * Runs when the user presses the "Run" button after selecting their indicator weights.
+ * @param {*} map mapbox map object that the walls will be drawn on
+ * @param {*} source geojson source for the boundaries upon which walls will be drawn
  */
-export function drawHeights(map, source) {
+export function drawWalls(map, source) {
   const HEIGHT_MULTIPLIER = 5000;
   let edges = source["features"]; // get all edges from the source into one array
   let rawWombleValues = [];
@@ -127,16 +129,15 @@ export function drawHeights(map, source) {
     return;
   }
 
-  // create the geojson that will be used for the walls source data
+  // create a new geojson that will be used for the walls source data
   let wallsData = {
     type: "FeatureCollection",
     features: [],
   };
 
-  // TODO use a deep copy of the edge, currently, this modifies the original source, OR maybe it actually doesn't?? double check
   // add each edge that has a non-zero womble value to the walls source data
   for (let i = 0; i < edges.length; i++) {
-    let edge = edges[i];
+    let edge = JSON.parse(JSON.stringify(edges[i])); // deep copying the edge so the original source is not modified
     if (rawWombleValues[i] > 0) {
       edge["properties"]["womble"] = rawWombleValues[i];
       edge["properties"]["womble_scaled"] = rawWombleValues[i] / maxWomble;
@@ -198,9 +199,6 @@ export function calculateWomble(edge) {
     selectedIndicators.push(slider.getAttribute("indicatorname")); // each slider was previously created with an "indicatorname" attribute
     indicatorWeights.push(parseFloat(slider.value));
   }
-
-  // console.log(selectedIndicators);
-  // console.log(indicatorWeights);
 
   let womble = 0;
 

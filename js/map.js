@@ -1,6 +1,6 @@
 import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
 import { initMapBoundaries } from "./boundaries.js";
-import { drawHeights } from "./womble.js";
+import { drawWalls } from "./womble.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
@@ -57,7 +57,7 @@ resetWeightsButton.addEventListener("click", setDefaultWeights);
 // we need to pass the user's selected boundaries to the drawHeights function
 let runWombleButton = document.getElementById("run-womble-button");
 runWombleButton.addEventListener("click", () =>
-  drawHeights(map, boundaries_SA1_2016)
+  drawWalls(map, boundaries_SA1_2016)
 );
 
 // TODO: the run and reset buttons should be unhidden at the end of the function that handles the the user's selection of indicators. That function is not written yet so, for now
