@@ -31,11 +31,20 @@
                 <button id="reset-weights-button">Reset</button>
                 <button id="run-womble-button">Run</button> 
             </div>
+
+            <!-- All layer filter checkboxes in the HTML file should be in the form: [LAYER_ID]-checkbox -->
+            <div id="filter-buttons">
+                <label for="boundaries-checkbox">Show Boundaries</label>
+                <input type="checkbox" id="boundaries-checkbox" checked>
+                <label for="walls-checkbox">Show Walls</label>
+                <input type="checkbox" id="walls-checkbox" checked>
+            </div>
         </div>
     </div>
     <script src="js/boundaries.js" type="module"></script>
     <script src="js/sliders.js" type="module"></script>
     <script src="js/womble.js" type="module"></script>>
+    <script src="js/filter.js" type="module"></script>>
     <script src="js/map.js" type="module"></script>
 </body>
 

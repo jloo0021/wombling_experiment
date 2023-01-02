@@ -1,6 +1,7 @@
 import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
 import { initMapBoundaries } from "./boundaries.js";
 import { drawWalls } from "./womble.js";
+import { toggleableLayers } from "./filter.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
@@ -67,6 +68,8 @@ document.getElementById("womble-indicators-buttons").removeAttribute("hidden");
 // when map loads, do...
 map.on("load", () => {
   initMapBoundaries(map, boundaries_SA1_2016);
+
+  toggleableLayers(map);
 
   transparencySlider.addEventListener("input", (e) => {
     // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here

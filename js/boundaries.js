@@ -13,18 +13,18 @@ export function initMapBoundaries(map, sourceData) {
     data: sourceData,
   };
 
-  map.addSource("boundarySource", source);
+  map.addSource("boundariesSource", source);
 
   // layer defines how to display the source
-  let boundary = {
-    id: "boundary", // this needs to be unique
+  let boundaries = {
+    id: "boundaries", // this needs to be unique
     type: "fill",
-    source: "boundarySource",
+    source: "boundariesSource",
     paint: {
       "fill-color": "green",
     },
   };
 
-  map.addLayer(boundary);
+  map.addLayer(boundaries);
   console.log("Map boundaries initialised");
 }
