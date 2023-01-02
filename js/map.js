@@ -1,3 +1,4 @@
+
 import { drawBoundary } from "./boundaries.js";
 import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 console.log(geoJsonData);
@@ -40,3 +41,45 @@ map.on("load", () => {
     sliderValue.textContent = e.target.value + "%";
   });
 });
+
+let uploadBtn = document.querySelector("#csvInput");
+const customTxt = document.getElementById("custom-text");
+uploadBtn.addEventListener("change", changeBG);
+
+function changeBG(e) {
+  e.preventDefault();
+  if(uploadBtn.value){
+    customTxt.innerHTML = uploadBtn.value.match(
+      /[\/\\]([\w\d\s\.\-\(\)]+)$/
+    )[1];;
+  }else{
+    customTxt.innerHTML = "No file chosen, yet"
+  }
+
+  const file = e.target.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function (e) {
+    const csvArray = csvToArr(e.target.result, ",");
+    console.log(csvArray);
+    
+  };
+
+  reader.readAsText(file);
+};
+
+function csvToArr(stringVal, splitter) {
+  const [keys, ...rest] = stringVal
+    .trim()
+    .split("\n")
+    .map((item) => item.split(splitter));
+
+  const formedArr = rest.map((item) => {
+    const object = {};
+    keys.forEach((key, index) => (object[key] = item.at(index)));
+    return object;
+  });
+  return formedArr;
+}
+
+
