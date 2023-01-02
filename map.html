@@ -18,6 +18,13 @@
         <div class="map-overlay-inner">
             <label>Boundary opacity: <span id="transparency-slider-value">100%</span></label>
             <input id="transparency-slider" type="range" min="0" max="100" step="0" value="100">
+            <!-- All layer filter checkboxes in the HTML file should be in the form: [LAYER_ID]-checkbox -->
+            <div id="filter-buttons">
+                <label for="boundaries-checkbox">Show Boundaries</label>
+                <input type="checkbox" id="boundaries-checkbox" checked>
+                <label for="walls-checkbox">Show Walls</label>
+                <input type="checkbox" id="walls-checkbox" checked>
+            </div>
 
             <!-- This div contains the sliders for the user's indicator weight inputs. Initially empty until the user selects their indicators -->
             <div id="womble-indicators-sliders">
@@ -32,13 +39,7 @@
                 <button id="run-womble-button">Run</button> 
             </div>
 
-            <!-- All layer filter checkboxes in the HTML file should be in the form: [LAYER_ID]-checkbox -->
-            <div id="filter-buttons">
-                <label for="boundaries-checkbox">Show Boundaries</label>
-                <input type="checkbox" id="boundaries-checkbox" checked>
-                <label for="walls-checkbox">Show Walls</label>
-                <input type="checkbox" id="walls-checkbox" checked>
-            </div>
+            
         </div>
     </div>
     <script src="js/boundaries.js" type="module"></script>
