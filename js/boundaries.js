@@ -2,62 +2,42 @@
 // import geoJsonData from "../vic.geojson" assert { type: "json" };
 // import geoJsonData from "../dummy.geojson" assert { type: "json" }; // dummy data based on liveability geojson, with some coordinates manually converted using epsg.io
 
-// Could also use fetch instead of import
-// fetch("./boundaries_SA1_2016.geojson")
-//   .then((response) => {
-//     return response.json();
-//   })
-//   .then((data) => console.log(data));
-
 /**
- * Draws a boundary between two areas on the map
- * @param {*} map
+ * Draws a map layer of the user's selected boundaries. No heights or colours are drawn yet.
+ * @param {*} map the mapbox map object that we're working on
  */
-export function drawBoundary(map, sourceData) {
-  // map is the mapbox map object that we're working on
-  const HEIGHT_MULTIPLIER = 1000;
-
-  console.log("drawBoundary called");
-
+export function initMapBoundaries(map, sourceData) {
   // source defines the data to be drawn
   let source = {
     type: "geojson",
     data: sourceData,
   };
 
-  map.addSource("boundarySource", source);
+  map.addSource("boundariesSource", source);
 
   // colors to use for the categories
-const colors = ['#be87b9', '#dcc2dc', '#ebedec', '#b5bcd7']
+  const colors = ["#be87b9", "#dcc2dc", "#ebedec", "#b5bcd7"];
 
   // layer defines how to display the source
-  let boundary = {
-    id: "boundary", // this needs to be unique
-    type: "fill-extrusion",
-    source: source,
+  let boundaries = {
+    id: "boundaries", // this needs to be unique
+    type: "fill",
+    source: "boundariesSource",
     paint: {
-      "fill-extrusion-color": ["case",
-      [">=", ["to-number", ["get", 'womble_scaled']], 1],
-      colors[0],
-      [">=", ["to-number", ["get", 'womble_scaled']], 0.6],
-      colors[3],
-      [">=", ["to-number", ["get", 'womble_scaled']], 0.3],
-      colors[2],
-      colors[1]],
-      // "fill-extrusion-height": ["get", "height"],
-      // "fill-extrusion-base": ["get", "base_height"],
-      // "fill-extrusion-opacity": 0.5,
-      // "fill-extrusion-color": "gray",
-
-      // multiplies each features womble scaled property with the height multiplier. see mapbox expressions for details
-      "fill-extrusion-height": [
-        "*",
-        ["get", "womble_scaled"],
-        HEIGHT_MULTIPLIER,
-      ],
-      "fill-extrusion-opacity": 1,
+      // "fill-extrusion-color": [
+      //   "case",
+      //   [">=", ["to-number", ["get", "womble_scaled"]], 1],
+      //   colors[0],
+      //   [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
+      //   colors[3],
+      //   [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
+      //   colors[2],
+      //   colors[1],
+      // ],
+      "fill-color": "green",
     },
   };
 
-  map.addLayer(boundary);
+  map.addLayer(boundaries);
+  console.log("Map boundaries initialised");
 }
