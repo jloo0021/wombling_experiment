@@ -1,7 +1,8 @@
+import { indicatorsData, setIndicatorsData } from "./index.js";
+
 let uploadBtn = document.querySelector("#csvInput");
 const customTxt = document.getElementById("custom-text");
 uploadBtn.addEventListener("change", changeBG);
-let csvArray;
 
 function changeBG(e) {
   e.preventDefault();
@@ -17,8 +18,7 @@ function changeBG(e) {
   const reader = new FileReader();
 
   reader.onload = function (e) {
-    csvArray = csvToArr(e.target.result, ",");
-    console.log(csvArray);
+    setIndicatorsData(csvToArr(e.target.result, ","));
   };
 
   reader.readAsText(file);
@@ -26,13 +26,16 @@ function changeBG(e) {
 
 function csvToArr(stringVal, splitter) {
   const [keys, ...rest] = stringVal
+    .replace(/['"]+/g, "") // gets rid of quotation marks from the csv data
     .trim()
     .split("\n")
     .map((item) => item.split(splitter));
 
+  console.log([keys]);
+
   const formedArr = rest.map((item) => {
     const object = {};
-    keys.forEach((key, index) => (object[key] = item.at(index)));
+    keys.forEach((key, index) => (object[key] = parseFloat(item.at(index))));
     return object;
   });
   return formedArr;

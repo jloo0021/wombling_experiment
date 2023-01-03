@@ -1,5 +1,5 @@
 import { retrieveIndicatorSliders } from "./sliders.js";
-import indicatorsData from "../liveability_indicators_sa1_2016.json" assert { type: "json" };
+import { indicatorsData } from "./index.js";
 
 /**
  * OLD IMPLEMENTATION
@@ -203,7 +203,6 @@ export function calculateWomble(edge) {
   let womble = 0;
 
   // find the elements in the indicators csv array that corresponds to the edges neighbouring areas
-  // TODO: for now im using a hardcoded imported json object for the indicators data
   let area1 = indicatorsData.find(
     (area) => area["sa1"] == edge["properties"]["sa1_id1"] // TODO: will have to update area code name, hardcoded to sa1_id1 for now
   );

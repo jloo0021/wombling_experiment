@@ -24,7 +24,13 @@ let transparencySliderValue = document.getElementById(
   "transparency-slider-value"
 );
 
-let map = new mapboxgl.Map({
+// variable for the csv data is made global
+export let indicatorsData;
+export function setIndicatorsData(data) {
+  indicatorsData = data;
+}
+
+export let map = new mapboxgl.Map({
   container: "map",
   // center: [144.9631, -37.9631], // long lat of melb
   center: [145.2, -37.817], // long lat of east side melb
