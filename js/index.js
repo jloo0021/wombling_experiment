@@ -64,9 +64,11 @@ resetWeightsButton.addEventListener("click", setDefaultWeights);
 // TODO: this event listener should be set in the function that handles the user's choice of boundaries. That function is not written yet, so the boundaries source is hardcoded.
 // we need to pass the user's selected boundaries to the drawHeights function
 let runWombleButton = document.getElementById("run-womble-button");
-runWombleButton.addEventListener("click", () =>
-  drawWalls(map, boundaries_SA1_2016)
-);
+runWombleButton.addEventListener("click", () => {
+  document.getElementById("loader").removeAttribute("hidden");
+  setTimeout(drawWalls, 1, map, boundaries_SA1_2016);
+  // drawWalls(map, boundaries_SA1_2016);
+});
 
 // TODO: the run and reset buttons should be unhidden at the end of the function that handles the the user's selection of indicators. That function is not written yet so, for now
 // it is being unhidden manually here

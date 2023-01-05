@@ -126,6 +126,7 @@ export function drawWalls(map, source) {
   // handling the case where the max womble is somehow zero, i dont think this should ever happen
   if (maxWomble == 0) {
     console.log("Max womble value in this data set is zero");
+    document.getElementById("loader").setAttribute("hidden", true);
     return;
   }
 
@@ -191,6 +192,9 @@ export function drawWalls(map, source) {
 
     map.addLayer(wallsLayer);
   }
+  map.on("idle", () => {
+    document.getElementById("loader").setAttribute("hidden", true);
+  });
 }
 
 /**
