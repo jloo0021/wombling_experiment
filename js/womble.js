@@ -192,9 +192,9 @@ export function drawWalls(map, source) {
 
     map.addLayer(wallsLayer);
   }
-  map.on("idle", () => {
-    document.getElementById("loader").setAttribute("hidden", true);
-  });
+
+  // hide loading spinner once the map loads
+  document.getElementById("loader").setAttribute("hidden", true);
 }
 
 /**

@@ -65,9 +65,13 @@ resetWeightsButton.addEventListener("click", setDefaultWeights);
 // we need to pass the user's selected boundaries to the drawHeights function
 let runWombleButton = document.getElementById("run-womble-button");
 runWombleButton.addEventListener("click", () => {
-  document.getElementById("loader").removeAttribute("hidden");
-  setTimeout(drawWalls, 1, map, boundaries_SA1_2016);
-  // drawWalls(map, boundaries_SA1_2016);
+  if (indicatorsData) {
+    document.getElementById("loader").removeAttribute("hidden"); // show loading spinner
+    setTimeout(drawWalls, 1, map, boundaries_SA1_2016); // 1 ms delay is required so that the loading spinner appears immediately before drawWalls is called, maybe see if there's a better way to do this
+    // drawWalls(map, boundaries_SA1_2016);
+  } else {
+    console.log("Indicators data not found");
+  }
 });
 
 // TODO: the run and reset buttons should be unhidden at the end of the function that handles the the user's selection of indicators. That function is not written yet so, for now
