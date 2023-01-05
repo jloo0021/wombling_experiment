@@ -15,29 +15,42 @@ export function initMapBoundaries(map, sourceData) {
 
   map.addSource("boundariesSource", source);
 
-  // colors to use for the categories
-  const colors = ["#be87b9", "#dcc2dc", "#ebedec", "#b5bcd7"];
-
   // layer defines how to display the source
   let boundaries = {
     id: "boundaries", // this needs to be unique
     type: "fill",
     source: "boundariesSource",
     paint: {
-      // "fill-extrusion-color": [
-      //   "case",
-      //   [">=", ["to-number", ["get", "womble_scaled"]], 1],
-      //   colors[0],
-      //   [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
-      //   colors[3],
-      //   [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
-      //   colors[2],
-      //   colors[1],
-      // ],
       "fill-color": "green",
     },
   };
 
   map.addLayer(boundaries);
   console.log("Map boundaries initialised");
+}
+
+export function initMapAreas(map, sourceData) {
+  // source defines the data to be drawn
+  let source = {
+    type: "geojson",
+    data: sourceData,
+  };
+
+  map.addSource("areasSource", source);
+
+  // layer defines how to display the source
+  let areas = {
+    id: "areas", // this needs to be unique
+    type: "fill",
+    source: "areasSource",
+    layout: {
+      visibility: "none",
+    },
+    paint: {
+      // "fill-color": "red",
+    },
+  };
+
+  map.addLayer(areas);
+  console.log("Map areas initialised");
 }

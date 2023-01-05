@@ -1,10 +1,11 @@
 import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
-import { initMapBoundaries } from "./boundaries.js";
+import { initMapAreas, initMapBoundaries } from "./boundaries.js";
 import { drawWalls } from "./womble.js";
 import { toggleableLayers } from "./filter.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
+import areas_SA1_2016 from "../SA1_2016_Greater_Melbourne.geojson" assert { type: "json" };
 // console.log(geoJsonData);
 
 // Could also use fetch instead of import
@@ -74,6 +75,7 @@ document.getElementById("womble-indicators-buttons").removeAttribute("hidden");
 // when map loads, do...
 map.on("load", () => {
   initMapBoundaries(map, boundaries_SA1_2016);
+  initMapAreas(map, areas_SA1_2016);
 
   toggleableLayers(map);
 
