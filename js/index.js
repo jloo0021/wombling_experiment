@@ -96,3 +96,23 @@ map.on("load", () => {
     transparencySliderValue.textContent = e.target.value + "%";
   });
 });
+
+// clicking on wall behaviour which displays a popup and highlights the neighbouring areas
+map.on("click", "walls", (e) => {
+  let wall = e.features[0];
+  let description = `Scaled womble: ${wall.properties.womble_scaled}. Neighbouring area IDs: ${wall.properties.sa1_id1}, ${wall.properties.sa1_id2}`;
+
+  // area IDs are converted to strings b/c they'll be compared to the SA1 area properties which are strings
+  let areaIds = [
+    wall.properties.sa1_id1.toString(),
+    wall.properties.sa1_id2.toString(),
+  ];
+
+  new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(description).addTo(map);
+
+  // highlights the neighbouring areas
+  // uses setFilter to display only the features in the "areas" layer which match the area IDs adjacent to the clicked wall
+  // here we're using the property SA1_MAIN16 as the area ID
+  // TODO: maybe modify this/future sa1 area files to use a more homogenous property name (e.g. area_id)
+  map.setFilter("areas", ["in", ["get", "SA1_MAIN16"], ["literal", areaIds]]);
+});

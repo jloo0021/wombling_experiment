@@ -43,12 +43,11 @@ export function initMapAreas(map, sourceData) {
     id: "areas", // this needs to be unique
     type: "fill",
     source: "areasSource",
-    layout: {
-      visibility: "none",
-    },
     paint: {
-      // "fill-color": "red",
+      "fill-color": "blue",
+      "fill-opacity": 0.3,
     },
+    filter: ["boolean", false], // initialise filter to show no features by setting false
   };
 
   map.addLayer(areas);
