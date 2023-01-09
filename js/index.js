@@ -2,9 +2,14 @@ import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
 import { initMapBoundaries } from "./boundaries.js";
 import { drawWalls } from "./womble.js";
 import { toggleableLayers } from "./filter.js";
+import { csvArray, csvToArr} from './upload.js';
+import { createIndicatorOptions, getSelectValues} from "./indicatorOptions.js";
+import indicatorsData from "../liveability_indicators_sa1_2016.json" assert { type: "json" };
+ 
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
+
 // console.log(geoJsonData);
 
 // Could also use fetch instead of import
@@ -37,17 +42,19 @@ let map = new mapboxgl.Map({
   antialias: true,
 });
 
+console.log(csvArray);
+
+
 map.addControl(new mapboxgl.NavigationControl());
-createIndicatorSliders([
-  "dwelling",
-  "person",
-  "urban_liveability_index",
-  "social_infrastructure_mix",
-  "walkability",
-  "local_employment",
-  "closest_pos",
-  "closest_healthy_food",
-]); // hardcoded for now, TODO: retrieve user's selected indicators and pass them as args to this function
+
+createIndicatorOptions();
+new MultiSelectTag('indicators-selection');  // id
+
+function submitOptions(){
+
+
+
+}
 
 // add event listener to the button for resetting indicator weight sliders
 let resetWeightsButton = document.getElementById("reset-weights-button");

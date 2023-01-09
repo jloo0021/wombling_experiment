@@ -48,6 +48,8 @@ export function createIndicatorSliders(indicators) {
   addDependendentSliderBehaviour();
 }
 
+
+
 /**
  * Updates the innerText of the span that displays the value associated with a particular slider element.
  * This function is dependent on the slider container structure, where the display value is a sibling element of the input slider element
