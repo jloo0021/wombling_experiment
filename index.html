@@ -25,12 +25,12 @@
             <input type="file" id="csvInput" accept=".csv" />
             </div>
             
-            <div class="block">
+            <div id="selectionBlock" class="hide">
                 <label for="indicators"> Select Womble Indicators</label>
                 <select name="indicators" id="indicators-selection" multiple>
                     <!-- dynamically add options -->
                 </select>
-                <button onclick="submitOptions()">Confirm selection</button>
+                <button id="submitOptions">Confirm selection</button>
             </div>
             <label>Boundary opacity: <span id="transparency-slider-value">100%</span></label>
 

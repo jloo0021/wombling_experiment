@@ -1,20 +1,11 @@
 // import { csvArray, csvToArr} from './upload.js';
 import indicatorsData from "../liveability_indicators_sa1_2016.json" assert { type: "json" };
-let optionsArray = [
-    "dwelling",
-    "person",
-    "urban_liveability_index",
-    "social_infrastructure_mix",
-    "walkability",
-    "local_employment",
-    "closest_pos",
-    "closest_healthy_food",
-];
 
-function createIndicatorOptions() {
+
+function createIndicatorOptions(optionsArray) {
     // if (csvArray.Property == null) {
 
-    console.log(optionsArray);
+    // console.log(optionsArray);
     var x = document.getElementById("indicators-selection");
 
 
@@ -31,16 +22,16 @@ function createIndicatorOptions() {
         x.add(option, i);
     }
 
-
     // }
 }
 
 // Return an array of the selected option values
 // select is an HTML select element
 function getSelectValues() {
-    var options = document.getElementById('select-meal-type').selectedOptions;
+    var options = document.getElementById("indicators-selection").selectedOptions;
     var values = Array.from(options).map(({ value }) => value);
-    console.log(values);
+    console.log(values)
+    return values;
 }
 
 // Exporting variables and functions

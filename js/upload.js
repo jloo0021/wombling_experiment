@@ -31,12 +31,16 @@ function csvToArr(stringVal, splitter) {
     .split("\n")
     .map((item) => item.split(splitter));
 
-  console.log([keys]);
+  
+  const headers = Object.values(keys);
+console.log(headers); 
 
   const formedArr = rest.map((item) => {
     const object = {};
     keys.forEach((key, index) => (object[key] = parseFloat(item.at(index))));
     return object;
   });
-  return formedArr;
+  
+  return [formedArr,headers];
+  // return formedArr;
 }

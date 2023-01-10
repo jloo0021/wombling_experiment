@@ -2,9 +2,8 @@ import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
 import { initMapBoundaries } from "./boundaries.js";
 import { drawWalls } from "./womble.js";
 import { toggleableLayers } from "./filter.js";
-import { csvArray, csvToArr} from './upload.js';
 import { createIndicatorOptions, getSelectValues} from "./indicatorOptions.js";
-import indicatorsData from "../liveability_indicators_sa1_2016.json" assert { type: "json" };
+// import indicatorsData from "../liveability_indicators_sa1_2016.json" assert { type: "json" };
  
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
@@ -29,6 +28,20 @@ let transparencySliderValue = document.getElementById(
   "transparency-slider-value"
 );
 
+// variable for the csv data is made global
+export let indicatorsData;
+export let optionsData
+export function setIndicatorsData(data) {
+  indicatorsData = data[0];
+  data[1].shift();
+  optionsData = data[1];
+
+
+  createIndicatorOptions(optionsData);
+  new MultiSelectTag('indicators-selection');  // id
+  document.getElementById("selectionBlock").classList.remove("hide");
+}
+
 let map = new mapboxgl.Map({
   container: "map",
   // center: [144.9631, -37.9631], // long lat of melb
@@ -42,20 +55,32 @@ let map = new mapboxgl.Map({
   antialias: true,
 });
 
-console.log(csvArray);
 
 
 map.addControl(new mapboxgl.NavigationControl());
 
-createIndicatorOptions();
-new MultiSelectTag('indicators-selection');  // id
+let optionsArray2 = [
+  "dwelling",
+  "person",
+  "urban_liveability_index",
+  "social_infrastructure_mix",
+  "walkability",
+  "local_employment",
+  "closest_pos",
+  "closest_healthy_food",
+];
+
+
+let selectionSubmit = document.getElementById("submitOptions");
+selectionSubmit.addEventListener("click", () =>
+submitOptions()
+);
 
 function submitOptions(){
-
-
-
+  let selectedValues = getSelectValues();
+  console.log(selectedValues);
+  createIndicatorSliders(selectedValues);
 }
-
 // add event listener to the button for resetting indicator weight sliders
 let resetWeightsButton = document.getElementById("reset-weights-button");
 resetWeightsButton.addEventListener("click", setDefaultWeights);
