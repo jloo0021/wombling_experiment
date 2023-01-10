@@ -10,6 +10,7 @@ import { toggleableLayers } from "./filter.js";
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
 import areas_SA1_2016 from "../SA1_2016_Greater_Melbourne.geojson" assert { type: "json" };
+import { initCollapsibleBehaviour } from "./collapsible.js";
 // console.log(geoJsonData);
 
 // Could also use fetch instead of import
@@ -47,6 +48,8 @@ export let map = new mapboxgl.Map({
   bearing: -17.6,
   antialias: true,
 });
+
+initCollapsibleBehaviour();
 
 map.addControl(new mapboxgl.NavigationControl());
 createIndicatorSliders([

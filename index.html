@@ -15,7 +15,8 @@
     <!-- Map goes in here -->
     <div id="map"></div>
     <div class="map-overlay top">
-        <div class="map-overlay-inner">
+        <button id="menu-collapsible" class="collapsible">Menu</button>
+        <div id="menu-contents" class="map-overlay-inner">
             <div class="block">
                 <label for="csvInput" class="custom-file-upload btn">
                     Choose a CSV file to upload.
@@ -48,13 +49,9 @@
                 <button id="run-womble-button">Run</button> 
             </div>
             <div id="loader" class="loader" hidden></div>
-
-            
         </div>
-        
     </div>
  
-
     <script src="js/boundaries.js" type="module"></script>
     <script src="js/upload.js" type="module"></script>>
     <script src="js/sliders.js" type="module"></script>

@@ -13,7 +13,7 @@ body {
 .map-overlay {
     font: bold 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     position: absolute;
-    width: 35%;
+    width: 25%;
     top: 0;
     left: 0;
     padding: 10px;
@@ -39,6 +39,36 @@ body {
     position: relative;
     margin: 0;
     /* cursor: ew-resize; */
+}
+
+/* for the collapsible menu */
+.collapsible {
+    background-color: #e5fcff;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+.active, .collapsible:hover {
+    background-color: hsl(190, 49%, 85%);
+}
+
+/* icons that show depending on whether menu is opened/closed (-/+) */
+.collapsible:after {
+    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    font-size: 13px;
+    color: white;
+    float: right;
+    margin-left: 5px;
+}
+  
+.active:after {
+    content: "\2796"; /* Unicode character for "minus" sign (-) */
 }
 
 input[type="file"] {
