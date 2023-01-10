@@ -84,7 +84,7 @@ document.getElementById("womble-indicators-buttons").removeAttribute("hidden");
 
 // when map loads, do...
 map.on("load", () => {
-  initMapBoundaries(map, boundaries_SA1_2016);
+  initMapBoundaries(map, areas_SA1_2016);
   initMapAreas(map, areas_SA1_2016);
   initClickableWallBehaviour(map);
 
