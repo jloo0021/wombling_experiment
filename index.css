@@ -54,13 +54,13 @@ body {
     font-size: 15px;
 }
 
-.active, .collapsible:hover {
+.collapsible:hover {
     background-color: hsl(190, 49%, 85%);
 }
 
 /* icons that show depending on whether menu is opened/closed (-/+) */
 .collapsible:after {
-    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    content: "\2796"; /* Unicode character for "minus" sign (-) */
     font-size: 13px;
     color: white;
     float: right;
@@ -68,7 +68,7 @@ body {
 }
   
 .active:after {
-    content: "\2796"; /* Unicode character for "minus" sign (-) */
+    content: '\02795'; /* Unicode character for "plus" sign (+) */
 }
 
 input[type="file"] {
