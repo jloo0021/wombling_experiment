@@ -117,3 +117,7 @@ input[type="file"] {
 .mapboxgl-popup-content {
     opacity: 0.75;
 }
+
+.hide {
+    display: none;
+}

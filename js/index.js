@@ -9,6 +9,7 @@ import { toggleableLayers } from "./filter.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
+import { createIndicatorOptions, getSelectValues } from "./indicatorOptions.js";
 import areas_SA1_2016 from "../SA1_2016_Greater_Melbourne.geojson" assert { type: "json" };
 import { initCollapsibleBehaviour } from "./collapsible.js";
 // console.log(geoJsonData);
@@ -32,8 +33,15 @@ let transparencySliderValue = document.getElementById(
 
 // variable for the csv data is made global
 export let indicatorsData;
+export let optionsData;
 export function setIndicatorsData(data) {
-  indicatorsData = data;
+  indicatorsData = data[0];
+  data[1].shift();
+  optionsData = data[1];
+
+  createIndicatorOptions(optionsData);
+  new MultiSelectTag("indicators-selection"); // id
+  document.getElementById("selectionBlock").classList.remove("hide");
 }
 
 export let map = new mapboxgl.Map({
@@ -52,16 +60,14 @@ export let map = new mapboxgl.Map({
 initCollapsibleBehaviour();
 
 map.addControl(new mapboxgl.NavigationControl());
-createIndicatorSliders([
-  "dwelling",
-  "person",
-  "urban_liveability_index",
-  "social_infrastructure_mix",
-  "walkability",
-  "local_employment",
-  "closest_pos",
-  "closest_healthy_food",
-]); // hardcoded for now, TODO: retrieve user's selected indicators and pass them as args to this function
+
+let selectionSubmit = document.getElementById("submitOptions");
+selectionSubmit.addEventListener("click", () => submitOptions());
+function submitOptions() {
+  let selectedValues = getSelectValues();
+  console.log(selectedValues);
+  createIndicatorSliders(selectedValues);
+}
 
 // add event listener to the button for resetting indicator weight sliders
 let resetWeightsButton = document.getElementById("reset-weights-button");

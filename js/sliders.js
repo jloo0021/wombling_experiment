@@ -5,6 +5,11 @@
 export function createIndicatorSliders(indicators) {
   let wombleSlidersDiv = document.getElementById("womble-indicators-sliders"); // the element that all the sliders will be contained in
 
+  // remove existing indicator sliders
+  while (wombleSlidersDiv.firstChild) {
+    wombleSlidersDiv.removeChild(wombleSlidersDiv.lastChild);
+  }
+
   // create the HTML elements required for each slider
   for (let i = 0; i < indicators.length; i++) {
     let indicator = indicators[i];
