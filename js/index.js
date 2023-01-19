@@ -12,6 +12,8 @@ import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84_buffered7.geojson"
 import { createIndicatorOptions, getSelectValues } from "./indicatorOptions.js";
 import areas_SA1_2016 from "../SA1_2016_Greater_Melbourne.geojson" assert { type: "json" };
 import { initCollapsibleBehaviour } from "./collapsible.js";
+import { DimensionToggle } from "./DimensionToggle.js";
+import { Dimensions } from "./enums.js";
 // console.log(geoJsonData);
 
 // Could also use fetch instead of import
@@ -110,3 +112,18 @@ map.on("load", () => {
     transparencySliderValue.textContent = e.target.value + "%";
   });
 });
+
+// TODO: THIS IS JUST FOR TESTING
+document.getElementById("test").addEventListener("click", () => {
+  // map.setPitch(0, { duration: 2000 });
+  // map.setProjection("mercator");
+  // console.log(map.getProjection());
+  console.log(map.getMaxPitch());
+});
+
+// another global to store the dimension that the app is currently in (2d or 3d)
+export let appDimension = Dimensions.THREE_D;
+export function setDimension(dimension) {
+  appDimension = dimension;
+}
+map.addControl(new DimensionToggle({ pitch: map.getPitch() }));
