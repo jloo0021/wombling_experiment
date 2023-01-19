@@ -5,7 +5,7 @@
 export function toggleableLayers(map) {
   // enumerate ids of the layers
   // add id's to this array and add a corresponding checkbox to the HTML file to extend functionality to include other layers
-  let toggleableLayerIds = ["boundaries", "walls"];
+  let toggleableLayerIds = ["boundaries", "walls", "thicknesses"];
 
   for (let id of toggleableLayerIds) {
     let layerCheckbox = document.getElementById(`${id}-checkbox`); // all layer filter checkboxes in the HTML file should be in this form

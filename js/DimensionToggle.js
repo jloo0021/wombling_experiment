@@ -27,8 +27,13 @@ export class DimensionToggle {
         this._btn.className = `mapboxgl-ctrl-icon mapboxgl-ctrl-dimensiontoggle-2d`;
 
         // restore previous pitch
-        map.easeTo({ pitch: this._previousPitch, duration: 1000 });
+        map.easeTo({
+          pitch: this._previousPitch,
+          duration: 1000,
+        });
         map.setMaxPitch(85); // default max pitch
+
+        // delete thicknesses and draw walls
       } else if (appDimension == Dimensions.THREE_D) {
         // switch to 2d
         setDimension(Dimensions.TWO_D);
@@ -38,6 +43,8 @@ export class DimensionToggle {
         this._previousPitch = map.getPitch();
         map.easeTo({ pitch: 0, duration: 1000 });
         map.setMaxPitch(0);
+
+        // delete walls and draw thicknesses
       }
     });
 

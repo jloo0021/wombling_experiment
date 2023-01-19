@@ -4,11 +4,12 @@ import {
   initMapAreas,
   initMapBoundaries,
 } from "./boundaries.js";
-import { drawWalls } from "./womble.js";
+import { drawWalls, drawThicknesses } from "./womble.js";
 import { toggleableLayers } from "./filter.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
-import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
+import boundaries_SA1_2016_buffered from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
+import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84.geojson" assert { type: "json" };
 import { createIndicatorOptions, getSelectValues } from "./indicatorOptions.js";
 import areas_SA1_2016 from "../SA1_2016_Greater_Melbourne.geojson" assert { type: "json" };
 import { initCollapsibleBehaviour } from "./collapsible.js";
@@ -46,6 +47,12 @@ export function setIndicatorsData(data) {
   document.getElementById("selectionBlock").classList.remove("hide");
 }
 
+// another global to store the dimension that the app is currently in (2d or 3d)
+export let appDimension = Dimensions.THREE_D;
+export function setDimension(dimension) {
+  appDimension = dimension;
+}
+
 export let map = new mapboxgl.Map({
   container: "map",
   // center: [144.9631, -37.9631], // long lat of melb
@@ -62,6 +69,7 @@ export let map = new mapboxgl.Map({
 initCollapsibleBehaviour();
 
 map.addControl(new mapboxgl.NavigationControl());
+map.addControl(new DimensionToggle({ pitch: map.getPitch() }));
 
 let selectionSubmit = document.getElementById("submitOptions");
 selectionSubmit.addEventListener("click", () => submitOptions());
@@ -82,7 +90,16 @@ let runWombleButton = document.getElementById("run-womble-button");
 runWombleButton.addEventListener("click", () => {
   if (indicatorsData) {
     document.getElementById("loader").removeAttribute("hidden"); // show loading spinner
-    setTimeout(drawWalls, 1, map, boundaries_SA1_2016); // 1 ms delay is required so that the loading spinner appears immediately before drawWalls is called, maybe see if there's a better way to do this
+
+    // draw walls if in 3d mode
+    if (appDimension == Dimensions.THREE_D) {
+      setTimeout(drawWalls, 1, map, boundaries_SA1_2016_buffered); // 1 ms delay is required so that the loading spinner appears immediately before drawWalls is called, maybe see if there's a better way to do this
+    }
+    // draw thicknesses if in 2d mode
+    else if (appDimension == Dimensions.TWO_D) {
+      setTimeout(drawThicknesses, 1, map, boundaries_SA1_2016);
+    }
+
     // drawWalls(map, boundaries_SA1_2016);
   } else {
     console.log("Indicators data not found");
@@ -112,18 +129,3 @@ map.on("load", () => {
     transparencySliderValue.textContent = e.target.value + "%";
   });
 });
-
-// TODO: THIS IS JUST FOR TESTING
-document.getElementById("test").addEventListener("click", () => {
-  // map.setPitch(0, { duration: 2000 });
-  // map.setProjection("mercator");
-  // console.log(map.getProjection());
-  console.log(map.getMaxPitch());
-});
-
-// another global to store the dimension that the app is currently in (2d or 3d)
-export let appDimension = Dimensions.THREE_D;
-export function setDimension(dimension) {
-  appDimension = dimension;
-}
-map.addControl(new DimensionToggle({ pitch: map.getPitch() }));

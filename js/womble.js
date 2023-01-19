@@ -108,43 +108,7 @@ import { indicatorsData } from "./index.js";
  */
 export function drawWalls(map, source) {
   const HEIGHT_MULTIPLIER = 5000;
-  let edges = source["features"]; // get all edges from the source into one array
-  let rawWombleValues = [];
-  let maxWomble = 0; // used to calculate womble_scaled
-
-  // create array of womble values for each edge
-  for (let edge of edges) {
-    let womble = calculateWomble(edge);
-    rawWombleValues.push(womble);
-
-    // keep track of the largest womble value
-    if (womble > maxWomble) {
-      maxWomble = womble;
-    }
-  }
-
-  // handling the case where the max womble is somehow zero, i dont think this should ever happen
-  if (maxWomble == 0) {
-    console.log("Max womble value in this data set is zero");
-    document.getElementById("loader").setAttribute("hidden", true);
-    return;
-  }
-
-  // create a new geojson that will be used for the walls source data
-  let wallsData = {
-    type: "FeatureCollection",
-    features: [],
-  };
-
-  // add each edge that has a non-zero womble value to the walls source data
-  for (let i = 0; i < edges.length; i++) {
-    let edge = JSON.parse(JSON.stringify(edges[i])); // deep copying the edge so the original source is not modified
-    if (rawWombleValues[i] > 0) {
-      edge["properties"]["womble"] = rawWombleValues[i];
-      edge["properties"]["womble_scaled"] = rawWombleValues[i] / maxWomble;
-      wallsData.features.push(edge);
-    }
-  }
+  let wallsData = generateWombleFeaturesData(source);
 
   // if walls have already been drawn (i.e. walls source exists), update the source data with the new data
   if (map.getSource("wallsSource")) {
@@ -198,11 +162,123 @@ export function drawWalls(map, source) {
 }
 
 /**
+ * Adds thickness to the edges based on their womble values.
+ * Runs when the user presses the "Run" button after selecting their indicator weights, while in 2D mode.
+ * @param {*} map mapbox map object that the walls will be drawn on
+ * @param {*} source geojson source for the boundaries upon which walls will be drawn
+ */
+export function drawThicknesses(map, source) {
+  console.log("drawing thicknesses");
+  const WIDTH_MULTIPLIER = 50;
+  let thicknessesData = generateWombleFeaturesData(source);
+
+  // if thicknesses have already been drawn (i.e. thicknesses source exists), update the source data with the new data
+  if (map.getSource("thicknessesSource")) {
+    map.getSource("thicknessesSource").setData(thicknessesData);
+  }
+  // else, add the thicknesses source and draw the layer for the first time
+  else {
+    // use the data json object as the source for the thicknesses layer
+    let thicknessesSource = {
+      type: "geojson",
+      data: thicknessesData,
+    };
+
+    map.addSource("thicknessesSource", thicknessesSource);
+
+    // colors to use for the categories
+    const colors = ["#be87b9", "#dcc2dc", "#ebedec", "#b5bcd7"];
+
+    // create and draw the layer
+    let thicknessesLayer = {
+      id: "thicknesses", // this needs to be unique
+      type: "line",
+      source: "thicknessesSource",
+
+      layout: {
+        // "line-join": "round",
+        // // "line-miter-limit": 100,
+      },
+      paint: {
+        "line-color": [
+          "case",
+          [">=", ["to-number", ["get", "womble_scaled"]], 1],
+          colors[0],
+          [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
+          colors[3],
+          [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
+          colors[2],
+          colors[1],
+        ],
+        "line-opacity": 1,
+
+        // mapbox expression to multiply each feature's womble property with some constant to calculate the width drawn
+        "line-width": ["*", ["get", "womble_scaled"], WIDTH_MULTIPLIER],
+      },
+    };
+
+    map.addLayer(thicknessesLayer);
+  }
+
+  // hide loading spinner once the map loads
+  document.getElementById("loader").setAttribute("hidden", true);
+}
+
+/**
+ * Creates womble data which can be used to draw features on a mapbox map.
+ * Womble data will be created for each edge in the supplied source data.
+ * This womble data is added as a property for each edge, but this is done so as a deep copy so as not to modify the supplied source data.
+ * @param {*} source geojson source for the boundaries upon which the womble features will be drawn
+ * @returns data in json form that can be supplied as the data property in a mapbox source
+ */
+function generateWombleFeaturesData(source) {
+  let edges = source["features"]; // get all edges from the source into one array
+  let rawWombleValues = [];
+  let maxWomble = 0; // used to calculate womble_scaled
+
+  // create array of womble values for each edge
+  for (let edge of edges) {
+    let womble = calculateWomble(edge);
+    rawWombleValues.push(womble);
+
+    // keep track of the largest womble value
+    if (womble > maxWomble) {
+      maxWomble = womble;
+    }
+  }
+
+  // handling the case where the max womble is somehow zero, i dont think this should ever happen
+  if (maxWomble == 0) {
+    console.log("Max womble value in this data set is zero");
+    document.getElementById("loader").setAttribute("hidden", true);
+    return;
+  }
+
+  // create a new geojson that will be used for the womble features source data
+  let wombleFeaturesData = {
+    type: "FeatureCollection",
+    features: [],
+  };
+
+  // add each edge that has a non-zero womble value to the walls source data
+  for (let i = 0; i < edges.length; i++) {
+    let edge = JSON.parse(JSON.stringify(edges[i])); // deep copying the edge so the original source is not modified
+    if (rawWombleValues[i] > 0) {
+      edge["properties"]["womble"] = rawWombleValues[i];
+      edge["properties"]["womble_scaled"] = rawWombleValues[i] / maxWomble;
+      wombleFeaturesData.features.push(edge);
+    }
+  }
+
+  return wombleFeaturesData;
+}
+
+/**
  * Calculates the womble value for a particular edge
  * @param {Number} edge object corresponding to the edge that the womble calculation is being done for
  * @returns {Number} womble value
  */
-export function calculateWomble(edge) {
+function calculateWomble(edge) {
   // TODO: pass in the indicators csv as an array? or some type of object i can use
   // console.log(indicatorsData);
 
