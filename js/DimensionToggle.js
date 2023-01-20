@@ -2,7 +2,7 @@ import { Dimensions } from "./enums.js";
 import { appDimension, setDimension } from "./index.js";
 
 export class DimensionToggle {
-  constructor({ pitch }) {
+  constructor({ pitch = 45 }) {
     this._previousPitch = pitch;
   }
 

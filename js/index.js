@@ -48,7 +48,7 @@ export function setIndicatorsData(data) {
 }
 
 // another global to store the dimension that the app is currently in (2d or 3d)
-export let appDimension = Dimensions.THREE_D;
+export let appDimension = Dimensions.TWO_D;
 export function setDimension(dimension) {
   appDimension = dimension;
 }
@@ -61,15 +61,13 @@ export let map = new mapboxgl.Map({
   zoom: 10,
   style: "mapbox://styles/mapbox/light-v11",
   accessToken: MAPBOX_TOKEN,
-  pitch: 45,
-  bearing: -17.6,
   antialias: true,
 });
 
 initCollapsibleBehaviour();
 
 map.addControl(new mapboxgl.NavigationControl());
-map.addControl(new DimensionToggle({ pitch: map.getPitch() }));
+map.addControl(new DimensionToggle({ pitch: 45 }));
 
 let selectionSubmit = document.getElementById("submitOptions");
 selectionSubmit.addEventListener("click", () => submitOptions());
