@@ -1,5 +1,6 @@
 import { retrieveIndicatorSliders } from "./sliders.js";
-import { indicatorsData } from "./index.js";
+import { appDimension, indicatorsData } from "./index.js";
+import { Dimensions } from "./enums.js";
 
 /**
  * OLD IMPLEMENTATION
@@ -108,6 +109,7 @@ import { indicatorsData } from "./index.js";
  */
 export function drawWalls(map, source) {
   const HEIGHT_MULTIPLIER = 5000;
+  const WIDTH_MULTIPLIER = 10;
   let wallsData = generateWombleFeaturesData(source);
 
   // if walls have already been drawn (i.e. walls source exists), update the source data with the new data
@@ -123,39 +125,80 @@ export function drawWalls(map, source) {
     };
 
     map.addSource("wallsSource", wallsSource);
+    console.log(wallsSource);
+    console.log(map.getSource("wallsSource"));
+    console.log(map.querySourceFeatures("wallsSource"));
 
     // colors to use for the categories
     const colors = ["#be87b9", "#dcc2dc", "#ebedec", "#b5bcd7"];
 
     // create and draw the layer
-    let wallsLayer = {
-      id: "walls", // this needs to be unique
-      type: "fill-extrusion",
-      source: "wallsSource",
-      paint: {
-        "fill-extrusion-color": [
-          "case",
-          [">=", ["to-number", ["get", "womble_scaled"]], 1],
-          colors[0],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
-          colors[3],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
-          colors[2],
-          colors[1],
-        ],
-        "fill-extrusion-opacity": 1,
+    let wallsLayer;
 
-        // mapbox expression to multiply each feature's womble property with some constant to calculate the height drawn
-        "fill-extrusion-height": [
-          "*",
-          ["get", "womble_scaled"],
-          HEIGHT_MULTIPLIER,
-        ],
-      },
-    };
+    // if in 2d mode, draw thicknesses using line
+    if (appDimension == Dimensions.TWO_D) {
+      wallsLayer = {
+        id: "walls",
+        type: "line",
+        source: "wallsSource",
+
+        layout: {
+          "line-join": "miter",
+        },
+
+        paint: {
+          "line-color": [
+            "case",
+            [">=", ["to-number", ["get", "womble_scaled"]], 1],
+            colors[0],
+            [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
+            colors[3],
+            [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
+            colors[2],
+            colors[1],
+          ],
+          "line-opacity": 1,
+
+          // mapbox expression to multiply each feature's womble property with some constant to calculate the width drawn
+          "line-width": ["*", ["get", "womble_scaled"], WIDTH_MULTIPLIER],
+        },
+      };
+    }
+    // if in 3d mode, draw heights using fill-extrusion
+    else if (appDimension == Dimensions.THREE_D) {
+      wallsLayer = {
+        id: "walls", // this needs to be unique
+        type: "fill-extrusion",
+        source: "wallsSource",
+        paint: {
+          "fill-extrusion-color": [
+            "case",
+            [">=", ["to-number", ["get", "womble_scaled"]], 1],
+            colors[0],
+            [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
+            colors[3],
+            [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
+            colors[2],
+            colors[1],
+          ],
+          "fill-extrusion-opacity": 1,
+
+          // mapbox expression to multiply each feature's womble property with some constant to calculate the height drawn
+          "fill-extrusion-height": [
+            "*",
+            ["get", "womble_scaled"],
+            HEIGHT_MULTIPLIER,
+          ],
+        },
+      };
+    }
 
     map.addLayer(wallsLayer);
   }
+
+  // hide boundaries directly after running womble
+  document.getElementById("boundaries-checkbox").checked = false;
+  map.setLayoutProperty("boundaries", "visibility", "none");
 
   // hide loading spinner once the map loads
   document.getElementById("loader").setAttribute("hidden", true);
@@ -167,62 +210,68 @@ export function drawWalls(map, source) {
  * @param {*} map mapbox map object that the walls will be drawn on
  * @param {*} source geojson source for the boundaries upon which walls will be drawn
  */
-export function drawThicknesses(map, source) {
-  console.log("drawing thicknesses");
-  const WIDTH_MULTIPLIER = 50;
-  let thicknessesData = generateWombleFeaturesData(source);
+// export function drawThicknesses(map, source) {
+//   console.log("drawing thicknesses");
+//   const WIDTH_MULTIPLIER = 10;
+//   let thicknessesData = generateWombleFeaturesData(source);
 
-  // if thicknesses have already been drawn (i.e. thicknesses source exists), update the source data with the new data
-  if (map.getSource("thicknessesSource")) {
-    map.getSource("thicknessesSource").setData(thicknessesData);
-  }
-  // else, add the thicknesses source and draw the layer for the first time
-  else {
-    // use the data json object as the source for the thicknesses layer
-    let thicknessesSource = {
-      type: "geojson",
-      data: thicknessesData,
-    };
+//   // if thicknesses have already been drawn (i.e. thicknesses source exists), update the source data with the new data
+//   if (map.getSource("thicknessesSource")) {
+//     map.getSource("thicknessesSource").setData(thicknessesData);
+//   }
+//   // else, add the thicknesses source and draw the layer for the first time
+//   else {
+//     // use the data json object as the source for the thicknesses layer
+//     let thicknessesSource = {
+//       type: "geojson",
+//       data: thicknessesData,
+//     };
 
-    map.addSource("thicknessesSource", thicknessesSource);
+//     console.log(thicknessesSource);
 
-    // colors to use for the categories
-    const colors = ["#be87b9", "#dcc2dc", "#ebedec", "#b5bcd7"];
+//     map.addSource("thicknessesSource", thicknessesSource);
 
-    // create and draw the layer
-    let thicknessesLayer = {
-      id: "thicknesses", // this needs to be unique
-      type: "line",
-      source: "thicknessesSource",
+//     // colors to use for the categories
+//     const colors = ["#be87b9", "#dcc2dc", "#ebedec", "#b5bcd7"];
 
-      layout: {
-        // "line-join": "round",
-        // // "line-miter-limit": 100,
-      },
-      paint: {
-        "line-color": [
-          "case",
-          [">=", ["to-number", ["get", "womble_scaled"]], 1],
-          colors[0],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
-          colors[3],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
-          colors[2],
-          colors[1],
-        ],
-        "line-opacity": 1,
+//     // create and draw the layer
+//     let thicknessesLayer = {
+//       id: "thicknesses", // this needs to be unique
+//       type: "line",
+//       source: "thicknessesSource",
 
-        // mapbox expression to multiply each feature's womble property with some constant to calculate the width drawn
-        "line-width": ["*", ["get", "womble_scaled"], WIDTH_MULTIPLIER],
-      },
-    };
+//       layout: {
+//         "line-join": "miter",
+//         "line-miter-limit": 0,
+//       },
+//       paint: {
+//         "line-color": [
+//           "case",
+//           [">=", ["to-number", ["get", "womble_scaled"]], 1],
+//           colors[0],
+//           [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
+//           colors[3],
+//           [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
+//           colors[2],
+//           colors[1],
+//         ],
+//         "line-opacity": 1,
 
-    map.addLayer(thicknessesLayer);
-  }
+//         // mapbox expression to multiply each feature's womble property with some constant to calculate the width drawn
+//         "line-width": ["*", ["get", "womble_scaled"], WIDTH_MULTIPLIER],
+//       },
+//     };
 
-  // hide loading spinner once the map loads
-  document.getElementById("loader").setAttribute("hidden", true);
-}
+//     map.addLayer(thicknessesLayer);
+//   }
+
+//   // hide boundaries directly after running womble
+//   document.getElementById("boundaries-checkbox").checked = false;
+//   map.setLayoutProperty("boundaries", "visibility", "none");
+
+//   // hide loading spinner once the map loads
+//   document.getElementById("loader").setAttribute("hidden", true);
+// }
 
 /**
  * Creates womble data which can be used to draw features on a mapbox map.

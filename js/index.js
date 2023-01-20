@@ -4,7 +4,7 @@ import {
   initMapAreas,
   initMapBoundaries,
 } from "./boundaries.js";
-import { drawWalls, drawThicknesses } from "./womble.js";
+import { drawWalls } from "./womble.js";
 import { toggleableLayers } from "./filter.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
@@ -59,6 +59,7 @@ export let map = new mapboxgl.Map({
   center: [145.2, -37.817], // long lat of east side melb
   // center: [149.8911094722651, -35.0898882056091],
   zoom: 10,
+  maxPitch: 0,
   style: "mapbox://styles/mapbox/light-v11",
   accessToken: MAPBOX_TOKEN,
   antialias: true,
@@ -89,13 +90,14 @@ runWombleButton.addEventListener("click", () => {
   if (indicatorsData) {
     document.getElementById("loader").removeAttribute("hidden"); // show loading spinner
 
-    // draw walls if in 3d mode
+    // draw walls if in 3d mode, using buffered source (polygon features)
     if (appDimension == Dimensions.THREE_D) {
       setTimeout(drawWalls, 1, map, boundaries_SA1_2016_buffered); // 1 ms delay is required so that the loading spinner appears immediately before drawWalls is called, maybe see if there's a better way to do this
     }
-    // draw thicknesses if in 2d mode
+    // draw thicknesses if in 2d mode, using unbuffered source (line features)
     else if (appDimension == Dimensions.TWO_D) {
-      setTimeout(drawThicknesses, 1, map, boundaries_SA1_2016);
+      // setTimeout(drawThicknesses, 1, map, boundaries_SA1_2016);
+      setTimeout(drawWalls, 1, map, boundaries_SA1_2016);
     }
 
     // drawWalls(map, boundaries_SA1_2016);
@@ -114,6 +116,21 @@ map.on("load", () => {
   initMapAreas(map, areas_SA1_2016);
   initClickableWallBehaviour(map);
 
+  // unbuffered source is used for the 2d walls, since we can add thickness to lines
+  let unbufferedSource = {
+    type: "geojson",
+    data: boundaries_SA1_2016,
+  };
+
+  // buffered source is used for the 3d walls, because fill-extrusion only works on polygons, i.e. a buffered source
+  let bufferedSource = {
+    type: "geojson",
+    data: boundaries_SA1_2016_buffered,
+  };
+
+  map.addSource("unbufferedSource", unbufferedSource);
+  map.addSource("bufferedSource", bufferedSource);
+
   toggleableLayers(map);
 
   transparencySlider.addEventListener("input", (e) => {
@@ -127,3 +144,5 @@ map.on("load", () => {
     transparencySliderValue.textContent = e.target.value + "%";
   });
 });
+
+function initSources() {}
