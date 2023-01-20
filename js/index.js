@@ -4,7 +4,7 @@ import {
   initMapAreas,
   initMapBoundaries,
 } from "./boundaries.js";
-import { drawWalls } from "./womble.js";
+import { drawWalls, DimensionToggle } from "./womble.js";
 import { toggleableLayers } from "./filter.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
@@ -13,7 +13,6 @@ import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84.geojson" assert { 
 import { createIndicatorOptions, getSelectValues } from "./indicatorOptions.js";
 import areas_SA1_2016 from "../SA1_2016_Greater_Melbourne.geojson" assert { type: "json" };
 import { initCollapsibleBehaviour } from "./collapsible.js";
-import { DimensionToggle } from "./DimensionToggle.js";
 import { Dimensions } from "./enums.js";
 // console.log(geoJsonData);
 
