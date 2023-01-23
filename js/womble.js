@@ -152,24 +152,46 @@ export function addWallsLayer(map) {
       source: "wallsSource",
 
       layout: {
-        "line-join": "miter",
+        "line-cap": "round",
+        "line-join": "miter", // this doesn't seem to actually join the lines properly
       },
 
       paint: {
         "line-color": [
           "case",
           [">=", ["to-number", ["get", "womble_scaled"]], 1],
-          colors[0],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
           colors[3],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
+          [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
           colors[2],
+          [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
           colors[1],
+          colors[0],
         ],
         "line-opacity": 1,
 
-        // mapbox expression to multiply each feature's womble property with some constant to calculate the width drawn
-        "line-width": ["*", ["get", "womble_scaled"], WIDTH_MULTIPLIER],
+        // mapbox expression to use interpolation to adjust line width at different zoom levels
+        // exponential function is used to create an effect where as you zoom in, the max line width increases while maintaining the min line width
+        // this is done so that you can more easily distinguish line widths when zoomed in, while keeping the lines uncluttered when zoomed out
+        "line-width": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          // at zoom lvl 12, the line width range is (1, 4]
+          12,
+          ["^", 4, ["get", "womble_scaled"]],
+          // at zoom lvl 13, the line width range is (1, 8]
+          13,
+          ["^", 8, ["get", "womble_scaled"]],
+          // at zoom lvl 14, the line width range is (1, 12]
+          14,
+          ["^", 12, ["get", "womble_scaled"]],
+          // at zoom lvl 15, the line width range is (1, 16]
+          15,
+          ["^", 16, ["get", "womble_scaled"]],
+          // at zoom lvl 16+, the line width range is (1, 20]
+          16,
+          ["^", 20, ["get", "womble_scaled"]],
+        ],
       },
     };
   }
@@ -183,12 +205,12 @@ export function addWallsLayer(map) {
         "fill-extrusion-color": [
           "case",
           [">=", ["to-number", ["get", "womble_scaled"]], 1],
-          colors[0],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
           colors[3],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
+          [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
           colors[2],
+          [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
           colors[1],
+          colors[0],
         ],
         "fill-extrusion-opacity": 1,
 
@@ -484,6 +506,9 @@ export class DimensionToggle {
     });
     map.setMaxPitch(85); // default max pitch
 
+    // remove min zoom
+    map.setMinZoom(null);
+
     // delete thicknesses and draw walls
     this.#convertWalls(map);
   }
@@ -497,6 +522,9 @@ export class DimensionToggle {
     this._previousPitch = map.getPitch();
     map.easeTo({ pitch: 0, duration: 1000 });
     map.setMaxPitch(0);
+
+    // set min zoom
+    map.setMinZoom(12);
 
     // delete walls and draw thicknesses
     this.#convertWalls(map);

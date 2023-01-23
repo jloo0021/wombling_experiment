@@ -62,33 +62,17 @@ export function initMapAreas(map, sourceData) {
 export function initClickableWallBehaviour(map) {
   map.on("click", "walls", (e) => {
     let wall = e.features[0];
-    let description = `Raw womble: ${wall.properties.womble} <br> Scaled womble: ${wall.properties.womble_scaled} <br> Neighbouring area IDs: <br> ${wall.properties.sa1_id1}, <br> ${wall.properties.sa1_id2}`;
+
+    // raw and scaled womble values rounded to 3 dec places
+    let rawWomble = wall.properties.womble.toFixed(3);
+    let scaledWomble = wall.properties.womble_scaled.toFixed(3);
+    let description = `Raw womble: ${rawWomble} <br> Scaled womble: ${scaledWomble} <br> Neighbouring area IDs: <br> ${wall.properties.sa1_id1}, <br> ${wall.properties.sa1_id2}`;
     console.log(wall);
 
     // area IDs are converted to strings b/c they'll be compared to the SA1 area properties which are strings
     let areaIds = [
       wall.properties.sa1_id1.toString(),
       wall.properties.sa1_id2.toString(),
-    ];
-
-    new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(description).addTo(map);
-
-    // highlights the neighbouring areas
-    // uses setFilter to display only the features in the "areas" layer which match the area IDs adjacent to the clicked wall
-    // here we're using the property SA1_MAIN16 as the area ID
-    // TODO: maybe modify this/future sa1 area files to use a more homogenous property name (e.g. area_id)
-    map.setFilter("areas", ["in", ["get", "SA1_MAIN16"], ["literal", areaIds]]);
-  });
-
-  map.on("click", "thicknesses", (e) => {
-    let thickness = e.features[0];
-    let description = `Raw womble: ${thickness.properties.womble} <br> Scaled womble: ${thickness.properties.womble_scaled} <br> Neighbouring area IDs: <br> ${thickness.properties.sa1_id1}, <br> ${thickness.properties.sa1_id2}`;
-    console.log(thickness);
-
-    // area IDs are converted to strings b/c they'll be compared to the SA1 area properties which are strings
-    let areaIds = [
-      thickness.properties.sa1_id1.toString(),
-      thickness.properties.sa1_id2.toString(),
     ];
 
     new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(description).addTo(map);

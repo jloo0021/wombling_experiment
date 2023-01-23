@@ -57,7 +57,8 @@ export let map = new mapboxgl.Map({
   // center: [144.9631, -37.9631], // long lat of melb
   center: [145.2, -37.817], // long lat of east side melb
   // center: [149.8911094722651, -35.0898882056091],
-  zoom: 10,
+  zoom: 12,
+  minZoom: 12,
   maxPitch: 0,
   style: "mapbox://styles/mapbox/light-v11",
   accessToken: MAPBOX_TOKEN,
@@ -144,4 +145,6 @@ map.on("load", () => {
   });
 });
 
-function initSources() {}
+// document.getElementById("test").addEventListener("click", () => {
+//   console.log(map.getZoom());
+// });
