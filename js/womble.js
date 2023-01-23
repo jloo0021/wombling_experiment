@@ -123,10 +123,6 @@ export function drawWalls(map, source) {
     };
 
     map.addSource("wallsSource", wallsSource);
-    console.log(wallsSource);
-    console.log(map.getSource("wallsSource"));
-    console.log(map.querySourceFeatures("wallsSource"));
-
     addWallsLayer(map);
   }
 
@@ -143,7 +139,7 @@ export function addWallsLayer(map) {
   const WIDTH_MULTIPLIER = 10;
 
   // colors to use for the categories
-  const colors = ["#be87b9", "#dcc2dc", "#ebedec", "#b5bcd7"];
+  const colors = ["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20"];
 
   // create and draw the layer
   let wallsLayer;
@@ -425,31 +421,9 @@ export class DimensionToggle {
     // switch dimensions when this button is clicked
     this._btn.addEventListener("click", () => {
       if (appDimension == Dimensions.TWO_D) {
-        // switch to 3d
-        setDimension(Dimensions.THREE_D);
-        this._btn.className = `mapboxgl-ctrl-icon mapboxgl-ctrl-dimensiontoggle-2d`;
-
-        // restore previous pitch
-        map.easeTo({
-          pitch: this._previousPitch,
-          duration: 1000,
-        });
-        map.setMaxPitch(85); // default max pitch
-
-        // delete thicknesses and draw walls
-        this.#convertWallsTo3d(map);
+        this.#switchTo3d(map);
       } else if (appDimension == Dimensions.THREE_D) {
-        // switch to 2d
-        setDimension(Dimensions.TWO_D);
-        this._btn.className = `mapboxgl-ctrl-icon mapboxgl-ctrl-dimensiontoggle-3d`;
-
-        // disable pitch
-        this._previousPitch = map.getPitch();
-        map.easeTo({ pitch: 0, duration: 1000 });
-        map.setMaxPitch(0);
-
-        // delete walls and draw thicknesses
-        this.#convertWallsTo2d(map);
+        this.#switchTo2d(map);
       }
     });
 
@@ -462,118 +436,69 @@ export class DimensionToggle {
     this._map = undefined;
   }
 
-  #convertWallsTo3d(map) {
-    // convert walls from 2d to 3d, i.e. from thicknesses to heights
-    if (map.getSource("wallsSource")) {
-      console.log(map.getSource("unbufferedSource"));
-      let wallsData = map.getSource("wallsSource")._data;
-      console.log(wallsData);
-
-      let bufferedFeatures = map.getSource("bufferedSource")._data["features"];
-      console.log(bufferedFeatures);
-
-      // overwrite the geometries for each feature in the existing walls data
-      for (let wall of wallsData["features"]) {
-        // the raw buffered source data will have more features than the existing walls data, b/c the walls data will have filtered out edges where the womble cannot be calculated
-        // therefore, we need to "find" the features in the raw source that correspond with our existing walls
-        let bufferedFeature = bufferedFeatures.find(
-          (feature) =>
-            feature["properties"]["ogc_fid"] == wall["properties"]["ogc_fid"]
-        );
-
-        // console.log(bufferedFeature);
-        bufferedFeature = JSON.parse(JSON.stringify(bufferedFeature)); // deep copy so we don't somehow modify raw source
-        wall["geometry"] = bufferedFeature["geometry"];
-      }
-      console.log(wallsData);
-
-      map.removeLayer("walls");
-      map.getSource("wallsSource").setData(wallsData);
-      addWallsLayer(map);
-      // const colors = ["#be87b9", "#dcc2dc", "#ebedec", "#b5bcd7"];
-      // const HEIGHT_MULTIPLIER = 5000;
-      // let wallsLayer = {
-      //   id: "walls", // this needs to be unique
-      //   type: "fill-extrusion",
-      //   source: "wallsSource",
-      //   paint: {
-      //     "fill-extrusion-color": [
-      //       "case",
-      //       [">=", ["to-number", ["get", "womble_scaled"]], 1],
-      //       colors[0],
-      //       [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
-      //       colors[3],
-      //       [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
-      //       colors[2],
-      //       colors[1],
-      //     ],
-      //     "fill-extrusion-opacity": 1,
-
-      //     // mapbox expression to multiply each feature's womble property with some constant to calculate the height drawn
-      //     "fill-extrusion-height": [
-      //       "*",
-      //       ["get", "womble_scaled"],
-      //       HEIGHT_MULTIPLIER,
-      //     ],
-      //   },
-      // };
-      // map.addLayer(wallsLayer);
+  #convertWalls(map) {
+    if (!map.getSource("wallsSource")) {
+      console.log("No existing walls to convert");
+      return;
     }
+
+    let wallsData = map.getSource("wallsSource")._data;
+
+    // will use either unbuffered or buffered features
+    // unbuffered features if we're converting to 2d b/c we want lines
+    // buffered features if we're converting to 3d b/c we want polygons that we can make fill-extrusions from
+    let rawFeatures;
+    if (appDimension == Dimensions.TWO_D) {
+      rawFeatures = map.getSource("unbufferedSource")._data["features"];
+    } else if (appDimension == Dimensions.THREE_D) {
+      rawFeatures = map.getSource("bufferedSource")._data["features"];
+    }
+
+    // overwrite the geometries for each feature in the existing walls data
+    for (let wall of wallsData["features"]) {
+      // the raw source data will have more features than the existing walls data, b/c the walls data will have filtered out edges where the womble cannot be calculated
+      // therefore, we need to "find" the features in the raw source that correspond with our existing walls
+      let rawFeature = rawFeatures.find(
+        (feature) =>
+          feature["properties"]["ogc_fid"] == wall["properties"]["ogc_fid"]
+      );
+
+      rawFeature = JSON.parse(JSON.stringify(rawFeature)); // deep copy so we don't somehow modify raw source
+      wall["geometry"] = rawFeature["geometry"];
+    }
+
+    map.removeLayer("walls");
+    map.getSource("wallsSource").setData(wallsData);
+    addWallsLayer(map);
   }
 
-  #convertWallsTo2d(map) {
-    // convert walls from 3d to 2d, i.e. from heights to thicknesses
-    if (map.getSource("wallsSource")) {
-      let wallsData = map.getSource("wallsSource")._data;
+  #switchTo3d(map) {
+    // switch to 3d
+    setDimension(Dimensions.THREE_D);
+    this._btn.className = `mapboxgl-ctrl-icon mapboxgl-ctrl-dimensiontoggle-2d`;
 
-      let unbufferedFeatures =
-        map.getSource("unbufferedSource")._data["features"];
+    // restore previous pitch
+    map.easeTo({
+      pitch: this._previousPitch,
+      duration: 1000,
+    });
+    map.setMaxPitch(85); // default max pitch
 
-      // overwrite the geometries for each feature in the existing walls data
-      for (let wall of wallsData["features"]) {
-        // the raw source data will have more features than the existing walls data, b/c the walls data will have filtered out edges where the womble cannot be calculated
-        // therefore, we need to "find" the features in the raw source that correspond with our existing walls
-        let unbufferedFeature = unbufferedFeatures.find(
-          (feature) =>
-            feature["properties"]["ogc_fid"] == wall["properties"]["ogc_fid"]
-        );
+    // delete thicknesses and draw walls
+    this.#convertWalls(map);
+  }
 
-        unbufferedFeature = JSON.parse(JSON.stringify(unbufferedFeature)); // deep copy so we don't somehow modify raw source
-        wall["geometry"] = unbufferedFeature["geometry"];
-      }
+  #switchTo2d(map) {
+    // switch to 2d
+    setDimension(Dimensions.TWO_D);
+    this._btn.className = `mapboxgl-ctrl-icon mapboxgl-ctrl-dimensiontoggle-3d`;
 
-      map.removeLayer("walls");
-      map.getSource("wallsSource").setData(wallsData);
-      addWallsLayer(map);
-      //   const colors = ["#be87b9", "#dcc2dc", "#ebedec", "#b5bcd7"];
-      //   const WIDTH_MULTIPLIER = 10;
-      //   let wallsLayer = {
-      //     id: "walls",
-      //     type: "line",
-      //     source: "wallsSource",
+    // disable pitch
+    this._previousPitch = map.getPitch();
+    map.easeTo({ pitch: 0, duration: 1000 });
+    map.setMaxPitch(0);
 
-      //     layout: {
-      //       "line-join": "miter",
-      //     },
-
-      //     paint: {
-      //       "line-color": [
-      //         "case",
-      //         [">=", ["to-number", ["get", "womble_scaled"]], 1],
-      //         colors[0],
-      //         [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
-      //         colors[3],
-      //         [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
-      //         colors[2],
-      //         colors[1],
-      //       ],
-      //       "line-opacity": 1,
-
-      //       // mapbox expression to multiply each feature's womble property with some constant to calculate the width drawn
-      //       "line-width": ["*", ["get", "womble_scaled"], WIDTH_MULTIPLIER],
-      //     },
-      //   };
-      //   map.addLayer(wallsLayer);
-    }
+    // delete walls and draw thicknesses
+    this.#convertWalls(map);
   }
 }
