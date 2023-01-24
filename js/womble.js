@@ -506,8 +506,8 @@ export class DimensionToggle {
     });
     map.setMaxPitch(85); // default max pitch
 
-    // remove min zoom
-    map.setMinZoom(null);
+    // set min zoom
+    map.setMinZoom(9);
 
     // delete thicknesses and draw walls
     this.#convertWalls(map);

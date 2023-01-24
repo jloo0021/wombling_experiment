@@ -1,3 +1,5 @@
+import { LightModes } from "./enums.js";
+
 /**
  * Adds the toggling visibility behaviour that occurs when the corresponding layer checkboxes are clicked by the user
  * @param {*} map mapbox map
@@ -25,5 +27,43 @@ export function toggleableLayers(map) {
         map.setLayoutProperty(id, "visibility", "none");
       }
     });
+  }
+}
+
+// TODO: move control buttons into one file together?
+// ALSO, changing the style just doesn't work, b/c it deletes all existing layers and sources
+export class darkModeToggle {
+  constructor(mode = LightModes.LIGHT) {
+    this._mode = mode;
+  }
+  onAdd(map) {
+    this._map = map;
+    this._container = document.createElement("div");
+    this._container.className = "mapboxgl-ctrl-group mapboxgl-ctrl";
+    this._btn = document.createElement("button");
+
+    this._btn.addEventListener("click", () => {
+      // if light, change to dark
+      if (this._mode == LightModes.LIGHT) {
+        console.log(map.getStyle());
+        let currentStyle = map.getStyle();
+
+        this._mode = LightModes.DARK;
+        map.setStyle("mapbox://styles/mapbox/dark-v11");
+      }
+      // if dark, change to light
+      else if (this._mode == LightModes.DARK) {
+        this._mode = LightModes.LIGHT;
+        map.setStyle("mapbox://styles/mapbox/light-v11");
+      }
+    });
+
+    this._container.appendChild(this._btn);
+    return this._container;
+  }
+
+  onRemove() {
+    this._container.parentNode.removeChild(this._container);
+    this._map = undefined;
   }
 }
