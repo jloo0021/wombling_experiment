@@ -114,9 +114,7 @@ input[type="file"] {
     100% { transform: rotate(360deg); }
 }
 
-.mapboxgl-popup-content {
-    opacity: 0.75;
-}
+
 
 .hide {
     display: none;
@@ -130,3 +128,34 @@ input[type="file"] {
 .mapboxgl-ctrl-dimensiontoggle-2d {
     background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMCIgaGVpZ2h0PSIzMCI+ICAgIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkeT0iLjM1ZW0iIHN0eWxlPSJmb250LXNpemU6IDE0cHg7IGZvbnQtZmFtaWx5OiAnSGVsdmV0aWNhIE5ldWUnLEFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmOyBmb250LXdlaWdodDogYm9sZDsgdGV4dC1hbmNob3I6IG1pZGRsZTsiPjJEPC90ZXh0Pjwvc3ZnPg==);
 }
+
+
+/* popups that appear upon clicking a wall */
+.wall-popup .mapboxgl-popup-content {
+    opacity: 1;
+    background-color:orange;
+    color: white;
+    border-width: 10px;
+    border-radius: 3px 3px 0 0;
+    border-top-color: #444;
+    border-top-width: 10%;
+    box-shadow: 3px 3px 2px #8B5D33
+}
+
+.wall-popup .mapboxgl-popup-tip {
+    border-top-color:orange;
+}
+
+/* popups that appear upon clicking an area */
+.area-popup .mapboxgl-popup-content {
+    opacity: 1;
+    background-color:blue;
+    color: white;
+
+    box-shadow: 3px 3px 2px #6e6e6e
+}
+
+.area-popup .mapboxgl-popup-tip {
+    border-top-color:blue;
+}
+

@@ -1,6 +1,7 @@
 import { retrieveIndicatorSliders } from "./sliders.js";
 import { appDimension, setDimension, indicatorsData } from "./index.js";
 import { Dimensions } from "./enums.js";
+import { closeExistingPopups } from "./boundaries.js";
 
 /**
  * OLD IMPLEMENTATION
@@ -108,7 +109,10 @@ import { Dimensions } from "./enums.js";
  * @param {*} source geojson source for the boundaries upon which walls will be drawn
  */
 export function drawWalls(map, source) {
+  closeExistingPopups(map);
+
   let wallsData = generateWombleFeaturesData(source);
+  // appendIndicatorsToAreas(map, "areasSource");
 
   // if walls have already been drawn (i.e. walls source exists), update the source data with the new data
   if (map.getSource("wallsSource")) {
@@ -361,7 +365,7 @@ function calculateWomble(edge) {
   let indicatorWeights = [];
   for (let slider of sliders) {
     selectedIndicators.push(slider.getAttribute("indicatorname")); // each slider was previously created with an "indicatorname" attribute
-    indicatorWeights.push(parseFloat(slider.value));
+    indicatorWeights.push(parseFloat(slider.value) / 100); // divide by 100 b/c the slider values are percentages
   }
 
   let womble = 0;
@@ -407,6 +411,38 @@ function calculateWomble(edge) {
 
   return womble;
 }
+
+// note: this function adds significant amount of time because we are using .find() for every single area feature
+// potentially, a faster way to achieve the area onclick functionality is calling .find() only when an area is clicked, and then dynamically populating the popup
+// export function appendIndicatorsToAreas(map, sourceId) {
+//   let areasSource = map.getSource(sourceId);
+//   let areas = areasSource._data.features;
+//   let newAreasData = {
+//     type: "FeatureCollection",
+//     features: [],
+//   };
+
+//   if (indicatorsData == undefined) {
+//     console.log("Indicators data not loaded");
+//     return;
+//   }
+
+//   // iterate over each area feature of the source and append the corresponding indicators data to the area feature
+//   for (let area of areas) {
+//     let correspondingIndicators = indicatorsData.find((indicators) => {
+//       // TODO: have to find a way to generalise these property names to accomodate other area types
+//       let indicatorsCode = indicators["sa1"].toString(); // both codes have to be strings for comparison
+//       let areaCode = area["properties"]["SA1_MAIN16"];
+
+//       return indicatorsCode == areaCode;
+//     });
+
+//     Object.assign(area["properties"], correspondingIndicators);
+//     newAreasData.features.push(area);
+//   }
+
+//   areasSource.setData(newAreasData);
+// }
 
 // TODO: use this function to decide whether or not to use distance weighting once i figure out the specifics of how to implement
 /**

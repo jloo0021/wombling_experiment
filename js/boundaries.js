@@ -1,6 +1,5 @@
-// import geoJsonData from "../boundaries_SA1_2016.geojson" assert { type: "json" }; // app must be open on live server for imports/fetching to work
-// import geoJsonData from "../vic.geojson" assert { type: "json" };
-// import geoJsonData from "../dummy.geojson" assert { type: "json" }; // dummy data based on liveability geojson, with some coordinates manually converted using epsg.io
+import { indicatorsData } from "./index.js";
+import { getSelectValues } from "./indicatorOptions.js";
 
 /**
  * Draws a map layer of the user's selected boundaries. No heights or colours are drawn yet.
@@ -52,6 +51,7 @@ export function initMapAreas(map, sourceData) {
   };
 
   map.addLayer(areas);
+
   console.log("Map areas initialised");
 }
 
@@ -61,6 +61,7 @@ export function initMapAreas(map, sourceData) {
  */
 export function initClickableWallBehaviour(map) {
   map.on("click", "walls", (e) => {
+    closeExistingPopups(map);
     let wall = e.features[0];
 
     // raw and scaled womble values rounded to 3 dec places
@@ -75,7 +76,18 @@ export function initClickableWallBehaviour(map) {
       wall.properties.sa1_id2.toString(),
     ];
 
-    new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(description).addTo(map);
+    // create popup
+    let popup = new mapboxgl.Popup({ closeOnClick: false });
+    popup.setLngLat(e.lngLat);
+    popup.setHTML(description);
+    popup.addClassName("wall-popup");
+    popup.addTo(map);
+
+    // closing the popup unhighlights the neighbouring areas
+    popup.on("close", () => {
+      closeExistingPopups(map);
+      // map.setFilter("areas", ["boolean", false]);
+    });
 
     // highlights the neighbouring areas
     // uses setFilter to display only the features in the "areas" layer which match the area IDs adjacent to the clicked wall
@@ -83,4 +95,67 @@ export function initClickableWallBehaviour(map) {
     // TODO: maybe modify this/future sa1 area files to use a more homogenous property name (e.g. area_id)
     map.setFilter("areas", ["in", ["get", "SA1_MAIN16"], ["literal", areaIds]]);
   });
+
+  // change mouse pointer upon hovering over walls
+  map.on("mouseenter", "walls", () => {
+    map.getCanvas().style.cursor = "pointer";
+  });
+  map.on("mouseleave", "walls", () => {
+    map.getCanvas().style.cursor = "";
+  });
+}
+
+export function initClickableAreaBehaviour(map) {
+  map.on("click", "areas", (e) => {
+    let area = e.features[0];
+    console.log(area);
+    let areaCode = area["properties"]["SA1_MAIN16"];
+
+    // find indicators that correspond with the area that was clicked on
+    let correspondingIndicators = indicatorsData.find((indicators) => {
+      // TODO: have to find a way to generalise these property names to accomodate other area types
+      let indicatorsCode = indicators["sa1"].toString(); // both codes have to be strings for comparison
+
+      return indicatorsCode == areaCode;
+    });
+
+    let selectedIndicators = getSelectValues();
+    correspondingIndicators = Object.entries(correspondingIndicators); // convert indicators object to an array
+
+    // filter out any indicators that were NOT selected by user, i.e. keep only selected indicators
+    correspondingIndicators = correspondingIndicators.filter(([key, value]) =>
+      selectedIndicators.includes(key)
+    );
+    console.log(correspondingIndicators);
+
+    let description = `Area ID: ${areaCode}, <br>`;
+
+    for (let [key, value] of correspondingIndicators) {
+      description += `${key}: ${value}, <br>`;
+    }
+
+    // create popup
+    let popup = new mapboxgl.Popup();
+    popup.setLngLat(e.lngLat);
+    popup.setHTML(description);
+    popup.addClassName("area-popup");
+    popup.addTo(map);
+  });
+
+  map.on("mouseenter", "areas", () => {
+    map.getCanvas().style.cursor = "pointer";
+  });
+  map.on("mouseleave", "areas", () => {
+    map.getCanvas().style.cursor = "";
+  });
+}
+
+export function closeExistingPopups(map) {
+  let popups = document.getElementsByClassName("mapboxgl-popup");
+  while (popups.length > 0) {
+    popups[0].remove();
+  }
+
+  // unhighlight selected areas
+  map.setFilter("areas", ["boolean", false]);
 }

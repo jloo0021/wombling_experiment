@@ -1,5 +1,6 @@
 import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
 import {
+  initClickableAreaBehaviour,
   initClickableWallBehaviour,
   initMapAreas,
   initMapBoundaries,
@@ -93,11 +94,11 @@ runWombleButton.addEventListener("click", () => {
 
     // draw walls if in 3d mode, using buffered source (polygon features)
     if (appDimension == Dimensions.THREE_D) {
+      // TODO: loading spinner is broken sometimes?
       setTimeout(drawWalls, 1, map, boundaries_SA1_2016_buffered); // 1 ms delay is required so that the loading spinner appears immediately before drawWalls is called, maybe see if there's a better way to do this
     }
     // draw thicknesses if in 2d mode, using unbuffered source (line features)
     else if (appDimension == Dimensions.TWO_D) {
-      // setTimeout(drawThicknesses, 1, map, boundaries_SA1_2016);
       setTimeout(drawWalls, 1, map, boundaries_SA1_2016);
     }
 
@@ -116,6 +117,7 @@ map.on("load", () => {
   initMapBoundaries(map, areas_SA1_2016);
   initMapAreas(map, areas_SA1_2016);
   initClickableWallBehaviour(map);
+  initClickableAreaBehaviour(map);
 
   // unbuffered source is used for the 2d walls, since we can add thickness to lines
   let unbufferedSource = {
@@ -147,5 +149,6 @@ map.on("load", () => {
 });
 
 // document.getElementById("test").addEventListener("click", () => {
-//   console.log(map.getZoom());
+//   appendIndicatorsToAreas(map.getSource("areasSource"));
+//   console.log(map.getSource("areasSource"));
 // });
