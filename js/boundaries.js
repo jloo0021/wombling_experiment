@@ -1,4 +1,4 @@
-import { indicatorsData } from "./index.js";
+import { csvAreaCode, indicatorsData } from "./index.js";
 import { getSelectValues } from "./indicatorOptions.js";
 
 /**
@@ -113,8 +113,12 @@ export function initClickableAreaBehaviour(map) {
 
     // find indicators that correspond with the area that was clicked on
     let correspondingIndicators = indicatorsData.find((indicators) => {
-      // TODO: have to find a way to generalise these property names to accomodate other area types
-      let indicatorsCode = indicators["sa1"].toString(); // both codes have to be strings for comparison
+      let indicatorsCode = indicators[csvAreaCode]; // csvAreaCode is global and initialised in setIndicatorsData()
+
+      // if code is a number, convert it to string
+      if (!isNaN(indicatorsCode)) {
+        indicatorsCode = indicatorsCode.toString(); // both codes have to be strings for comparison
+      }
 
       return indicatorsCode == areaCode;
     });

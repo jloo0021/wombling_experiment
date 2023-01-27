@@ -37,15 +37,27 @@ let transparencySliderValue = document.getElementById(
 // variable for the csv data is made global
 export let indicatorsData;
 export let optionsData;
+export let csvAreaCode;
 export function setIndicatorsData(data) {
-  indicatorsData = data[0];
-  data[1].shift();
-  optionsData = data[1];
+  indicatorsData = data.data;
+  let headers = Object.keys(data.data[0]);
+  csvAreaCode = headers.shift();
+  optionsData = headers;
 
   createIndicatorOptions(optionsData);
   new MultiSelectTag("indicators-selection"); // id
   document.getElementById("selectionBlock").classList.remove("hide");
 }
+
+// export function setIndicatorsData(data) {
+//   indicatorsData = data[0];
+//   csvAreaCode = data[1].shift();
+//   optionsData = data[1];
+
+//   createIndicatorOptions(optionsData);
+//   new MultiSelectTag("indicators-selection"); // id
+//   document.getElementById("selectionBlock").classList.remove("hide");
+// }
 
 // another global to store the dimension that the app is currently in (2d or 3d)
 export let appDimension = Dimensions.TWO_D;
@@ -76,7 +88,6 @@ let selectionSubmit = document.getElementById("submitOptions");
 selectionSubmit.addEventListener("click", () => submitOptions());
 function submitOptions() {
   let selectedValues = getSelectValues();
-  console.log(selectedValues);
   createIndicatorSliders(selectedValues);
 }
 

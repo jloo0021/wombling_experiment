@@ -1,5 +1,10 @@
 import { retrieveIndicatorSliders } from "./sliders.js";
-import { appDimension, setDimension, indicatorsData } from "./index.js";
+import {
+  appDimension,
+  setDimension,
+  indicatorsData,
+  csvAreaCode,
+} from "./index.js";
 import { Dimensions } from "./enums.js";
 import { closeExistingPopups } from "./boundaries.js";
 
@@ -339,7 +344,7 @@ function generateWombleFeaturesData(source) {
   // add each edge that has a non-zero womble value to the walls source data
   for (let i = 0; i < edges.length; i++) {
     let edge = JSON.parse(JSON.stringify(edges[i])); // deep copying the edge so the original source is not modified
-    if (rawWombleValues[i] > 0) {
+    if (rawWombleValues[i] != null) {
       edge["properties"]["womble"] = rawWombleValues[i];
       edge["properties"]["womble_scaled"] = rawWombleValues[i] / maxWomble;
       wombleFeaturesData.features.push(edge);
@@ -355,9 +360,6 @@ function generateWombleFeaturesData(source) {
  * @returns {Number} womble value
  */
 function calculateWomble(edge) {
-  // TODO: pass in the indicators csv as an array? or some type of object i can use
-  // console.log(indicatorsData);
-
   let sliders = retrieveIndicatorSliders();
 
   // retrieve the user's selected indicator names and weights
@@ -372,17 +374,17 @@ function calculateWomble(edge) {
 
   // find the elements in the indicators csv array that corresponds to the edges neighbouring areas
   let area1 = indicatorsData.find(
-    (area) => area["sa1"] == edge["properties"]["sa1_id1"] // TODO: will have to update area code name, hardcoded to sa1_id1 for now
+    (area) => area[csvAreaCode] == edge["properties"]["sa1_id1"] // TODO: will have to update area code name, hardcoded to sa1_id1 for now
   );
 
   let area2 = indicatorsData.find(
-    (area) => area["sa1"] == edge["properties"]["sa1_id2"] // TODO: will have to update area code name, hardcoded to sa1_id2 for now
+    (area) => area[csvAreaCode] == edge["properties"]["sa1_id2"] // TODO: will have to update area code name, hardcoded to sa1_id2 for now
   );
 
   // if either or both of the areas are undefined it means the indicators csv doesn't have data for that area and therefore we cannot calculate a womble value for that edge
   if (area1 == undefined || area2 == undefined) {
     console.log(`Indicators data not found for this edge`);
-    return 0; // TODO: could return null instead, and if womble is null, draw the edge in a different way?
+    return null;
   }
 
   // actual womble calculation is done here
@@ -390,14 +392,25 @@ function calculateWomble(edge) {
     // if an indicator value is found to not be a number, we can't calculate womble, communicate it to user. TODO: for now it prints to console, but we should print it to somewhere on the page
     if (
       isNaN(area1[selectedIndicators[i]]) ||
-      isNaN(area2[selectedIndicators[i]])
+      area1[selectedIndicators[i]] === null
     ) {
       console.log(
-        `Warning: Indicator value is not a number. Found: ${
-          area1[selectedIndicators[i]]
-        } and ${area2[selectedIndicators[i]]}`
+        `Warning: Indicator value is not a number.
+        Found: area ID: ${area1[csvAreaCode]},
+        ${selectedIndicators[i]}: ${area1[selectedIndicators[i]]}`
       );
-      return 0;
+      return null;
+    }
+    if (
+      isNaN(area2[selectedIndicators[i]]) ||
+      area2[selectedIndicators[i]] === null
+    ) {
+      console.log(
+        `Warning: Indicator value is not a number.
+        Found: area ID: ${area2[csvAreaCode]},
+        ${selectedIndicators[i]}: ${area2[selectedIndicators[i]]}`
+      );
+      return null;
     }
 
     // womble += indicatorWeights[i] * absolute difference of (area1's selectedIndicator[i] value and area2's selectedIndicator[i] value)
