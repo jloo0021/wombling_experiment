@@ -161,7 +161,7 @@ export function drawWalls(map, source) {
     map.addSource("wallsSource", wallsSource);
 
     // colors to use for the categories
-    const colors = ["#be87b9", "#dcc2dc", "#ebedec", "#b5bcd7"];
+    const colors = ["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20"];
 
     // create and draw the layer
     let wallsLayer = {
@@ -172,12 +172,12 @@ export function drawWalls(map, source) {
         "fill-extrusion-color": [
           "case",
           [">=", ["to-number", ["get", "womble_scaled"]], 1],
-          colors[0],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
           colors[3],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
+          [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
           colors[2],
+          [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
           colors[1],
+          colors[0],
         ],
         "fill-extrusion-opacity": 1,
 

@@ -22,7 +22,24 @@ function createIndicatorOptions(optionsArray) {
         x.add(option, i);
     }
 
+    var optionsTest = document.getElementById("indicators-selection").options;
+    for (var i = 0; i < optionsTest.length; i++) {
+        console.log(optionsTest[i].value);
+    }
     // }
+}
+
+function removeIndicatorOptions() {
+    var optionsTest = document.getElementById("indicators-selection").options;
+    for (var i = 0; i < optionsTest.length; i++) {
+        console.log(optionsTest[i].value);
+    }
+    var options = document.querySelectorAll('#indicators-selection option');
+    options.forEach(o => o.remove());
+    var optionsTest = document.getElementById("indicators-selection").options;
+    for (var i = 0; i < optionsTest.length; i++) {
+        console.log(optionsTest[i].value);
+    }
 }
 
 // Return an array of the selected option values
@@ -34,5 +51,12 @@ function getSelectValues() {
     return values;
 }
 
+function getValues() {
+    var options = document.getElementById("indicators-selection").options;
+    var values = Array.from(options).map(({ value }) => value);
+    console.log(values)
+    return values;
+}
+
 // Exporting variables and functions
-export { createIndicatorOptions, getSelectValues };
+export { createIndicatorOptions, getSelectValues, removeIndicatorOptions, getValues };
