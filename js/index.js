@@ -6,12 +6,24 @@ import {
   initMapBoundaries,
 } from "./boundaries.js";
 import { drawWalls, DimensionToggle } from "./womble.js";
-import { darkModeToggle, toggleableLayers } from "./filter.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import boundaries_SA1_2016_buffered from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84.geojson" assert { type: "json" };
-import { createIndicatorOptions, getSelectValues } from "./indicatorOptions.js";
+import {
+  darkModeToggle,
+  toggleableLayers,
+  colorCheck,
+  heightCheck,
+} from "./filter.js";
+// import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
+// import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
+import {
+  createIndicatorOptions,
+  getSelectValues,
+  removeIndicatorOptions,
+  getValues,
+} from "./indicatorOptions.js";
 import areas_SA1_2016 from "../SA1_2016_Greater_Melbourne.geojson" assert { type: "json" };
 import { initCollapsibleBehaviour } from "./collapsible.js";
 import { Dimensions } from "./enums.js";
@@ -44,9 +56,23 @@ export function setIndicatorsData(data) {
   csvAreaCode = headers.shift();
   optionsData = headers;
 
-  createIndicatorOptions(optionsData);
-  new MultiSelectTag("indicators-selection"); // id
-  document.getElementById("selectionBlock").classList.remove("hide");
+  var prevSelect = document.getElementById("indicators-selection");
+  if (prevSelect.options.length) {
+    const element = document.getElementById("indicators-selection");
+    const divID = document.getElementById("selectionBlock");
+    removeIndicatorOptions();
+    element.remove();
+    divID.appendChild(element);
+    createIndicatorOptions(optionsData);
+
+    new MultiSelectTag("indicators-selection");
+    getValues();
+  } else {
+    createIndicatorOptions(optionsData);
+    getValues();
+    new MultiSelectTag("indicators-selection"); // id
+    document.getElementById("selectionBlock").classList.remove("hide");
+  }
 }
 
 // export function setIndicatorsData(data) {
@@ -146,6 +172,8 @@ map.on("load", () => {
   map.addSource("bufferedSource", bufferedSource);
 
   toggleableLayers(map);
+  colorCheck(map);
+  heightCheck(map);
 
   transparencySlider.addEventListener("input", (e) => {
     // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here
