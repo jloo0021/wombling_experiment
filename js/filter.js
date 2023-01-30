@@ -1,4 +1,5 @@
-import { LightModes } from "./enums.js";
+import { Dimensions, LightModes } from "./enums.js";
+import { appDimension } from "./index.js";
 
 /**
  * Adds the toggling visibility behaviour that occurs when the corresponding layer checkboxes are clicked by the user
@@ -77,15 +78,19 @@ export function colorCheck(map) {
       return;
     }
 
-    // if the checkbox is checked, make sure the layer is visible by changing the layout object's visibility property
+    // if the checkbox is checked, make sure all wall colours are the same
     if (e.target.checked) {
       let color = "#808080";
-      map.setPaintProperty("walls", "fill-extrusion-color", color);
+      if (appDimension == Dimensions.TWO_D) {
+        map.setPaintProperty("walls", "line-color", color);
+      } else if (appDimension == Dimensions.THREE_D) {
+        map.setPaintProperty("walls", "fill-extrusion-color", color);
+      }
     }
-    // if checkbox is NOT checked, make sure the layer is invisible
+    // if checkbox is NOT checked, make sure the wall colours are variable
     else {
       const colors = ["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20"];
-      map.setPaintProperty("walls", "fill-extrusion-color", [
+      let colourExpression = [
         "case",
         [">=", ["to-number", ["get", "womble_scaled"]], 1],
         colors[3],
@@ -94,7 +99,12 @@ export function colorCheck(map) {
         [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
         colors[1],
         colors[0],
-      ]);
+      ];
+      if (appDimension == Dimensions.TWO_D) {
+        map.setPaintProperty("walls", "line-color", colourExpression);
+      } else if (appDimension == Dimensions.THREE_D) {
+        map.setPaintProperty("walls", "fill-extrusion-color", colourExpression);
+      }
     }
   });
 }
@@ -109,18 +119,46 @@ export function heightCheck(map) {
       return;
     }
 
-    // if the checkbox is checked, make sure the layer is visible by changing the layout object's visibility property
+    // if the checkbox is checked, set all heights/widths to be the same
     if (e.target.checked) {
-      map.setPaintProperty("walls", "fill-extrusion-height", 250);
+      if (appDimension == Dimensions.TWO_D) {
+        map.setPaintProperty("walls", "line-width", 4);
+      } else if (appDimension == Dimensions.THREE_D) {
+        map.setPaintProperty("walls", "fill-extrusion-height", 250);
+      }
     }
-    // if checkbox is NOT checked, make sure the layer is invisible
+    // if checkbox is NOT checked, make sure the heights/widths are variable
     else {
-      const HEIGHT_MULTIPLIER = 5000;
-      map.setPaintProperty("walls", "fill-extrusion-height", [
-        "*",
-        ["get", "womble_scaled"],
-        HEIGHT_MULTIPLIER,
-      ]);
+      if (appDimension == Dimensions.TWO_D) {
+        let lineWidthExpression = [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          // at zoom lvl 12, the line width range is (1, 4]
+          12,
+          ["^", 4, ["get", "womble_scaled"]],
+          // at zoom lvl 13, the line width range is (1, 8]
+          13,
+          ["^", 8, ["get", "womble_scaled"]],
+          // at zoom lvl 14, the line width range is (1, 12]
+          14,
+          ["^", 12, ["get", "womble_scaled"]],
+          // at zoom lvl 15, the line width range is (1, 16]
+          15,
+          ["^", 16, ["get", "womble_scaled"]],
+          // at zoom lvl 16+, the line width range is (1, 20]
+          16,
+          ["^", 20, ["get", "womble_scaled"]],
+        ];
+        map.setPaintProperty("walls", "line-width", lineWidthExpression);
+      } else if (appDimension == Dimensions.THREE_D) {
+        const HEIGHT_MULTIPLIER = 5000;
+        map.setPaintProperty("walls", "fill-extrusion-height", [
+          "*",
+          ["get", "womble_scaled"],
+          HEIGHT_MULTIPLIER,
+        ]);
+      }
     }
   });
 }
