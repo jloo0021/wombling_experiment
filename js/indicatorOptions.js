@@ -2,19 +2,11 @@
 import indicatorsData from "../liveability_indicators_sa1_2016.json" assert { type: "json" };
 
 
-function createIndicatorOptions(optionsArray) {
+function createIndicatorOptions(optionsArray, select_id) {
     // if (csvArray.Property == null) {
 
     // console.log(optionsArray);
-    var x = document.getElementById("indicators-selection");
-
-
-    // const res = JSON.parse("liveability_indicators_sa1_2016.json");
-
-    // Object.entries(res).forEach((entry) => {
-    //     const [key, value] = entry;
-    //      console.log(`${key}: ${value}`);
-    // });
+    var x = document.getElementById(select_id);
 
     for (let i = 0; i < optionsArray.length; i++) {
         var option = document.createElement("option");

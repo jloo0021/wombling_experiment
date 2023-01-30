@@ -59,18 +59,23 @@ export function setIndicatorsData(data) {
   var prevSelect = document.getElementById("indicators-selection");
   if (prevSelect.options.length) {
     const element = document.getElementById("indicators-selection");
-    const divID = document.getElementById("selectionBlock");
-    removeIndicatorOptions();
     element.remove();
-    divID.appendChild(element);
-    createIndicatorOptions(optionsData);
+    const divID = document.getElementById("selectionBlock");
+
+    let next_select = document.createElement("SELECT");
+    next_select.setAttribute("id", "indicators-selection-nxt");
+    createIndicatorOptions(optionsData, "indicators-selection-nxt");
+
+    divID.appendChild(next_select);
 
     new MultiSelectTag("indicators-selection");
     getValues();
   } else {
-    createIndicatorOptions(optionsData);
+    let initial_select = document.createElement("SELECT");
+    initial_select.setAttribute("id", "indicators-selection-init");
+    createIndicatorOptions(optionsData, "indicators-selection-init");
     getValues();
-    new MultiSelectTag("indicators-selection"); // id
+    new MultiSelectTag("indicators-selection-init"); // id
     document.getElementById("selectionBlock").classList.remove("hide");
   }
 }
