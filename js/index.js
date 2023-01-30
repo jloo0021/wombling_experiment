@@ -58,9 +58,11 @@ export function setIndicatorsData(data) {
 
   var prevSelect = document.getElementById("indicators-selection-init");
   if (typeof(prevSelect) != 'undefined' && prevSelect != null) {
-    
+    var prev_Select = document.getElementById("indicators-selection-init");
+    prev_Select.remove();
+
     const divID = document.getElementById("selectionBlock");
-    divID.removeChild(prevSelect);
+    
 
     let select_id_next = "indicators-selection-nxt";
     let next_select = document.createElement("SELECT");
