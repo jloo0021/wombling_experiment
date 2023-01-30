@@ -56,26 +56,33 @@ export function setIndicatorsData(data) {
   csvAreaCode = headers.shift();
   optionsData = headers;
 
-  var prevSelect = document.getElementById("indicators-selection");
-  if (prevSelect.options.length) {
-    const element = document.getElementById("indicators-selection");
-    element.remove();
+  var prevSelect = document.getElementById("indicators-selection-init");
+  if (typeof(prevSelect) != 'undefined' && prevSelect != null) {
+    
     const divID = document.getElementById("selectionBlock");
+    divID.removeChild(prevSelect);
 
+    let select_id_next = "indicators-selection-nxt";
     let next_select = document.createElement("SELECT");
-    next_select.setAttribute("id", "indicators-selection-nxt");
-    createIndicatorOptions(optionsData, "indicators-selection-nxt");
-
+    next_select.setAttribute("id",select_id_next);
     divID.appendChild(next_select);
 
-    new MultiSelectTag("indicators-selection");
-    getValues();
+    createIndicatorOptions(optionsData, select_id_next);
+    getValues(select_id_next);
+    new MultiSelectTag(select_id_next);
+
   } else {
+    let select_id = "indicators-selection-init";
     let initial_select = document.createElement("SELECT");
-    initial_select.setAttribute("id", "indicators-selection-init");
-    createIndicatorOptions(optionsData, "indicators-selection-init");
-    getValues();
-    new MultiSelectTag("indicators-selection-init"); // id
+    initial_select.setAttribute("id",select_id);
+    initial_select.getAttribute("id");
+
+    const divID = document.getElementById("selectionBlock");
+    divID.appendChild(initial_select);
+
+    createIndicatorOptions(optionsData, select_id);
+    getValues(select_id);
+    new MultiSelectTag(select_id); // id
     document.getElementById("selectionBlock").classList.remove("hide");
   }
 }

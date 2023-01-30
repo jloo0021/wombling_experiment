@@ -14,7 +14,7 @@ function createIndicatorOptions(optionsArray, select_id) {
         x.add(option, i);
     }
 
-    var optionsTest = document.getElementById("indicators-selection").options;
+    var optionsTest = document.getElementById(select_id).options;
     for (var i = 0; i < optionsTest.length; i++) {
         console.log(optionsTest[i].value);
     }
@@ -36,15 +36,15 @@ function removeIndicatorOptions() {
 
 // Return an array of the selected option values
 // select is an HTML select element
-function getSelectValues() {
-    var options = document.getElementById("indicators-selection").selectedOptions;
+function getSelectValues(select_id) {
+    var options = document.getElementById(select_id).selectedOptions;
     var values = Array.from(options).map(({ value }) => value);
     console.log(values)
     return values;
 }
 
-function getValues() {
-    var options = document.getElementById("indicators-selection").options;
+function getValues(select_id) {
+    var options = document.getElementById(select_id).options;
     var values = Array.from(options).map(({ value }) => value);
     console.log(values)
     return values;
