@@ -109,7 +109,7 @@ initCollapsibleBehaviour();
 
 map.addControl(new mapboxgl.NavigationControl());
 map.addControl(new DimensionToggle({ pitch: 45 }));
-map.addControl(new darkModeToggle());
+// map.addControl(new darkModeToggle());
 
 let selectionSubmit = document.getElementById("submitOptions");
 selectionSubmit.addEventListener("click", () => submitOptions());
@@ -178,12 +178,26 @@ map.on("load", () => {
   addCheckboxListeners(map);
 
   transparencySlider.addEventListener("input", (e) => {
+    if (!map.getLayer("walls")) {
+      console.log("Layer doesn't exist");
+      return;
+    }
+
     // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here
-    map.setPaintProperty(
-      "walls",
-      "fill-extrusion-opacity",
-      parseInt(e.target.value, 10) / 100
-    );
+    if (appDimension == Dimensions.TWO_D) {
+      map.setPaintProperty(
+        "walls",
+        "line-opacity",
+        parseInt(e.target.value, 10) / 100
+      );
+    } else if (appDimension == Dimensions.THREE_D) {
+      map.setPaintProperty(
+        "walls",
+        "fill-extrusion-opacity",
+        parseInt(e.target.value, 10) / 100
+      );
+    }
+
     // value indicator
     transparencySliderValue.textContent = e.target.value + "%";
   });

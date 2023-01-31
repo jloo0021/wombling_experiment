@@ -8,6 +8,11 @@ import {
 import { Dimensions } from "./enums.js";
 import { closeExistingPopups } from "./boundaries.js";
 import { runAllCheckboxHandlers } from "./filter.js";
+import {
+  getColourExpression,
+  getHeightExpression,
+  getWidthExpression,
+} from "./expressions.js";
 
 /**
  * OLD IMPLEMENTATION
@@ -146,10 +151,6 @@ export function drawWalls(map, source) {
 
 export function addWallsLayer(map) {
   const HEIGHT_MULTIPLIER = 5000;
-  const WIDTH_MULTIPLIER = 10;
-
-  // colors to use for the categories
-  const colors = ["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20"];
 
   // create and draw the layer
   let wallsLayer;
@@ -160,48 +161,13 @@ export function addWallsLayer(map) {
       id: "walls",
       type: "line",
       source: "wallsSource",
-
       layout: {
         "line-cap": "round",
         "line-join": "miter", // this doesn't seem to actually join the lines properly
       },
-
       paint: {
-        "line-color": [
-          "case",
-          [">=", ["to-number", ["get", "womble_scaled"]], 1],
-          colors[3],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
-          colors[2],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
-          colors[1],
-          colors[0],
-        ],
-        "line-opacity": 1,
-
-        // mapbox expression to use interpolation to adjust line width at different zoom levels
-        // exponential function is used to create an effect where as you zoom in, the max line width increases while maintaining the min line width
-        // this is done so that you can more easily distinguish line widths when zoomed in, while keeping the lines uncluttered when zoomed out
-        "line-width": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          // at zoom lvl 12, the line width range is (1, 4]
-          12,
-          ["^", 4, ["get", "womble_scaled"]],
-          // at zoom lvl 13, the line width range is (1, 8]
-          13,
-          ["^", 8, ["get", "womble_scaled"]],
-          // at zoom lvl 14, the line width range is (1, 12]
-          14,
-          ["^", 12, ["get", "womble_scaled"]],
-          // at zoom lvl 15, the line width range is (1, 16]
-          15,
-          ["^", 16, ["get", "womble_scaled"]],
-          // at zoom lvl 16+, the line width range is (1, 20]
-          16,
-          ["^", 20, ["get", "womble_scaled"]],
-        ],
+        "line-color": getColourExpression(),
+        "line-width": getWidthExpression(),
       },
     };
   }
@@ -212,24 +178,8 @@ export function addWallsLayer(map) {
       type: "fill-extrusion",
       source: "wallsSource",
       paint: {
-        "fill-extrusion-color": [
-          "case",
-          [">=", ["to-number", ["get", "womble_scaled"]], 1],
-          colors[3],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
-          colors[2],
-          [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
-          colors[1],
-          colors[0],
-        ],
-        "fill-extrusion-opacity": 1,
-
-        // mapbox expression to multiply each feature's womble property with some constant to calculate the height drawn
-        "fill-extrusion-height": [
-          "*",
-          ["get", "womble_scaled"],
-          HEIGHT_MULTIPLIER,
-        ],
+        "fill-extrusion-color": getColourExpression(),
+        "fill-extrusion-height": getHeightExpression(),
       },
     };
   }
@@ -427,38 +377,6 @@ function calculateWomble(edge) {
 
   return womble;
 }
-
-// note: this function adds significant amount of time because we are using .find() for every single area feature
-// potentially, a faster way to achieve the area onclick functionality is calling .find() only when an area is clicked, and then dynamically populating the popup
-// export function appendIndicatorsToAreas(map, sourceId) {
-//   let areasSource = map.getSource(sourceId);
-//   let areas = areasSource._data.features;
-//   let newAreasData = {
-//     type: "FeatureCollection",
-//     features: [],
-//   };
-
-//   if (indicatorsData == undefined) {
-//     console.log("Indicators data not loaded");
-//     return;
-//   }
-
-//   // iterate over each area feature of the source and append the corresponding indicators data to the area feature
-//   for (let area of areas) {
-//     let correspondingIndicators = indicatorsData.find((indicators) => {
-//       // TODO: have to find a way to generalise these property names to accomodate other area types
-//       let indicatorsCode = indicators["sa1"].toString(); // both codes have to be strings for comparison
-//       let areaCode = area["properties"]["SA1_MAIN16"];
-
-//       return indicatorsCode == areaCode;
-//     });
-
-//     Object.assign(area["properties"], correspondingIndicators);
-//     newAreasData.features.push(area);
-//   }
-
-//   areasSource.setData(newAreasData);
-// }
 
 // TODO: use this function to decide whether or not to use distance weighting once i figure out the specifics of how to implement
 /**
