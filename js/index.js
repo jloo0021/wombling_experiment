@@ -1,5 +1,5 @@
 import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
-import { createVariables } from "./variableOptions.js";
+import { createVariables, checkVariables } from "./variableOptions.js";
 import {
   initClickableAreaBehaviour,
   initClickableWallBehaviour,
@@ -55,6 +55,7 @@ export function setIndicatorsData(data) {
   indicatorsData = data.data;
   let headers = Object.keys(data.data[0]);
   csvAreaCode = headers.shift();
+  optionsData = headers;
   
   createVariables(headers);
   
@@ -159,6 +160,7 @@ map.on("load", () => {
   toggleableLayers(map);
   colorCheck(map);
   heightCheck(map);
+  checkVariables(optionsData);
 
   transparencySlider.addEventListener("input", (e) => {
     // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here

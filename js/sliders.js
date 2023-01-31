@@ -2,7 +2,7 @@
  * Creates the indicator weight sliders for the user to adjust the weights for the womble calculation.
  * @param {*} indicators array of strings, each string is an indicator that the user has selected for the wombling calculation
  */
-export function createIndicatorSliders(indicators) {
+export function createIndicatorSliders(indicator, i) {
   let wombleSlidersDiv = document.getElementById("womble-indicators-sliders"); // the element that all the sliders will be contained in
 
   // remove existing indicator sliders
@@ -11,44 +11,44 @@ export function createIndicatorSliders(indicators) {
   }
 
   // create the HTML elements required for each slider
-  for (let i = 0; i < indicators.length; i++) {
-    let indicator = indicators[i];
+  // for (let i = 0; i < indicators.length; i++) {
 
-    // create a div that contains: a span for the indicator name, a span for the slider value, and the input slider
-    // e.g.
-    // <div class="slider-container">
-    //   <span>Indicator 2:</span>
-    //   <span id="slider-display-1">x%</span>
-    //   <input id="slider1" type="range" min="0" max="100" step="0.01" value="20">
-    // </div>
 
-    let sliderContainer = document.createElement("div");
+  // create a div that contains: a span for the indicator name, a span for the slider value, and the input slider
+  // e.g.
+  // <div class="slider-container">
+  //   <span>Indicator 2:</span>
+  //   <span id="slider-display-1">x%</span>
+  //   <input id="slider1" type="range" min="0" max="100" step="0.01" value="20">
+  // </div>
 
-    // indicator name
-    let indicatorName = document.createElement("span");
-    indicatorName.innerText = `${indicator}: `;
+  let sliderContainer = document.createElement(`div-${i}`);
 
-    // slider display value
-    let sliderValue = document.createElement("span");
-    sliderValue.setAttribute("id", `slider-display-${i}`);
-    sliderValue.setAttribute("slidervalue", ""); // boolean attribute to help us recognise this as a slider value element later
+  // indicator name
+  let indicatorName = document.createElement("span");
+  indicatorName.innerText = `${indicator}: `;
 
-    // slider input
-    let sliderInput = document.createElement("input");
-    sliderInput.setAttribute("id", `slider-${i}`);
-    sliderInput.setAttribute("type", "range");
-    sliderInput.setAttribute("min", "0");
-    sliderInput.setAttribute("max", "100");
-    sliderInput.setAttribute("step", "0.01");
-    sliderInput.setAttribute("sliderinput", ""); // boolean attribute to help us recognise this as a slider input element later
-    sliderInput.setAttribute("indicatorname", indicator); // attribute that tells us which indicator this slider is associated with
+  // slider display value
+  let sliderValue = document.createElement("span");
+  sliderValue.setAttribute("id", `slider-display-${i}`);
+  sliderValue.setAttribute("slidervalue", ""); // boolean attribute to help us recognise this as a slider value element later
 
-    // append elements accordingly
-    sliderContainer.appendChild(indicatorName);
-    sliderContainer.appendChild(sliderValue);
-    sliderContainer.appendChild(sliderInput);
-    wombleSlidersDiv.appendChild(sliderContainer);
-  }
+  // slider input
+  let sliderInput = document.createElement("input");
+  sliderInput.setAttribute("id", `slider-${i}`);
+  sliderInput.setAttribute("type", "range");
+  sliderInput.setAttribute("min", "0");
+  sliderInput.setAttribute("max", "100");
+  sliderInput.setAttribute("step", "0.01");
+  sliderInput.setAttribute("sliderinput", ""); // boolean attribute to help us recognise this as a slider input element later
+  sliderInput.setAttribute("indicatorname", indicator); // attribute that tells us which indicator this slider is associated with
+
+  // append elements accordingly
+  sliderContainer.appendChild(indicatorName);
+  sliderContainer.appendChild(sliderValue);
+  sliderContainer.appendChild(sliderInput);
+  wombleSlidersDiv.appendChild(sliderContainer);
+
   setDefaultWeights();
   addDependendentSliderBehaviour();
 }
