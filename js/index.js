@@ -1,4 +1,5 @@
 import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
+import { createVariables } from "./variableOptions.js";
 import {
   initClickableAreaBehaviour,
   initClickableWallBehaviour,
@@ -54,39 +55,9 @@ export function setIndicatorsData(data) {
   indicatorsData = data.data;
   let headers = Object.keys(data.data[0]);
   csvAreaCode = headers.shift();
-  optionsData = headers;
-
-  var prevSelect = document.getElementById("indicators-selection-init");
-  if (typeof(prevSelect) != 'undefined' && prevSelect != null) {
-    var prev_Select = document.getElementById("indicators-selection-init");
-    prev_Select.remove();
-
-    const divID = document.getElementById("selectionBlock");
-    
-
-    let select_id_next = "indicators-selection-nxt";
-    let next_select = document.createElement("SELECT");
-    next_select.setAttribute("id",select_id_next);
-    divID.appendChild(next_select);
-
-    createIndicatorOptions(optionsData, select_id_next);
-    getValues(select_id_next);
-    new MultiSelectTag(select_id_next);
-
-  } else {
-    let select_id = "indicators-selection-init";
-    let initial_select = document.createElement("SELECT");
-    initial_select.setAttribute("id",select_id);
-    initial_select.getAttribute("id");
-
-    const divID = document.getElementById("selectionBlock");
-    divID.appendChild(initial_select);
-
-    createIndicatorOptions(optionsData, select_id);
-    getValues(select_id);
-    new MultiSelectTag(select_id); // id
-    document.getElementById("selectionBlock").classList.remove("hide");
-  }
+  
+  createVariables(headers);
+  
 }
 
 // export function setIndicatorsData(data) {
