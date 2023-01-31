@@ -36,7 +36,7 @@ function removeIndicatorOptions() {
 
 // Return an array of the selected option values
 // select is an HTML select element
-function getSelectValues(select_id) {
+function gyug(select_id) {
     var options = document.getElementById(select_id).selectedOptions;
     var values = Array.from(options).map(({ value }) => value);
     console.log(values)
@@ -51,4 +51,4 @@ function getValues(select_id) {
 }
 
 // Exporting variables and functions
-export { createIndicatorOptions, getSelectValues, removeIndicatorOptions, getValues };
+export { createIndicatorOptions, removeIndicatorOptions, getValues };

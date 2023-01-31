@@ -20,24 +20,24 @@ export function createVariables(optionsArray) {
 
 }
 
-export function checkVariables(optionsArray) {
+function getSelectValues(optionsArray) {
 
+    let values = [];
     for (let i = 0; i < optionsArray.length; i++) {
         let currentVariable = document.getElementById(`variable-${i}`);
 
-        heightCheckbox.addEventListener("click", (e) => {
+  
 
-            if (e.target.checked) {
+            if (currentVariable.checked) {
                 // make indicator slider visisble
                 // createIndicatorSliders(currentVariable.innerText, i);
-                
+                values.push(optionsArray[i]);
             }
-            // if checkbox is NOT checked, make sure the layer is invisible
-            else {
-                // make indicator slider gone
-                let sliderContainer = document.getElementById(`div-${i}`);
-                sliderContainer.remove();
-            }
-        });
+        
     }
+    
+    return values;
+
 }
+
+export { getSelectValues };

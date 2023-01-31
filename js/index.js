@@ -1,5 +1,5 @@
 import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
-import { createVariables, checkVariables } from "./variableOptions.js";
+import { createVariables, getSelectValues } from "./variableOptions.js";
 import {
   initClickableAreaBehaviour,
   initClickableWallBehaviour,
@@ -21,7 +21,6 @@ import {
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import {
   createIndicatorOptions,
-  getSelectValues,
   removeIndicatorOptions,
   getValues,
 } from "./indicatorOptions.js";
@@ -99,7 +98,7 @@ map.addControl(new darkModeToggle());
 let selectionSubmit = document.getElementById("submitOptions");
 selectionSubmit.addEventListener("click", () => submitOptions());
 function submitOptions() {
-  let selectedValues = getSelectValues();
+  let selectedValues = getSelectValues(optionsData);
   createIndicatorSliders(selectedValues);
 }
 
@@ -160,7 +159,7 @@ map.on("load", () => {
   toggleableLayers(map);
   colorCheck(map);
   heightCheck(map);
-  checkVariables(optionsData);
+ 
 
   transparencySlider.addEventListener("input", (e) => {
     // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here
