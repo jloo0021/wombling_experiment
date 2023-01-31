@@ -7,6 +7,7 @@ import {
 } from "./index.js";
 import { Dimensions } from "./enums.js";
 import { closeExistingPopups } from "./boundaries.js";
+import { runAllCheckboxHandlers } from "./filter.js";
 
 /**
  * OLD IMPLEMENTATION
@@ -234,6 +235,8 @@ export function addWallsLayer(map) {
   }
 
   map.addLayer(wallsLayer);
+
+  runAllCheckboxHandlers(map);
 }
 
 /**

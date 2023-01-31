@@ -11,10 +11,11 @@ import { drawWalls, DimensionToggle } from "./womble.js";
 import boundaries_SA1_2016_buffered from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84.geojson" assert { type: "json" };
 import {
+  addCheckboxListeners,
   darkModeToggle,
-  toggleableLayers,
-  colorCheck,
-  heightCheck,
+  // toggleableLayers,
+  // colorCheck,
+  // heightCheck,
 } from "./filter.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
@@ -171,9 +172,10 @@ map.on("load", () => {
   map.addSource("unbufferedSource", unbufferedSource);
   map.addSource("bufferedSource", bufferedSource);
 
-  toggleableLayers(map);
-  colorCheck(map);
-  heightCheck(map);
+  // toggleableLayers(map);
+  // colorCheck(map);
+  // heightCheck(map);
+  addCheckboxListeners(map);
 
   transparencySlider.addEventListener("input", (e) => {
     // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here
