@@ -13,6 +13,7 @@ import boundaries_SA1_2016_buffered from "../boundaries_SA1_2016_wgs84_buffered7
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84.geojson" assert { type: "json" };
 import {
   addCheckboxListeners,
+  addTransparencySlider,
   darkModeToggle,
   // toggleableLayers,
   // colorCheck,
@@ -40,12 +41,6 @@ import { Dimensions } from "./enums.js";
 // mapbox token (taken from existing project)
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoibmR1bzAwMDMiLCJhIjoiY2tnNHlucmF3MHA4djJ6czNkaHRycmo1OCJ9.xfU4SWH35W5BYtJP8VnTEA";
-
-// elements for the transparency slider
-let transparencySlider = document.getElementById("transparency-slider");
-let transparencySliderValue = document.getElementById(
-  "transparency-slider-value"
-);
 
 // variable for the csv data is made global
 export let indicatorsData;
@@ -156,35 +151,8 @@ map.on("load", () => {
   map.addSource("unbufferedSource", unbufferedSource);
   map.addSource("bufferedSource", bufferedSource);
 
-  // toggleableLayers(map);
-  // colorCheck(map);
-  // heightCheck(map);
   addCheckboxListeners(map);
-
-  transparencySlider.addEventListener("input", (e) => {
-    if (!map.getLayer("walls")) {
-      console.log("Layer doesn't exist");
-      return;
-    }
-
-    // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here
-    if (appDimension == Dimensions.TWO_D) {
-      map.setPaintProperty(
-        "walls",
-        "line-opacity",
-        parseInt(e.target.value, 10) / 100
-      );
-    } else if (appDimension == Dimensions.THREE_D) {
-      map.setPaintProperty(
-        "walls",
-        "fill-extrusion-opacity",
-        parseInt(e.target.value, 10) / 100
-      );
-    }
-
-    // value indicator
-    transparencySliderValue.textContent = e.target.value + "%";
-  });
+  addTransparencySlider(map);
 });
 
 // document.getElementById("test").addEventListener("click", () => {

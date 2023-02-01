@@ -171,6 +171,47 @@ function heightCheckboxHandler(map) {
   }
 }
 
+export function addTransparencySlider(map) {
+  // elements for the transparency slider
+  let transparencySlider = document.getElementById("transparency-slider");
+  let transparencySliderValue = document.getElementById(
+    "transparency-slider-value"
+  );
+
+  transparencySlider.addEventListener("input", (e) => {
+    if (!map.getLayer("walls")) {
+      console.log("Layer doesn't exist");
+      return;
+    }
+
+    // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here
+    if (appDimension == Dimensions.TWO_D) {
+      map.setPaintProperty(
+        "walls",
+        "line-opacity",
+        parseInt(e.target.value, 10) / 100
+      );
+    } else if (appDimension == Dimensions.THREE_D) {
+      map.setPaintProperty(
+        "walls",
+        "fill-extrusion-opacity",
+        parseInt(e.target.value, 10) / 100
+      );
+    }
+
+    // value indicator
+    transparencySliderValue.textContent = e.target.value + "%";
+  });
+}
+
+export function addMinMaxSlider(map) {
+  // elements for the min/max sliders
+  let minSlider = document.getElementById("min-slider");
+  let minSliderValue = document.getElementById("min-slider-value");
+  let maxSlider = document.getElementById("max-slider");
+  let maxSliderValue = document.getElementById("max-slider-value");
+}
+
 // TODO: move control buttons into one file together?
 // ALSO, changing the style just doesn't work, b/c it deletes all existing layers and sources
 export class darkModeToggle {
@@ -208,98 +249,3 @@ export class darkModeToggle {
     this._map = undefined;
   }
 }
-
-// export function colorCheck(map) {
-//   let id = "walls";
-//   let colorCheckbox = document.getElementById(`color-checkbox`); // all layer filter checkboxes in the HTML file should be in this form
-//   colorCheckbox.addEventListener("click", (e) => {
-//     // if the clicked layer doesn't exist, return
-//     if (!map.getLayer(id)) {
-//       console.log("Layer not yet rendered");
-//       return;
-//     }
-
-//     // if the checkbox is checked, make sure all wall colours are the same
-//     if (e.target.checked) {
-//       let color = "#808080";
-//       if (appDimension == Dimensions.TWO_D) {
-//         map.setPaintProperty("walls", "line-color", color);
-//       } else if (appDimension == Dimensions.THREE_D) {
-//         map.setPaintProperty("walls", "fill-extrusion-color", color);
-//       }
-//     }
-//     // if checkbox is NOT checked, make sure the wall colours are variable
-//     else {
-//       const colors = ["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20"];
-//       let colourExpression = [
-//         "case",
-//         [">=", ["to-number", ["get", "womble_scaled"]], 1],
-//         colors[3],
-//         [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
-//         colors[2],
-//         [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
-//         colors[1],
-//         colors[0],
-//       ];
-//       if (appDimension == Dimensions.TWO_D) {
-//         map.setPaintProperty("walls", "line-color", colourExpression);
-//       } else if (appDimension == Dimensions.THREE_D) {
-//         map.setPaintProperty("walls", "fill-extrusion-color", colourExpression);
-//       }
-//     }
-//   });
-// }
-
-// export function heightCheck(map) {
-//   let id = "walls";
-//   let heightCheckbox = document.getElementById(`height-checkbox`); // all layer filter checkboxes in the HTML file should be in this form
-//   heightCheckbox.addEventListener("click", (e) => {
-//     // if the clicked layer doesn't exist, return
-//     if (!map.getLayer(id)) {
-//       console.log("Layer not yet rendered");
-//       return;
-//     }
-
-//     // if the checkbox is checked, set all heights/widths to be the same
-//     if (e.target.checked) {
-//       if (appDimension == Dimensions.TWO_D) {
-//         map.setPaintProperty("walls", "line-width", 4);
-//       } else if (appDimension == Dimensions.THREE_D) {
-//         map.setPaintProperty("walls", "fill-extrusion-height", 250);
-//       }
-//     }
-//     // if checkbox is NOT checked, make sure the heights/widths are variable
-//     else {
-//       if (appDimension == Dimensions.TWO_D) {
-//         let lineWidthExpression = [
-//           "interpolate",
-//           ["linear"],
-//           ["zoom"],
-//           // at zoom lvl 12, the line width range is (1, 4]
-//           12,
-//           ["^", 4, ["get", "womble_scaled"]],
-//           // at zoom lvl 13, the line width range is (1, 8]
-//           13,
-//           ["^", 8, ["get", "womble_scaled"]],
-//           // at zoom lvl 14, the line width range is (1, 12]
-//           14,
-//           ["^", 12, ["get", "womble_scaled"]],
-//           // at zoom lvl 15, the line width range is (1, 16]
-//           15,
-//           ["^", 16, ["get", "womble_scaled"]],
-//           // at zoom lvl 16+, the line width range is (1, 20]
-//           16,
-//           ["^", 20, ["get", "womble_scaled"]],
-//         ];
-//         map.setPaintProperty("walls", "line-width", lineWidthExpression);
-//       } else if (appDimension == Dimensions.THREE_D) {
-//         const HEIGHT_MULTIPLIER = 5000;
-//         map.setPaintProperty("walls", "fill-extrusion-height", [
-//           "*",
-//           ["get", "womble_scaled"],
-//           HEIGHT_MULTIPLIER,
-//         ]);
-//       }
-//     }
-//   });
-// }
