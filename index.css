@@ -159,3 +159,8 @@ input[type="file"] {
     border-top-color:blue;
 }
 
+/* DIV SCROLL */
+.map-overlay-inner{
+    overflow-y: auto;
+    max-height: 65em;
+}
