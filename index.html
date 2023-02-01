@@ -87,7 +87,7 @@
             </div>
 
             <!-- This div contains the reset and run buttons for the indicator sliders. Initially hidden until the user selects their indicators -->
-            <div id="womble-indicators-buttons" hidden>
+            <div id="womble-indicators-buttons" class="hide">
                 <label for="distance-weight-checkbox">Distance Weight</label>
                 <input type="checkbox" id="distance-weight-checkbox">
                 <button id="reset-weights-button">Reset</button>
@@ -96,7 +96,9 @@
             <div id="loader" class="loader" hidden></div>
             <!-- <button id="test">test</button> -->
         </div>
+
     </div>
+    <div class='map-overlay-legend' id='legend'></div>
  
     <script src="js/boundaries.js" type="module"></script>
     <script src="js/upload.js" type="module"></script>>
