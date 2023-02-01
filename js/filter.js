@@ -213,30 +213,29 @@ export function addMinMaxSlider(map) {
 
   // if either slider is adjusted, we have to perform the min max filter
   let filterMinMax = function (event) {
+    let min = parseFloat(minSlider.value);
+    let max = parseFloat(maxSlider.value);
+
     // update display values
-    minSliderValue.textContent = minSlider.value;
-    maxSliderValue.textContent = maxSlider.value;
+    minSliderValue.textContent = min;
+    maxSliderValue.textContent = max;
 
     if (!map.getLayer("walls")) {
       console.log("No walls to filter yet");
       return;
     }
 
+    if (min > max) {
+      console.log("Max must be greater than or equal to min");
+    }
+
     // filter the walls layer
 
     // returns true if wall's womble_scaled is >= min slider value
-    let greaterThanMinExpression = [
-      ">=",
-      ["get", "womble_scaled"],
-      minSlider.value,
-    ];
+    let greaterThanMinExpression = [">=", ["get", "womble_scaled"], min];
 
     // returns true if wall's womble_scaled is <= max slider value
-    let lessThanMaxExpression = [
-      "<=",
-      ["get", "womble_scaled"],
-      maxSlider.value,
-    ];
+    let lessThanMaxExpression = ["<=", ["get", "womble_scaled"], max];
 
     // returns true if wall's womble_scaled is in the range [min, max]
     let filterExpression = [
@@ -245,7 +244,7 @@ export function addMinMaxSlider(map) {
       lessThanMaxExpression,
     ];
 
-    map.setFilter("walls", greaterThanMinExpression);
+    map.setFilter("walls", filterExpression);
   };
 
   minSlider.addEventListener("input", filterMinMax);
