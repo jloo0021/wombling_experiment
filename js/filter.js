@@ -51,6 +51,7 @@ export function addCheckboxListeners(map) {
     "walls-checkbox": wallsCheckboxHandler,
     "color-checkbox": colourCheckboxHandler,
     "height-checkbox": heightCheckboxHandler,
+    "both-checkbox": colorAndHeightHandler
   };
 
   // add event listeners for each checkbox
@@ -68,6 +69,7 @@ export function runAllCheckboxHandlers(map) {
     wallsCheckboxHandler,
     colourCheckboxHandler,
     heightCheckboxHandler,
+    colorAndHeightHandler
   ];
 
   for (let handler of checkboxHandlers) {
@@ -128,14 +130,15 @@ function colourCheckboxHandler(map) {
     } else if (appDimension == Dimensions.THREE_D) {
       map.setPaintProperty("walls", "fill-extrusion-color", color);
     }
-  }
-  // if checkbox is NOT checked, make sure the wall colours are variable
-  else {
-    let colourExpression = getColourExpression();
+
     if (appDimension == Dimensions.TWO_D) {
-      map.setPaintProperty("walls", "line-color", colourExpression);
+      map.setPaintProperty("walls", "line-width", getWidthExpression());
     } else if (appDimension == Dimensions.THREE_D) {
-      map.setPaintProperty("walls", "fill-extrusion-color", colourExpression);
+      map.setPaintProperty(
+        "walls",
+        "fill-extrusion-height",
+        getHeightExpression()
+      );
     }
   }
 }
@@ -156,9 +159,40 @@ function heightCheckboxHandler(map) {
     } else if (appDimension == Dimensions.THREE_D) {
       map.setPaintProperty("walls", "fill-extrusion-height", 250);
     }
+
+    let colourExpression = getColourExpression();
+    if (appDimension == Dimensions.TWO_D) {
+      map.setPaintProperty("walls", "line-color", colourExpression);
+    } else if (appDimension == Dimensions.THREE_D) {
+      map.setPaintProperty("walls", "fill-extrusion-color", colourExpression);
+    }
   }
-  // if checkbox is NOT checked, make sure the heights/widths are variable
-  else {
+
+  // // if checkbox is NOT checked, make sure the heights/widths are variable
+  // else {
+  //   if (appDimension == Dimensions.TWO_D) {
+  //     map.setPaintProperty("walls", "line-width", getWidthExpression());
+  //   } else if (appDimension == Dimensions.THREE_D) {
+  //     map.setPaintProperty(
+  //       "walls",
+  //       "fill-extrusion-height",
+  //       getHeightExpression()
+  //     );
+  //   }
+  // }
+}
+
+function colorAndHeightHandler(map) {
+  let id = "walls";
+  let checkbox = document.getElementById(`both-checkbox`);
+  // if the clicked layer doesn't exist, return
+  if (!map.getLayer(id)) {
+    console.log("Layer not yet rendered");
+    return;
+  }
+
+  // if the checkbox is checked, set all heights/widths to be variable and apply colour
+  if (checkbox.checked) {
     if (appDimension == Dimensions.TWO_D) {
       map.setPaintProperty("walls", "line-width", getWidthExpression());
     } else if (appDimension == Dimensions.THREE_D) {
@@ -167,6 +201,13 @@ function heightCheckboxHandler(map) {
         "fill-extrusion-height",
         getHeightExpression()
       );
+    }
+
+    let colourExpression = getColourExpression();
+    if (appDimension == Dimensions.TWO_D) {
+      map.setPaintProperty("walls", "line-color", colourExpression);
+    } else if (appDimension == Dimensions.THREE_D) {
+      map.setPaintProperty("walls", "fill-extrusion-color", colourExpression);
     }
   }
 }
