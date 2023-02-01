@@ -162,5 +162,5 @@ input[type="file"] {
 /* DIV SCROLL */
 .map-overlay-inner{
     overflow-y: auto;
-    max-height: 65em;
+    max-height: 87vh;
 }
