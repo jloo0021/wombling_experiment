@@ -210,6 +210,46 @@ export function addMinMaxSlider(map) {
   let minSliderValue = document.getElementById("min-slider-value");
   let maxSlider = document.getElementById("max-slider");
   let maxSliderValue = document.getElementById("max-slider-value");
+
+  // if either slider is adjusted, we have to perform the min max filter
+  let filterMinMax = function (event) {
+    // update display values
+    minSliderValue.textContent = minSlider.value;
+    maxSliderValue.textContent = maxSlider.value;
+
+    if (!map.getLayer("walls")) {
+      console.log("No walls to filter yet");
+      return;
+    }
+
+    // filter the walls layer
+
+    // returns true if wall's womble_scaled is >= min slider value
+    let greaterThanMinExpression = [
+      ">=",
+      ["get", "womble_scaled"],
+      minSlider.value,
+    ];
+
+    // returns true if wall's womble_scaled is <= max slider value
+    let lessThanMaxExpression = [
+      "<=",
+      ["get", "womble_scaled"],
+      maxSlider.value,
+    ];
+
+    // returns true if wall's womble_scaled is in the range [min, max]
+    let filterExpression = [
+      "all",
+      greaterThanMinExpression,
+      lessThanMaxExpression,
+    ];
+
+    map.setFilter("walls", greaterThanMinExpression);
+  };
+
+  minSlider.addEventListener("input", filterMinMax);
+  maxSlider.addEventListener("input", filterMinMax);
 }
 
 // TODO: move control buttons into one file together?

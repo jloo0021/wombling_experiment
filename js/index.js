@@ -13,6 +13,7 @@ import boundaries_SA1_2016_buffered from "../boundaries_SA1_2016_wgs84_buffered7
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84.geojson" assert { type: "json" };
 import {
   addCheckboxListeners,
+  addMinMaxSlider,
   addTransparencySlider,
   darkModeToggle,
   // toggleableLayers,
@@ -153,6 +154,7 @@ map.on("load", () => {
 
   addCheckboxListeners(map);
   addTransparencySlider(map);
+  addMinMaxSlider(map);
 });
 
 // document.getElementById("test").addEventListener("click", () => {
