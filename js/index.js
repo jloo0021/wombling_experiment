@@ -1,4 +1,5 @@
 import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
+import { createVariables, getSelectValues } from "./variableOptions.js";
 import {
   initClickableAreaBehaviour,
   initClickableWallBehaviour,
@@ -21,7 +22,6 @@ import {
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import {
   createIndicatorOptions,
-  getSelectValues,
   removeIndicatorOptions,
   getValues,
 } from "./indicatorOptions.js";
@@ -57,23 +57,7 @@ export function setIndicatorsData(data) {
   csvAreaCode = headers.shift();
   optionsData = headers;
 
-  var prevSelect = document.getElementById("indicators-selection");
-  if (prevSelect.options.length) {
-    const element = document.getElementById("indicators-selection");
-    const divID = document.getElementById("selectionBlock");
-    removeIndicatorOptions();
-    element.remove();
-    divID.appendChild(element);
-    createIndicatorOptions(optionsData);
-
-    new MultiSelectTag("indicators-selection");
-    getValues();
-  } else {
-    createIndicatorOptions(optionsData);
-    getValues();
-    new MultiSelectTag("indicators-selection"); // id
-    document.getElementById("selectionBlock").classList.remove("hide");
-  }
+  createVariables(headers);
 }
 
 // export function setIndicatorsData(data) {
@@ -114,7 +98,7 @@ map.addControl(new DimensionToggle({ pitch: 45 }));
 let selectionSubmit = document.getElementById("submitOptions");
 selectionSubmit.addEventListener("click", () => submitOptions());
 function submitOptions() {
-  let selectedValues = getSelectValues();
+  let selectedValues = getSelectValues(optionsData);
   createIndicatorSliders(selectedValues);
 }
 

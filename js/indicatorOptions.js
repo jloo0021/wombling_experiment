@@ -2,19 +2,11 @@
 import indicatorsData from "../liveability_indicators_sa1_2016.json" assert { type: "json" };
 
 
-function createIndicatorOptions(optionsArray) {
+function createIndicatorOptions(optionsArray, select_id) {
     // if (csvArray.Property == null) {
 
     // console.log(optionsArray);
-    var x = document.getElementById("indicators-selection");
-
-
-    // const res = JSON.parse("liveability_indicators_sa1_2016.json");
-
-    // Object.entries(res).forEach((entry) => {
-    //     const [key, value] = entry;
-    //      console.log(`${key}: ${value}`);
-    // });
+    var x = document.getElementById(select_id);
 
     for (let i = 0; i < optionsArray.length; i++) {
         var option = document.createElement("option");
@@ -22,7 +14,7 @@ function createIndicatorOptions(optionsArray) {
         x.add(option, i);
     }
 
-    var optionsTest = document.getElementById("indicators-selection").options;
+    var optionsTest = document.getElementById(select_id).options;
     for (var i = 0; i < optionsTest.length; i++) {
         console.log(optionsTest[i].value);
     }
@@ -44,19 +36,19 @@ function removeIndicatorOptions() {
 
 // Return an array of the selected option values
 // select is an HTML select element
-function getSelectValues() {
-    var options = document.getElementById("indicators-selection").selectedOptions;
+function gyug(select_id) {
+    var options = document.getElementById(select_id).selectedOptions;
     var values = Array.from(options).map(({ value }) => value);
     console.log(values)
     return values;
 }
 
-function getValues() {
-    var options = document.getElementById("indicators-selection").options;
+function getValues(select_id) {
+    var options = document.getElementById(select_id).options;
     var values = Array.from(options).map(({ value }) => value);
     console.log(values)
     return values;
 }
 
 // Exporting variables and functions
-export { createIndicatorOptions, getSelectValues, removeIndicatorOptions, getValues };
+export { createIndicatorOptions, removeIndicatorOptions, getValues };

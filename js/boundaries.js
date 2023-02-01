@@ -1,5 +1,5 @@
 import { csvAreaCode, indicatorsData } from "./index.js";
-import { getSelectValues } from "./indicatorOptions.js";
+import { getSelectValues } from "./variableOptions.js";
 
 /**
  * Draws a map layer of the user's selected boundaries. No heights or colours are drawn yet.
