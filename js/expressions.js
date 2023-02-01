@@ -1,12 +1,13 @@
 export function getColourExpression() {
-  const colors = ["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20"];
+  const colors = ["#fed976", "#fd8d3c", "#fc4e2a", "#e31a1c"];
+  
   return [
     "case",
-    [">=", ["to-number", ["get", "womble_scaled"]], 1],
+    [">", ["to-number", ["get", "womble_scaled"]], 1],
     colors[3],
-    [">=", ["to-number", ["get", "womble_scaled"]], 0.6],
+    [">", ["to-number", ["get", "womble_scaled"]], 0.6],
     colors[2],
-    [">=", ["to-number", ["get", "womble_scaled"]], 0.3],
+    [">", ["to-number", ["get", "womble_scaled"]], 0.3],
     colors[1],
     colors[0],
   ];

@@ -481,6 +481,10 @@ export class DimensionToggle {
 
     // delete thicknesses and draw walls
     this.#convertWalls(map);
+
+    // Change the radio label to width only
+    document.getElementById('colorOnly-label').innerText
+                = 'Height only';
   }
 
   #switchTo2d(map) {
@@ -498,5 +502,9 @@ export class DimensionToggle {
 
     // delete walls and draw thicknesses
     this.#convertWalls(map);
+
+    // Change the radio label to width only
+    document.getElementById('colorOnly-label').innerText
+                = 'Width only';
   }
 }
