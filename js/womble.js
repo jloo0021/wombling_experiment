@@ -7,7 +7,7 @@ import {
 } from "./index.js";
 import { Dimensions } from "./enums.js";
 import { closeExistingPopups } from "./boundaries.js";
-import { runAllCheckboxHandlers } from "./filter.js";
+import { runAllInputHandlers } from "./filter.js";
 import {
   getColourExpression,
   getHeightExpression,
@@ -186,7 +186,7 @@ export function addWallsLayer(map) {
 
   map.addLayer(wallsLayer);
 
-  runAllCheckboxHandlers(map);
+  runAllInputHandlers(map);
 }
 
 /**

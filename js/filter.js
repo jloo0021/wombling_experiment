@@ -6,71 +6,47 @@ import {
 } from "./expressions.js";
 import { appDimension } from "./index.js";
 
-// // think of this as an abstract class
-// class FilterCheckbox {
-//   constructor(checkboxElement, map) {
-//     this.checkbox = checkboxElement;
-//     this.map = map;
-//   }
-//   isChecked() {
-//     return this.checkbox.checked;
-//   }
+export function addInputListeners(map) {
+  // each element in this array corresponds to some sort of option that the user has
+  // the object describes the html id of the input element, the function that handles the input, and the event to trigger the input handler
+  let elemObjects = [
+    {
+      id: "boundaries-checkbox",
+      handler: boundariesCheckboxHandler,
+      event: "click",
+    },
+    { id: "walls-checkbox", handler: wallsCheckboxHandler, event: "click" },
+    { id: "color-checkbox", handler: colourCheckboxHandler, event: "click" },
+    { id: "height-checkbox", handler: heightCheckboxHandler, event: "click" },
+    {
+      id: "transparency-slider",
+      handler: transparencySliderHandler,
+      event: "input",
+    },
+    { id: "min-slider", handler: minMaxSliderHandler, event: "input" },
+    { id: "max-slider", handler: minMaxSliderHandler, event: "input" },
+  ];
 
-//   // abstract method to be implemented by children
-//   runCheckedBehaviour() {}
-
-//   // abstract method to be implemented by children
-//   runUncheckedBehaviour() {}
-
-//   handleCheckbox() {
-//     if (this.isChecked) {
-//       this.runCheckedBehaviour();
-//     } else {
-//       this.runUncheckedBehaviour();
-//     }
-//   }
-// }
-
-// class BoundariesCheckbox extends FilterCheckbox {}
-// class WallsCheckbox extends FilterCheckbox {}
-// class ColourCheckbox extends FilterCheckbox {}
-// class HeightCheckbox extends FilterCheckbox {}
-
-// TODO: perhaps refactor into something like this for more code reuse:
-// let checkboxClasses = [
-//   // classes
-// ];
-
-// for (let checkboxClass of checkboxClasses) {
-//   checkboxClass.handle()
-// }
-
-export function addCheckboxListeners(map) {
-  let checkboxIds = {
-    "boundaries-checkbox": boundariesCheckboxHandler,
-    "walls-checkbox": wallsCheckboxHandler,
-    "color-checkbox": colourCheckboxHandler,
-    "height-checkbox": heightCheckboxHandler,
-  };
-
-  // add event listeners for each checkbox
-  for (let [checkboxId, handler] of Object.entries(checkboxIds)) {
-    let checkbox = document.getElementById(checkboxId);
-    checkbox.addEventListener("click", () => {
-      handler(map);
+  // add event listeners for each option element
+  for (let elemObject of elemObjects) {
+    let element = document.getElementById(elemObject.id);
+    element.addEventListener(elemObject.event, () => {
+      elemObject.handler(map);
     });
   }
 }
 
-export function runAllCheckboxHandlers(map) {
-  let checkboxHandlers = [
+export function runAllInputHandlers(map) {
+  let inputHandlers = [
     boundariesCheckboxHandler,
     wallsCheckboxHandler,
     colourCheckboxHandler,
     heightCheckboxHandler,
+    transparencySliderHandler,
+    minMaxSliderHandler,
   ];
 
-  for (let handler of checkboxHandlers) {
+  for (let handler of inputHandlers) {
     handler(map);
   }
 }
@@ -171,84 +147,78 @@ function heightCheckboxHandler(map) {
   }
 }
 
-export function addTransparencySlider(map) {
+function transparencySliderHandler(map) {
   // elements for the transparency slider
   let transparencySlider = document.getElementById("transparency-slider");
   let transparencySliderValue = document.getElementById(
     "transparency-slider-value"
   );
 
-  transparencySlider.addEventListener("input", (e) => {
-    if (!map.getLayer("walls")) {
-      console.log("Layer doesn't exist");
-      return;
-    }
+  if (!map.getLayer("walls")) {
+    console.log("Layer doesn't exist");
+    return;
+  }
 
-    // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here
-    if (appDimension == Dimensions.TWO_D) {
-      map.setPaintProperty(
-        "walls",
-        "line-opacity",
-        parseInt(e.target.value, 10) / 100
-      );
-    } else if (appDimension == Dimensions.THREE_D) {
-      map.setPaintProperty(
-        "walls",
-        "fill-extrusion-opacity",
-        parseInt(e.target.value, 10) / 100
-      );
-    }
+  // adjust the boundary layer's fill-extrusion-opacity value. If you change the id of the boundary layer you'll also have to change it here
+  if (appDimension == Dimensions.TWO_D) {
+    map.setPaintProperty(
+      "walls",
+      "line-opacity",
+      parseInt(transparencySlider.value, 10) / 100
+    );
+  } else if (appDimension == Dimensions.THREE_D) {
+    map.setPaintProperty(
+      "walls",
+      "fill-extrusion-opacity",
+      parseInt(transparencySlider.value, 10) / 100
+    );
+  }
 
-    // value indicator
-    transparencySliderValue.textContent = e.target.value + "%";
-  });
+  // value indicator
+  transparencySliderValue.textContent = transparencySlider.value + "%";
 }
 
-export function addMinMaxSlider(map) {
+function minMaxSliderHandler(map) {
+  // if either slider is adjusted, we have to perform the min max filter
+
   // elements for the min/max sliders
   let minSlider = document.getElementById("min-slider");
   let minSliderValue = document.getElementById("min-slider-value");
   let maxSlider = document.getElementById("max-slider");
   let maxSliderValue = document.getElementById("max-slider-value");
 
-  // if either slider is adjusted, we have to perform the min max filter
-  let filterMinMax = function (event) {
-    let min = parseFloat(minSlider.value);
-    let max = parseFloat(maxSlider.value);
+  let min = parseFloat(minSlider.value);
+  let max = parseFloat(maxSlider.value);
 
-    // update display values
-    minSliderValue.textContent = min;
-    maxSliderValue.textContent = max;
+  // update display values
+  minSliderValue.textContent = min;
+  maxSliderValue.textContent = max;
 
-    if (!map.getLayer("walls")) {
-      console.log("No walls to filter yet");
-      return;
-    }
+  if (!map.getLayer("walls")) {
+    console.log("No walls to filter yet");
+    return;
+  }
 
-    if (min > max) {
-      console.log("Max must be greater than or equal to min");
-    }
+  if (min > max) {
+    console.log("Max must be greater than or equal to min");
+  }
 
-    // filter the walls layer
+  // filter the walls layer
 
-    // returns true if wall's womble_scaled is >= min slider value
-    let greaterThanMinExpression = [">=", ["get", "womble_scaled"], min];
+  // returns true if wall's womble_scaled is >= min slider value
+  let greaterThanMinExpression = [">=", ["get", "womble_scaled"], min];
 
-    // returns true if wall's womble_scaled is <= max slider value
-    let lessThanMaxExpression = ["<=", ["get", "womble_scaled"], max];
+  // returns true if wall's womble_scaled is <= max slider value
+  let lessThanMaxExpression = ["<=", ["get", "womble_scaled"], max];
 
-    // returns true if wall's womble_scaled is in the range [min, max]
-    let filterExpression = [
-      "all",
-      greaterThanMinExpression,
-      lessThanMaxExpression,
-    ];
+  // returns true if wall's womble_scaled is in the range [min, max]
+  let filterExpression = [
+    "all",
+    greaterThanMinExpression,
+    lessThanMaxExpression,
+  ];
 
-    map.setFilter("walls", filterExpression);
-  };
-
-  minSlider.addEventListener("input", filterMinMax);
-  maxSlider.addEventListener("input", filterMinMax);
+  map.setFilter("walls", filterExpression);
 }
 
 // TODO: move control buttons into one file together?
