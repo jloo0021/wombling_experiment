@@ -187,6 +187,13 @@ function minMaxSliderHandler(map) {
   let maxSlider = document.getElementById("max-slider");
   let maxSliderValue = document.getElementById("max-slider-value");
 
+  // automatically adjust slider if user makes min > max
+  if (parseFloat(minSlider.value) > parseFloat(maxSlider.value)) {
+    console.log("Max must be greater than or equal to min");
+    maxSlider.value = minSlider.value;
+    // minSlider.value = maxSlider.value;
+  }
+
   let min = parseFloat(minSlider.value);
   let max = parseFloat(maxSlider.value);
 
@@ -197,10 +204,6 @@ function minMaxSliderHandler(map) {
   if (!map.getLayer("walls")) {
     console.log("No walls to filter yet");
     return;
-  }
-
-  if (min > max) {
-    console.log("Max must be greater than or equal to min");
   }
 
   // filter the walls layer
