@@ -198,7 +198,7 @@ input[type="file"] {
 
 /* Tool tip css, taken from: https://www.w3schools.com/css/css_tooltip.asp */
 /* Tooltip container */
-.mytooltip {
+.indicator-options-tooltip {
     position: relative;
     display: inline-block;
     /* border-bottom: 1px dotted black;  */
@@ -206,7 +206,7 @@ input[type="file"] {
 }
   
 /* Tooltip text */
-.mytooltip .mytooltiptext {
+.indicator-options-tooltip .mytooltiptext {
     visibility: hidden;
     width: 120px;
     background-color: rgb(131, 131, 131);
@@ -225,6 +225,37 @@ input[type="file"] {
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.mytooltip:hover .mytooltiptext {
+.indicator-options-tooltip:hover .mytooltiptext {
+    visibility: visible;
+}
+
+.file-upload-tooltip {
+    position: relative;
+    display: inline-block;
+    /* border-bottom: 1px dotted black;  */
+    /* If you want dots under the hoverable text */
+}
+  
+/* Tooltip text */
+.file-upload-tooltip .mytooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: rgb(131, 131, 131);
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    width: 240px;
+    bottom: 100%;
+    left: 110%;
+    margin-left: -120px; /* Use half of the width, to center the tooltip */
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.file-upload-tooltip:hover .mytooltiptext {
     visibility: visible;
 }

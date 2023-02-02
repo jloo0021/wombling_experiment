@@ -28,7 +28,9 @@
                 <label for="csvInput" class="custom-file-upload btn">
                     Choose a CSV file to upload.
                 </label>
-                <span id="custom-text"> No file chosen, yet.</span>
+                <span id="custom-text" class="file-upload-tooltip"> No file chosen, yet. &#x1F6C8;
+                    <span class="mytooltiptext">The first column must contain area codes. All other columns must contain variable data.</span>
+                </span>
                 <input type="file" id="csvInput" accept=".csv" />
             </div>
             <hr>
@@ -90,9 +92,9 @@
             </div>
             <hr>
             
-            <span class="mytooltip">
+            <span class="indicator-options-tooltip">
                 <h5>Womble Indicator Options &#x1F6C8;</h5> 
-                <span class="mytooltiptext">The selected options below will only take effect upon clicking "Run"</span>
+                <span class="mytooltiptext">The selected options below will only take effect upon clicking "Run".</span>
             </span>
             
             <h6>Womble Indicators:</h6>
