@@ -7,7 +7,7 @@ import {
 } from "./index.js";
 import { Dimensions } from "./enums.js";
 import { closeExistingPopups } from "./boundaries.js";
-import { runAllCheckboxHandlers } from "./filter.js";
+import { runAllInputHandlers } from "./filter.js";
 import {
   getColourExpression,
   getHeightExpression,
@@ -186,7 +186,7 @@ export function addWallsLayer(map) {
 
   map.addLayer(wallsLayer);
 
-  runAllCheckboxHandlers(map);
+  runAllInputHandlers(map);
 }
 
 /**
@@ -366,19 +366,31 @@ function calculateWomble(edge) {
       return null;
     }
 
+    const DUMMY_DIST = 100; // TODO: remove this when we have real distance properties
+
     // womble += indicatorWeights[i] * absolute difference of (area1's selectedIndicator[i] value and area2's selectedIndicator[i] value)
-    womble +=
-      indicatorWeights[i] *
-      Math.abs(
-        parseFloat(area1[selectedIndicators[i]]) -
-          parseFloat(area2[selectedIndicators[i]])
-      );
+    if (isDistanceWeighted()) {
+      womble +=
+        (indicatorWeights[i] *
+          Math.abs(
+            parseFloat(area1[selectedIndicators[i]]) -
+              parseFloat(area2[selectedIndicators[i]])
+          )) /
+        DUMMY_DIST; // TODO: replace this w real distance when it exists in dataset
+      // edge.properties.distance; // divide by a distance property that we assume exists in the edge data
+    } else {
+      womble +=
+        indicatorWeights[i] *
+        Math.abs(
+          parseFloat(area1[selectedIndicators[i]]) -
+            parseFloat(area2[selectedIndicators[i]])
+        );
+    }
   }
 
   return womble;
 }
 
-// TODO: use this function to decide whether or not to use distance weighting once i figure out the specifics of how to implement
 /**
  * Function that checks whether the user has chosen to use distance weighting
  */
@@ -482,9 +494,10 @@ export class DimensionToggle {
     // delete thicknesses and draw walls
     this.#convertWalls(map);
 
-    // Change the radio label to width only
-    document.getElementById('colorOnly-label').innerText
-                = 'Height only';
+    // Change the radio label to height only
+    document.getElementById("colorOnly-label").innerText = "Height only";
+    document.getElementById("both-check-label").innerText =
+      "Both Color and Height";
   }
 
   #switchTo2d(map) {
@@ -504,7 +517,8 @@ export class DimensionToggle {
     this.#convertWalls(map);
 
     // Change the radio label to width only
-    document.getElementById('colorOnly-label').innerText
-                = 'Width only';
+    document.getElementById("colorOnly-label").innerText = "Width only";
+    document.getElementById("both-check-label").innerText =
+      "Both Color and Width";
   }
 }

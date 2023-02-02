@@ -1,6 +1,6 @@
 export function getColourExpression() {
   const colors = ["#fed976", "#fd8d3c", "#fc4e2a", "#e31a1c"];
-  
+
   return [
     "case",
     [">", ["to-number", ["get", "womble_scaled"]], 1],

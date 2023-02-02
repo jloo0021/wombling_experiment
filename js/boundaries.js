@@ -1,4 +1,4 @@
-import { csvAreaCode, indicatorsData } from "./index.js";
+import { csvAreaCode, indicatorsData, optionsData } from "./index.js";
 import { getSelectValues } from "./variableOptions.js";
 
 /**
@@ -123,7 +123,7 @@ export function initClickableAreaBehaviour(map) {
       return indicatorsCode == areaCode;
     });
 
-    let selectedIndicators = getSelectValues();
+    let selectedIndicators = getSelectValues(optionsData);
     correspondingIndicators = Object.entries(correspondingIndicators); // convert indicators object to an array
 
     // filter out any indicators that were NOT selected by user, i.e. keep only selected indicators
