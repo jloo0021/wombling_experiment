@@ -31,20 +31,26 @@
                 <span id="custom-text"> No file chosen, yet.</span>
             <input type="file" id="csvInput" accept=".csv" />
             </div>
-            
-            <div id="selectionBlock" >
-                <label for="indicators"> Select Womble Indicators</label>
+            <br>
+            <div id="selectionBlock">
+                <label for="options"> 
+                    <h5>Select Womble Indicators</h5> 
+                </label>
                 <div id="options"></div>
+                <br>
                 <button id="submitOptions">Confirm selection</button>
             </div>
+            <br>
 
-            <label>Wall opacity: <span id="transparency-slider-value">100%</span></label>
+            <h5>View Options</h5>
+
+            <label>Wall Opacity: <span id="transparency-slider-value">100%</span></label>
             <input id="transparency-slider" type="range" min="0" max="100" step="0" value="100">
 
-            <label>Min. womble: <span id="min-slider-value">0</span></label>
+            <label>Min. Womble: <span id="min-slider-value">0</span></label>
             <input id="min-slider" type="range" min="0" max="1" step="0.01" value="0">
 
-            <label>Max. womble: <span id="max-slider-value">1</span></label>
+            <label>Max. Womble: <span id="max-slider-value">1</span></label>
             <input id="max-slider" type="range" min="0" max="1" step="0.01" value="100">
 
             <!-- All layer filter checkboxes in the HTML file should be in the form: [LAYER_ID]-checkbox -->
@@ -58,9 +64,8 @@
                     <input type="checkbox" id="walls-checkbox" checked="checked">
                     <span class="checkmark"></span>
                 </label>
-
-    
             </div>
+
             <div>
                 <div id="color-checkbox-div">
                     <label class="radio-container" for="color-checkbox" id="colorOnly-label">Width only
@@ -69,7 +74,6 @@
                         <span class="radio-checkmark"></span>
                 </div>
                 
-
                 <div id="height-checkbox-div">
                     <label id="height-check-label" class="radio-container" for="height-checkbox">Color only
                     </label>
@@ -77,28 +81,36 @@
                         <span class="radio-checkmark"></span>
                 </div>
                 
-
                 <div id="both-checkbox-div">
                     <label id="both-check-label" class="radio-container" for="both-checkbox">Both Color and Width
                     </label>
                     <input type="radio" id="both-checkbox" name="radio">
                         <span class="radio-checkmark"></span>
-                </div>
-                
+                </div>  
             </div>
+            <br>
+            
+            <span class="mytooltip">
+                <h5>Womble Indicator Options &#x1F6C8;</h5> 
+                <span class="mytooltiptext">The selected options below will only take effect upon clicking "Run"</span>
+            </span>
+            
+            <h6>Womble Indicators:</h6>
 
             <!-- This div contains the sliders for the user's indicator weight inputs. Initially empty until the user selects their indicators -->
-            <div id="womble-indicators-sliders">
-                Womble Indicators:
-            </div>
+            <div id="womble-indicators-sliders"></div>
 
             <!-- This div contains the reset and run buttons for the indicator sliders. Initially hidden until the user selects their indicators -->
             <div id="womble-indicators-buttons" class="hide">
-                <label for="distance-weight-checkbox">Distance Weight</label>
-                <input type="checkbox" id="distance-weight-checkbox">
-                <button id="reset-weights-button">Reset</button>
+                <label class="checkbox-container" for="distance-weight-checkbox">Distance Weight
+                    <input type="checkbox" id="distance-weight-checkbox">
+                    <span class="checkmark"></span>
+                </label>
+                <br>
+                <button id="reset-weights-button">Reset Weights</button>
                 <button id="run-womble-button">Run</button> 
             </div>
+            <br>
             <div id="loader" class="loader" hidden></div>
             <!-- <button id="test">test</button> -->
         </div>
@@ -111,8 +123,6 @@
     <script src="js/sliders.js" type="module"></script>
     <script src="js/womble.js" type="module"></script>>
     <script src="js/filter.js" type="module"></script>>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-  </body>
     <script src="js/index.js" type="module"></script>
     
     <script src="js/indicatorOptions.js" type="module"></script>

@@ -120,34 +120,32 @@ runWombleButton.addEventListener("click", () => {
 
 // Legend logic
 // create legend
-const legend = document.getElementById('legend');
+const legend = document.getElementById("legend");
 const colors = ["#fed976", "#fd8d3c", "#fc4e2a", "#e31a1c"];
-const womble_scaled_breaks = [0, 0.3, 0.6, 1];
+const womble_scaled_breaks = [0, 0.25, 0.5, 0.75, 1];
 
-const item = document.createElement('div');
-const value = document.createElement('span');
+const item = document.createElement("div");
+const value = document.createElement("span");
 value.innerHTML = "<b>Wombled Scaled Values</b>";
 item.appendChild(value);
 legend.appendChild(item);
 
-for (let i = 0; i < colors.length-1; i++) {
+for (let i = 0; i < colors.length; i++) {
   const color = colors[i];
-  const item = document.createElement('div');
+  const item = document.createElement("div");
 
-  const key = document.createElement('span');
-  key.className = 'legend-key';
+  const key = document.createElement("span");
+  key.className = "legend-key";
   key.style.backgroundColor = color;
 
-  const value = document.createElement('span');
-  value.innerHTML = womble_scaled_breaks[i] + " - " + womble_scaled_breaks[i+1];
+  const value = document.createElement("span");
+  value.innerHTML =
+    womble_scaled_breaks[i] + " - " + womble_scaled_breaks[i + 1];
 
   item.appendChild(key);
   item.appendChild(value);
   legend.appendChild(item);
-} 
-  
-
-
+}
 
 // when map loads, do...
 map.on("load", () => {

@@ -51,7 +51,8 @@ body {
     border: none;
     text-align: left;
     outline: none;
-    font-size: 15px;
+    font-size: 30px;
+    font-weight: 700;
 }
 
 .collapsible:hover {
@@ -194,3 +195,36 @@ input[type="file"] {
     height: 10px;
     margin-right: 5px;
   }
+
+/* Tool tip css, taken from: https://www.w3schools.com/css/css_tooltip.asp */
+/* Tooltip container */
+.mytooltip {
+    position: relative;
+    display: inline-block;
+    /* border-bottom: 1px dotted black;  */
+    /* If you want dots under the hoverable text */
+}
+  
+/* Tooltip text */
+.mytooltip .mytooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: rgb(131, 131, 131);
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    width: 240px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -120px; /* Use half of the width, to center the tooltip */
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.mytooltip:hover .mytooltiptext {
+    visibility: visible;
+}

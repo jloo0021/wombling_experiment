@@ -3,11 +3,11 @@ export function getColourExpression() {
 
   return [
     "case",
-    [">", ["to-number", ["get", "womble_scaled"]], 1],
+    [">", ["to-number", ["get", "womble_scaled"]], 0.75],
     colors[3],
-    [">", ["to-number", ["get", "womble_scaled"]], 0.6],
+    [">", ["to-number", ["get", "womble_scaled"]], 0.5],
     colors[2],
-    [">", ["to-number", ["get", "womble_scaled"]], 0.3],
+    [">", ["to-number", ["get", "womble_scaled"]], 0.25],
     colors[1],
     colors[0],
   ];
