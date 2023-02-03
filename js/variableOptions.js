@@ -1,10 +1,21 @@
+
+var firstUpload = true;
+
 export function createVariables(optionsArray) {
+
+    const divID = document.getElementById("options");
+
+        if (!firstUpload) {
+            while (divID.firstChild) {
+                divID.removeChild(divID.lastChild);
+            }
+        }
 
     for (let i = 0; i < optionsArray.length; i++) {
         // let option = document.createElement("INPUT");
         // option.setAttribute("type", "checkbox");
-        // option.setAttribute("id", `variable-${i}`);
-
+        // option.setAttribute("id", `variable-${i}`)
+        
         var node = document.createElement('div');
         node.setAttribute("class", "form-check");
         // node.innerHTML = '<input type="checkbox" id="variable-' + i + '" name="check' + i + '"><label class = "checkbox-container"  for="variable-' + i + '">' + optionsArray[i] + '</label>';
@@ -13,13 +24,12 @@ export function createVariables(optionsArray) {
             '<input type="checkbox" id="variable-' + i + '" name="check' + i + '"><span class="checkmark"></span></label>';
 
 
-        const divID = document.getElementById("options");
         divID.appendChild(node);
 
         // setTimeout(function () {$('#' + gear.id).selectpicker();}, 300)
-
     }
 
+    firstUpload = false;
 }
 
 function getSelectValues(optionsArray) {
