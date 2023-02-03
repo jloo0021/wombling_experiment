@@ -66,8 +66,8 @@ export function setDimension(dimension) {
 
 export let map = new mapboxgl.Map({
   container: "map",
-  // center: [144.9631, -37.9631], // long lat of melb
-  center: [145.2, -37.817], // long lat of east side melb
+  center: [144.9628, -37.8102], // long lat of melb
+  // center: [145.2, -37.8102], // long lat of east side melb
   // center: [149.8911094722651, -35.0898882056091],
   zoom: 12,
   minZoom: 12,
