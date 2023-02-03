@@ -78,7 +78,8 @@ input[type="file"] {
   .custom-file-upload {
     display: inline-block;
     margin-left: 24px;
-    font-size: 20px;
+    font-size: 18px;
+    font-weight: bold;
     width: 275px;
     height: auto;
     cursor: pointer;
@@ -259,3 +260,17 @@ input[type="file"] {
 .file-upload-tooltip:hover .mytooltiptext {
     visibility: visible;
 }
+
+/* submit button css */
+#submitOptions {
+    background-color: #cff0f2; /* Green */
+    border: none;
+    color: #2a68a5;
+    padding: 15px 32px;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 20px;
+    font-weight: bold;
+  }
+  
