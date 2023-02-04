@@ -511,7 +511,7 @@ export class DimensionToggle {
     map.setMaxPitch(0);
 
     // set min zoom
-    map.setMinZoom(12);
+    map.setMinZoom(9);
 
     // delete walls and draw thicknesses
     this.#convertWalls(map);
