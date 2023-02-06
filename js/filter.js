@@ -4,7 +4,12 @@ import {
   getHeightExpression,
   getWidthExpression,
 } from "./expressions.js";
-import { appDimension } from "./index.js";
+import {
+  appDimension,
+  compareMap,
+  previousWombleData,
+  setCompareMap,
+} from "./index.js";
 
 export function addInputListeners(map) {
   // each element in this array corresponds to some sort of option that the user has
@@ -26,6 +31,7 @@ export function addInputListeners(map) {
     },
     { id: "min-slider", handler: minMaxSliderHandler, event: "input" },
     { id: "max-slider", handler: minMaxSliderHandler, event: "input" },
+    { id: "previous-checkbox", handler: showPreviousHandler, event: "click" },
   ];
 
   // add event listeners for each option element
@@ -263,6 +269,62 @@ function minMaxSliderHandler(map) {
   ];
 
   map.setFilter("walls", filterExpression);
+}
+
+function showPreviousHandler(map) {
+  let checkbox = document.getElementById("previous-checkbox");
+
+  if (checkbox.checked) {
+    // check if previous womble exists
+    // previousWombleData is a global var
+    if (previousWombleData === null) {
+      console.log("No previous womble data exists");
+      return;
+    }
+
+    // create "before" map div and insert into "comparison-container" div
+    let beforeMapDiv = document.createElement("div");
+    beforeMapDiv.id = "before-map";
+    beforeMapDiv.classList.add("map");
+    document
+      .getElementById("comparison-container")
+      .insertBefore(beforeMapDiv, document.getElementById("current-map"));
+
+    // create "before" map object
+    // basically copy the exact style and init all the required behaviours
+    const MAPBOX_TOKEN =
+      "pk.eyJ1IjoibmR1bzAwMDMiLCJhIjoiY2tnNHlucmF3MHA4djJ6czNkaHRycmo1OCJ9.xfU4SWH35W5BYtJP8VnTEA";
+
+    let { lng, lat } = map.getCenter();
+    let beforeMap = new mapboxgl.Map({
+      container: "before-map",
+      center: [lng, lat],
+      zoom: map.getZoom(),
+      minZoom: map.getMinZoom(),
+      maxPitch: map.getMaxZoom(),
+      style: map.getStyle(),
+      accessToken: MAPBOX_TOKEN,
+      antialias: true,
+    });
+
+    beforeMap.on("load", () => {
+      // set before map's data to previous womble data
+      beforeMap.getSource("wallsSource").setData(previousWombleData);
+
+      // create comparison
+      setCompareMap(
+        new mapboxgl.Compare(beforeMap, map, "#comparison-container")
+      );
+    });
+  } else {
+    // get compare object and delete it
+    if (compareMap !== null) {
+      compareMap.remove();
+    }
+
+    // delete "before" map div
+    document.getElementById("before-map").remove();
+  }
 }
 
 // TODO: move control buttons into one file together?

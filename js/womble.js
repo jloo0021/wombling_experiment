@@ -4,6 +4,7 @@ import {
   setDimension,
   indicatorsData,
   csvAreaCode,
+  setPreviousWombleData,
 } from "./index.js";
 import { Dimensions } from "./enums.js";
 import { closeExistingPopups } from "./boundaries.js";
@@ -116,14 +117,20 @@ import {
 /**
  * Draws the heights of the edges based on their womble values.
  * Runs when the user presses the "Run" button after selecting their indicator weights.
- * @param {*} map mapbox map object that the walls will be drawn on
+ * @param {*} map mapbox map object that the new walls will be drawn on
  * @param {*} source geojson source for the boundaries upon which walls will be drawn
  */
-export function drawWalls(map, source) {
+export function runWomble(map, source) {
   closeExistingPopups(map);
 
+  // if womble has been run before, move the current womble data to previousWombleData
+  // if not, there's no data to move, so just continue
+  if (map.getLayer("walls")) {
+    let wallsData = map.getSource("wallsSource")._data;
+    setPreviousWombleData(wallsData);
+  }
+
   let wallsData = generateWombleFeaturesData(source);
-  // appendIndicatorsToAreas(map, "areasSource");
 
   // if walls have already been drawn (i.e. walls source exists), update the source data with the new data
   if (map.getSource("wallsSource")) {
@@ -150,8 +157,6 @@ export function drawWalls(map, source) {
 }
 
 export function addWallsLayer(map) {
-  const HEIGHT_MULTIPLIER = 5000;
-
   // create and draw the layer
   let wallsLayer;
 

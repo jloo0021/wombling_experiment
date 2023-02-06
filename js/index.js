@@ -6,7 +6,7 @@ import {
   initMapAreas,
   initMapBoundaries,
 } from "./boundaries.js";
-import { drawWalls, DimensionToggle } from "./womble.js";
+import { runWomble, DimensionToggle } from "./womble.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import boundaries_SA1_2016_buffered from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
@@ -64,8 +64,18 @@ export function setDimension(dimension) {
   appDimension = dimension;
 }
 
-export let map = new mapboxgl.Map({
-  container: "map",
+export let previousWombleData = null;
+export function setPreviousWombleData(wombleData) {
+  previousWombleData = wombleData;
+}
+
+export let compareMap = null;
+export function setCompareMap(compare) {
+  compareMap = compare;
+}
+
+let map = new mapboxgl.Map({
+  container: "current-map",
   center: [144.9628, -37.8102], // long lat of melb
   // center: [145.2, -37.8102], // long lat of east side melb
   // center: [149.8911094722651, -35.0898882056091],
@@ -77,10 +87,35 @@ export let map = new mapboxgl.Map({
   antialias: true,
 });
 
+export let maps = {
+  beforeMap: null,
+  currentMap: map,
+};
+
+// const afterMap = new mapboxgl.Map({
+//   container: "after",
+//   center: [144.9628, -37.8102], // long lat of melb
+//   // center: [145.2, -37.8102], // long lat of east side melb
+//   // center: [149.8911094722651, -35.0898882056091],
+//   zoom: 9,
+//   minZoom: 9,
+//   maxPitch: 0,
+//   style: "mapbox://styles/mapbox/light-v11",
+//   accessToken: MAPBOX_TOKEN,
+//   antialias: true,
+// });
+
+// const compareMap = new mapboxgl.Compare(map, afterMap, container, {
+//   // Set this to enable comparing two maps by mouse movement:
+//   // mousemove: true,
+// });
+
 initCollapsibleBehaviour();
 
 map.addControl(new mapboxgl.NavigationControl());
 map.addControl(new DimensionToggle({ pitch: 45 }));
+// afterMap.addControl(new mapboxgl.NavigationControl());
+// afterMap.addControl(new DimensionToggle({ pitch: 45 }));
 // map.addControl(new darkModeToggle());
 
 let selectionSubmit = document.getElementById("submitOptions");
@@ -105,11 +140,11 @@ runWombleButton.addEventListener("click", () => {
     // draw walls if in 3d mode, using buffered source (polygon features)
     if (appDimension == Dimensions.THREE_D) {
       // TODO: loading spinner is broken sometimes?
-      setTimeout(drawWalls, 1, map, boundaries_SA1_2016_buffered); // 1 ms delay is required so that the loading spinner appears immediately before drawWalls is called, maybe see if there's a better way to do this
+      setTimeout(runWomble, 1, map, boundaries_SA1_2016_buffered); // 1 ms delay is required so that the loading spinner appears immediately before drawWalls is called, maybe see if there's a better way to do this
     }
     // draw thicknesses if in 2d mode, using unbuffered source (line features)
     else if (appDimension == Dimensions.TWO_D) {
-      setTimeout(drawWalls, 1, map, boundaries_SA1_2016);
+      setTimeout(runWomble, 1, map, boundaries_SA1_2016);
     }
 
     // drawWalls(map, boundaries_SA1_2016);
@@ -172,6 +207,10 @@ map.on("load", () => {
   addInputListeners(map);
 });
 
-// document.getElementById("test").addEventListener("click", () => {
-//   console.log(map.getZoom());
-// });
+document.getElementById("test").addEventListener("click", () => {
+  // compareMap.remove();
+  console.log("previous:");
+  console.log(previousWombleData);
+  console.log("current:");
+  console.log(map.getSource("wallsSource")._data);
+});

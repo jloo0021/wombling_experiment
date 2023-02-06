@@ -10,6 +10,26 @@ body {
     width: 100%; 
 }
 
+body {
+    overflow: hidden;
+}
+
+body * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+
 .map-overlay {
     font: bold 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     position: absolute;

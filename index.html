@@ -14,13 +14,20 @@
  
     <!-- <link rel="stylesheet" type="text/css" href="css/checkbox.css"> -->
     
+    <!-- mapbox -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.css" type="text/css">
     
 </head>
 
 
 <body>
     <!-- Map goes in here -->
-    <div id="map"></div>
+    <div id="comparison-container">
+        <!-- <div id="before" class="map"></div> -->
+        <div id="current-map" class="map"></div>
+    </div>
+    <!-- <div id="map"></div> -->
     <div class="map-overlay top">
         <button id="menu-collapsible" class="collapsible">Menu</button>
         <div id="menu-contents" class="map-overlay-inner" style="overflow-y:auto;">
@@ -65,6 +72,11 @@
 
                 <label id="walls-check-label" class="checkbox-container" for="walls-checkbox">Show Walls
                     <input type="checkbox" id="walls-checkbox" checked="checked">
+                    <span class="checkmark"></span>
+                </label>
+                <br>
+                <label id="show-previous-label" class="checkbox-container" for="previous-checkbox">Show Previous Calculation
+                    <input type="checkbox" id="previous-checkbox" >
                     <span class="checkmark"></span>
                 </label>
             </div>
@@ -115,7 +127,7 @@
             </div>
             <br>
             <div id="loader" class="loader" hidden></div>
-            <!-- <button id="test">test</button> -->
+            <button id="test">test</button>
         </div>
 
     </div>
