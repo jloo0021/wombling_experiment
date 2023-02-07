@@ -75,7 +75,7 @@
                     <span class="checkmark"></span>
                 </label>
                 <br>
-                <label id="show-previous-label" class="checkbox-container" for="previous-checkbox">Show Previous Calculation
+                <label id="show-previous-label" class="checkbox-container" for="previous-checkbox">Compare Previous Calculation
                     <input type="checkbox" id="previous-checkbox" >
                     <span class="checkmark"></span>
                 </label>
@@ -110,7 +110,7 @@
                 <span class="mytooltiptext">The selected options below will only take effect upon clicking "Run".</span>
             </span>
             
-            <h6>Womble Indicators:</h6>
+            <h6>Womble Indicator Weights:</h6>
 
             <!-- This div contains the sliders for the user's indicator weight inputs. Initially empty until the user selects their indicators -->
             <div id="womble-indicators-sliders"></div>
@@ -126,11 +126,12 @@
                 <button id="run-womble-button">Run</button> 
             </div>
             <br>
-            <div id="loader" class="loader" hidden></div>
+            
             <button id="test">test</button>
         </div>
 
     </div>
+    <div id="loader" class="loader" hidden></div>
     <div class='map-overlay-legend' id='legend'></div>
  
     <script src="js/boundaries.js" type="module"></script>

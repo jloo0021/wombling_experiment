@@ -84,7 +84,6 @@ let map = new mapboxgl.Map({
   maxPitch: 0,
   style: "mapbox://styles/mapbox/light-v11",
   accessToken: MAPBOX_TOKEN,
-  antialias: true,
 });
 
 export let maps = {
@@ -123,6 +122,10 @@ selectionSubmit.addEventListener("click", () => submitOptions());
 function submitOptions() {
   let selectedValues = getSelectValues(optionsData);
   createIndicatorSliders(selectedValues);
+
+  // scrolls menu to bottom
+  let menu = document.getElementById("menu-contents");
+  menu.scroll({ top: menu.scrollHeight, behavior: "smooth" });
 }
 
 // add event listener to the button for resetting indicator weight sliders

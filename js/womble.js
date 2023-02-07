@@ -481,6 +481,7 @@ export class DimensionToggle {
     map.removeLayer("walls");
     map.getSource("wallsSource").setData(wallsData);
     addWallsLayer(map);
+    runAllInputHandlers(map);
   }
 
   #switchTo3d(map) {

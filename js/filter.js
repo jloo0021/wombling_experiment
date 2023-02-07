@@ -11,8 +11,14 @@ import {
   previousWombleData,
   setCompareMap,
 } from "./index.js";
+import { DimensionToggle } from "./womble.js";
 
-export function addInputListeners(map) {
+/**
+ * Adds event listeners for all view option inputs.
+ * @param {*} map the mapbox map object that will be affected by the view option inputs
+ * @param {*} options set before to true if map is the "before" map. The "before" map will not have the showPreviousHandler added to it
+ */
+export function addInputListeners(map, options = { before: false }) {
   // each element in this array corresponds to some sort of option that the user has
   // the object describes the html id of the input element, the function that handles the input, and the event to trigger the input handler
   let elemObjects = [
@@ -34,6 +40,11 @@ export function addInputListeners(map) {
     { id: "max-slider", handler: minMaxSliderHandler, event: "input" },
     { id: "previous-checkbox", handler: showPreviousHandler, event: "click" },
   ];
+
+  // if before flag is set to true, we don't want to add the compare previous handler
+  if (options.before) {
+    elemObjects = elemObjects.filter((obj) => obj.id != "previous-checkbox");
+  }
 
   // add event listeners for each option element
   for (let elemObject of elemObjects) {
@@ -273,6 +284,7 @@ function minMaxSliderHandler(map) {
   map.setFilter("walls", filterExpression);
 }
 
+// this function should only be called on the "current" map and not the "before" map
 function showPreviousHandler(map) {
   let checkbox = document.getElementById("previous-checkbox");
 
@@ -282,6 +294,16 @@ function showPreviousHandler(map) {
     if (previousWombleData === null) {
       console.log("No previous womble data exists");
       return;
+    }
+
+    // remove existing compare object
+    if (compareMap !== null) {
+      compareMap.remove();
+    }
+
+    // remove existing "before" map div
+    if (document.getElementById("before-map")) {
+      document.getElementById("before-map").remove();
     }
 
     // create "before" map div and insert into "comparison-container" div
@@ -306,12 +328,17 @@ function showPreviousHandler(map) {
       maxPitch: map.getMaxZoom(),
       style: map.getStyle(),
       accessToken: MAPBOX_TOKEN,
-      antialias: true,
     });
 
     beforeMap.on("load", () => {
       // set before map's data to previous womble data
       beforeMap.getSource("wallsSource").setData(previousWombleData);
+
+      // init view option handlers, EXCEPT for showPreviousHandler, as it's written only for the "current" map
+      // therefore we set the before option to true
+      addInputListeners(beforeMap, { before: true });
+
+      beforeMap.addControl(new DimensionToggle({ pitch: 45 }));
 
       // create comparison
       setCompareMap(
