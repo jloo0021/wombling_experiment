@@ -11,7 +11,7 @@ import { runWomble, DimensionToggle } from "./womble.js";
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import boundaries_SA1_2016_buffered from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84.geojson" assert { type: "json" };
-import { addInputListeners } from "./filter.js";
+import { addInputListeners, darkModeToggle } from "./filter.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import {
@@ -116,7 +116,7 @@ map.addControl(new mapboxgl.NavigationControl());
 map.addControl(new DimensionToggle({ pitch: 45 }));
 // afterMap.addControl(new mapboxgl.NavigationControl());
 // afterMap.addControl(new DimensionToggle({ pitch: 45 }));
-// map.addControl(new darkModeToggle());
+map.addControl(new darkModeToggle());
 
 let selectionSubmit = document.getElementById("submitOptions");
 selectionSubmit.addEventListener("click", () => submitOptions());

@@ -1,8 +1,9 @@
 import { Dimensions, LightModes } from "./enums.js";
 import {
   getColourExpression,
+  getConstantWidthExpression,
   getHeightExpression,
-  getWidthExpression,
+  getVariableWidthExpression,
 } from "./expressions.js";
 import {
   appDimension,
@@ -52,6 +53,7 @@ export function runAllInputHandlers(map) {
     colorAndHeightHandler,
     transparencySliderHandler,
     minMaxSliderHandler,
+    showPreviousHandler,
   ];
 
   for (let handler of inputHandlers) {
@@ -114,7 +116,7 @@ function colourCheckboxHandler(map) {
     }
 
     if (appDimension == Dimensions.TWO_D) {
-      map.setPaintProperty("walls", "line-width", getWidthExpression());
+      map.setPaintProperty("walls", "line-width", getVariableWidthExpression());
     } else if (appDimension == Dimensions.THREE_D) {
       map.setPaintProperty(
         "walls",
@@ -137,7 +139,7 @@ function heightCheckboxHandler(map) {
   // if the checkbox is checked, set all heights/widths to be the same
   if (checkbox.checked) {
     if (appDimension == Dimensions.TWO_D) {
-      map.setPaintProperty("walls", "line-width", 4);
+      map.setPaintProperty("walls", "line-width", getConstantWidthExpression());
     } else if (appDimension == Dimensions.THREE_D) {
       map.setPaintProperty("walls", "fill-extrusion-height", 250);
     }
@@ -176,7 +178,7 @@ function colorAndHeightHandler(map) {
   // if the checkbox is checked, set all heights/widths to be variable and apply colour
   if (checkbox.checked) {
     if (appDimension == Dimensions.TWO_D) {
-      map.setPaintProperty("walls", "line-width", getWidthExpression());
+      map.setPaintProperty("walls", "line-width", getVariableWidthExpression());
     } else if (appDimension == Dimensions.THREE_D) {
       map.setPaintProperty(
         "walls",
@@ -323,7 +325,9 @@ function showPreviousHandler(map) {
     }
 
     // delete "before" map div
-    document.getElementById("before-map").remove();
+    if (document.getElementById("before-map")) {
+      document.getElementById("before-map").remove();
+    }
   }
 }
 
@@ -342,14 +346,17 @@ export class darkModeToggle {
     this._btn.addEventListener("click", () => {
       // if light, change to dark
       if (this._mode == LightModes.LIGHT) {
+        // this doesnt work
         console.log(map.getStyle());
         let currentStyle = map.getStyle();
+        currentStyle.sprite = "mapbox://sprites/mapbox/dark-v11";
 
         this._mode = LightModes.DARK;
-        map.setStyle("mapbox://styles/mapbox/dark-v11");
+        map.setStyle(currentStyle);
       }
       // if dark, change to light
       else if (this._mode == LightModes.DARK) {
+        console.log(map.getStyle());
         this._mode = LightModes.LIGHT;
         map.setStyle("mapbox://styles/mapbox/light-v11");
       }

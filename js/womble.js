@@ -12,7 +12,7 @@ import { runAllInputHandlers } from "./filter.js";
 import {
   getColourExpression,
   getHeightExpression,
-  getWidthExpression,
+  getVariableWidthExpression,
 } from "./expressions.js";
 
 /**
@@ -150,7 +150,9 @@ export function runWomble(map, source) {
 
   // hide boundaries directly after running womble
   document.getElementById("boundaries-checkbox").checked = false;
-  map.setLayoutProperty("boundaries", "visibility", "none");
+  // map.setLayoutProperty("boundaries", "visibility", "none");
+
+  runAllInputHandlers(map);
 
   // hide loading spinner once the map loads
   document.getElementById("loader").setAttribute("hidden", true);
@@ -172,7 +174,7 @@ export function addWallsLayer(map) {
       },
       paint: {
         "line-color": getColourExpression(),
-        "line-width": getWidthExpression(),
+        "line-width": getVariableWidthExpression(),
       },
     };
   }
@@ -190,8 +192,6 @@ export function addWallsLayer(map) {
   }
 
   map.addLayer(wallsLayer);
-
-  runAllInputHandlers(map);
 }
 
 /**
@@ -412,6 +412,8 @@ function isDistanceWeighted() {
 export class DimensionToggle {
   constructor({ pitch = 45 }) {
     this._previousPitch = pitch;
+    // TODO: take in before and current maps as parameter?
+    // so that we can switch to 2d/3d for both maps at once
   }
 
   onAdd(map) {
