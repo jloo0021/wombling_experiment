@@ -6,12 +6,16 @@ import {
   initMapAreas,
   initMapBoundaries,
 } from "./boundaries.js";
-import { runWomble, DimensionToggle } from "./womble.js";
+import { runWomble } from "./womble.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import boundaries_SA1_2016_buffered from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84.geojson" assert { type: "json" };
-import { addInputListeners, darkModeToggle } from "./filter.js";
+import {
+  addInputListeners,
+  darkModeToggle,
+  DimensionToggle,
+} from "./filter.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
 import {
@@ -86,10 +90,11 @@ let map = new mapboxgl.Map({
   accessToken: MAPBOX_TOKEN,
 });
 
-export let maps = {
-  beforeMap: null,
-  currentMap: map,
-};
+export let beforeMap = null;
+
+export function setBeforeMap(before) {
+  beforeMap = before;
+}
 
 // const afterMap = new mapboxgl.Map({
 //   container: "after",

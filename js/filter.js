@@ -7,11 +7,14 @@ import {
 } from "./expressions.js";
 import {
   appDimension,
+  beforeMap,
   compareMap,
   previousWombleData,
+  setBeforeMap,
   setCompareMap,
+  setDimension,
 } from "./index.js";
-import { DimensionToggle } from "./womble.js";
+import { addWallsLayer } from "./womble.js";
 
 /**
  * Adds event listeners for all view option inputs.
@@ -338,12 +341,12 @@ function showPreviousHandler(map) {
       // therefore we set the before option to true
       addInputListeners(beforeMap, { before: true });
 
-      beforeMap.addControl(new DimensionToggle({ pitch: 45 }));
-
       // create comparison
       setCompareMap(
         new mapboxgl.Compare(beforeMap, map, "#comparison-container")
       );
+
+      setBeforeMap(beforeMap);
     });
   } else {
     // get compare object and delete it
@@ -355,6 +358,143 @@ function showPreviousHandler(map) {
     if (document.getElementById("before-map")) {
       document.getElementById("before-map").remove();
     }
+
+    setBeforeMap(null);
+  }
+}
+
+/**
+ * Control button for switching between 2D and 3D modes.
+ * If pressed while in 2D mode, any existing walls are converted to fill-extrusion polygons, and pitch is added to the map.
+ * If pressed while in 3D mode, any existing walls are converted to flat lines, and altering the map pitch is disabled.
+ */
+export class DimensionToggle {
+  constructor({ pitch = 45 }) {
+    this._previousPitch = pitch;
+    // TODO: take in before and current maps as parameter?
+    // so that we can switch to 2d/3d for both maps at once
+  }
+
+  // should only be added to "current" map, not "before" map
+  onAdd(map) {
+    this._map = map;
+    this._container = document.createElement("div");
+    this._container.className = "mapboxgl-ctrl-group mapboxgl-ctrl";
+    this._btn = document.createElement("button");
+
+    // style the dimension toggle button depending on what dimension the app is in (i.e. if app is in 2d mode, show 3d on button)
+    if (appDimension == Dimensions.TWO_D) {
+      this._btn.className = `mapboxgl-ctrl-icon mapboxgl-ctrl-dimensiontoggle-3d`;
+    } else if (appDimension == Dimensions.THREE_D) {
+      this._btn.className = `mapboxgl-ctrl-icon mapboxgl-ctrl-dimensiontoggle-2d`;
+    }
+
+    // switch dimensions when this button is clicked
+    this._btn.addEventListener("click", () => {
+      if (appDimension == Dimensions.TWO_D) {
+        this.#switchTo3d(map);
+        // beforeMap is global
+        if (beforeMap !== null) {
+          this.#switchTo3d(beforeMap);
+        }
+      } else if (appDimension == Dimensions.THREE_D) {
+        this.#switchTo2d(map);
+        if (beforeMap !== null) {
+          this.#switchTo2d(beforeMap);
+        }
+      }
+    });
+
+    this._container.appendChild(this._btn);
+    return this._container;
+  }
+
+  onRemove() {
+    this._container.parentNode.removeChild(this._container);
+    this._map = undefined;
+  }
+
+  #convertWalls(map) {
+    if (!map.getSource("wallsSource")) {
+      console.log("No existing walls to convert");
+      return;
+    }
+
+    let wallsData = map.getSource("wallsSource")._data;
+
+    // will use either unbuffered or buffered features
+    // unbuffered features if we're converting to 2d b/c we want lines
+    // buffered features if we're converting to 3d b/c we want polygons that we can make fill-extrusions from
+    let rawFeatures;
+    if (appDimension == Dimensions.TWO_D) {
+      rawFeatures = map.getSource("unbufferedSource")._data["features"];
+    } else if (appDimension == Dimensions.THREE_D) {
+      rawFeatures = map.getSource("bufferedSource")._data["features"];
+    }
+
+    // overwrite the geometries for each feature in the existing walls data
+    for (let wall of wallsData["features"]) {
+      // the raw source data will have more features than the existing walls data, b/c the walls data will have filtered out edges where the womble cannot be calculated
+      // therefore, we need to "find" the features in the raw source that correspond with our existing walls
+      let rawFeature = rawFeatures.find(
+        (feature) =>
+          feature["properties"]["ogc_fid"] == wall["properties"]["ogc_fid"]
+      );
+
+      rawFeature = JSON.parse(JSON.stringify(rawFeature)); // deep copy so we don't somehow modify raw source
+      wall["geometry"] = rawFeature["geometry"];
+    }
+
+    map.removeLayer("walls");
+    map.getSource("wallsSource").setData(wallsData);
+    addWallsLayer(map);
+    runAllInputHandlers(map);
+  }
+
+  #switchTo3d(map) {
+    // switch to 3d
+    setDimension(Dimensions.THREE_D);
+    this._btn.className = `mapboxgl-ctrl-icon mapboxgl-ctrl-dimensiontoggle-2d`;
+
+    // restore previous pitch
+    map.easeTo({
+      pitch: this._previousPitch,
+      duration: 1000,
+    });
+    map.setMaxPitch(85); // default max pitch
+
+    // set min zoom
+    map.setMinZoom(9);
+
+    // delete thicknesses and draw walls
+    this.#convertWalls(map);
+
+    // Change the radio label to height only
+    document.getElementById("colorOnly-label").innerText = "Height only";
+    document.getElementById("both-check-label").innerText =
+      "Both Color and Height";
+  }
+
+  #switchTo2d(map) {
+    // switch to 2d
+    setDimension(Dimensions.TWO_D);
+    this._btn.className = `mapboxgl-ctrl-icon mapboxgl-ctrl-dimensiontoggle-3d`;
+
+    // disable pitch
+    this._previousPitch = map.getPitch();
+    map.easeTo({ pitch: 0, duration: 1000 });
+    map.setMaxPitch(0);
+
+    // set min zoom
+    map.setMinZoom(9);
+
+    // delete walls and draw thicknesses
+    this.#convertWalls(map);
+
+    // Change the radio label to width only
+    document.getElementById("colorOnly-label").innerText = "Width only";
+    document.getElementById("both-check-label").innerText =
+      "Both Color and Width";
   }
 }
 
