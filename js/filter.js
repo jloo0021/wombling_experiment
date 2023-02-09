@@ -58,7 +58,7 @@ export function addInputListeners(map, options = { before: false }) {
   }
 }
 
-export function runAllInputHandlers(map) {
+export function runAllInputHandlers(map, options = { before: false }) {
   let inputHandlers = [
     boundariesCheckboxHandler,
     wallsCheckboxHandler,
@@ -67,8 +67,12 @@ export function runAllInputHandlers(map) {
     colorAndHeightHandler,
     transparencySliderHandler,
     minMaxSliderHandler,
-    showPreviousHandler,
   ];
+
+  // if before flag is set to true, we don't want to run the compare previous handler
+  if (!options.before) {
+    inputHandlers.push(showPreviousHandler);
+  }
 
   for (let handler of inputHandlers) {
     handler(map);
@@ -302,12 +306,15 @@ function showPreviousHandler(map) {
     // remove existing compare object
     if (compareMap !== null) {
       compareMap.remove();
+      setCompareMap(null);
     }
 
     // remove existing "before" map div
     if (document.getElementById("before-map")) {
       document.getElementById("before-map").remove();
     }
+
+    setBeforeMap(null);
 
     // create "before" map div and insert into "comparison-container" div
     let beforeMapDiv = document.createElement("div");
@@ -328,7 +335,9 @@ function showPreviousHandler(map) {
       center: [lng, lat],
       zoom: map.getZoom(),
       minZoom: map.getMinZoom(),
-      maxPitch: map.getMaxZoom(),
+      pitch: map.getPitch(),
+      maxPitch: map.getMaxPitch(),
+      bearing: map.getBearing(),
       style: map.getStyle(),
       accessToken: MAPBOX_TOKEN,
     });
@@ -352,6 +361,7 @@ function showPreviousHandler(map) {
     // get compare object and delete it
     if (compareMap !== null) {
       compareMap.remove();
+      setCompareMap(null);
     }
 
     // delete "before" map div
@@ -395,12 +405,12 @@ export class DimensionToggle {
         this.#switchTo3d(map);
         // beforeMap is global
         if (beforeMap !== null) {
-          this.#switchTo3d(beforeMap);
+          this.#switchTo3d(beforeMap, { before: true });
         }
       } else if (appDimension == Dimensions.THREE_D) {
         this.#switchTo2d(map);
         if (beforeMap !== null) {
-          this.#switchTo2d(beforeMap);
+          this.#switchTo2d(beforeMap, { before: true });
         }
       }
     });
@@ -414,7 +424,7 @@ export class DimensionToggle {
     this._map = undefined;
   }
 
-  #convertWalls(map) {
+  #convertWalls(map, options = { before: false }) {
     if (!map.getSource("wallsSource")) {
       console.log("No existing walls to convert");
       return;
@@ -448,10 +458,10 @@ export class DimensionToggle {
     map.removeLayer("walls");
     map.getSource("wallsSource").setData(wallsData);
     addWallsLayer(map);
-    runAllInputHandlers(map);
+    runAllInputHandlers(map, { before: options.before });
   }
 
-  #switchTo3d(map) {
+  #switchTo3d(map, options = { before: false }) {
     // switch to 3d
     setDimension(Dimensions.THREE_D);
     this._btn.className = `mapboxgl-ctrl-icon mapboxgl-ctrl-dimensiontoggle-2d`;
@@ -467,7 +477,7 @@ export class DimensionToggle {
     map.setMinZoom(9);
 
     // delete thicknesses and draw walls
-    this.#convertWalls(map);
+    this.#convertWalls(map, options);
 
     // Change the radio label to height only
     document.getElementById("colorOnly-label").innerText = "Height only";
@@ -475,7 +485,7 @@ export class DimensionToggle {
       "Both Color and Height";
   }
 
-  #switchTo2d(map) {
+  #switchTo2d(map, options = { before: false }) {
     // switch to 2d
     setDimension(Dimensions.TWO_D);
     this._btn.className = `mapboxgl-ctrl-icon mapboxgl-ctrl-dimensiontoggle-3d`;
@@ -489,7 +499,7 @@ export class DimensionToggle {
     map.setMinZoom(9);
 
     // delete walls and draw thicknesses
-    this.#convertWalls(map);
+    this.#convertWalls(map, options);
 
     // Change the radio label to width only
     document.getElementById("colorOnly-label").innerText = "Width only";
