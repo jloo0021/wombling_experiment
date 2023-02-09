@@ -64,7 +64,7 @@ export function setDimension(dimension) {
   appDimension = dimension;
 }
 
-export let map = new mapboxgl.Map({
+let map = new mapboxgl.Map({
   container: "map",
   center: [144.9628, -37.8102], // long lat of melb
   // center: [145.2, -37.8102], // long lat of east side melb
@@ -83,12 +83,12 @@ map.addControl(new mapboxgl.NavigationControl());
 map.addControl(new DimensionToggle({ pitch: 45 }));
 // map.addControl(new darkModeToggle());
 
-let selectionSubmit = document.getElementById("submitOptions");
-selectionSubmit.addEventListener("click", () => submitOptions());
-function submitOptions() {
-  let selectedValues = getSelectValues(optionsData);
-  createIndicatorSliders(selectedValues);
-}
+// let selectionSubmit = document.getElementById("submitOptions");
+// selectionSubmit.addEventListener("click", () => submitOptions());
+// function submitOptions() {
+//   let selectedValues = getSelectValues(optionsData);
+//   createIndicatorSliders(selectedValues);
+// }
 
 // add event listener to the button for resetting indicator weight sliders
 let resetWeightsButton = document.getElementById("reset-weights-button");
