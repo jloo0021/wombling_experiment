@@ -96,11 +96,16 @@ input[type="file"] {
 }
 
 .loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
     border: 8px solid #f3f3f3;
     border-radius: 50%;
     border-top: 8px solid #3498db;
-    width: 30px;
-    height: 30px;
+    width: 90px;
+    height: 90px;
     -webkit-animation: spin 2s linear infinite; /* Safari */
     animation: spin 2s linear infinite;
 }
