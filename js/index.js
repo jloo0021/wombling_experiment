@@ -48,6 +48,12 @@ export function setIndicatorsData(data) {
   createVariables(headers);
 }
 
+// stores the user's selected variables for running the womble calc
+export let selectedVariables;
+export function setSelectedVariables(variables) {
+  selectedVariables = variables;
+}
+
 // export function setIndicatorsData(data) {
 //   indicatorsData = data[0];
 //   csvAreaCode = data[1].shift();

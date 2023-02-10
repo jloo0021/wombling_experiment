@@ -4,6 +4,8 @@ import {
   setDimension,
   indicatorsData,
   csvAreaCode,
+  setSelectedVariables,
+  optionsData,
 } from "./index.js";
 import { Dimensions } from "./enums.js";
 import { closeExistingPopups } from "./boundaries.js";
@@ -13,6 +15,7 @@ import {
   getHeightExpression,
   getWidthExpression,
 } from "./expressions.js";
+import { getSelectValues } from "./variableOptions.js";
 
 /**
  * OLD IMPLEMENTATION
@@ -121,6 +124,7 @@ import {
  */
 export function drawWalls(map, source) {
   closeExistingPopups(map);
+  setSelectedVariables(getSelectValues(optionsData));
 
   let wallsData = generateWombleFeaturesData(source);
   // appendIndicatorsToAreas(map, "areasSource");
@@ -150,8 +154,6 @@ export function drawWalls(map, source) {
 }
 
 export function addWallsLayer(map) {
-  const HEIGHT_MULTIPLIER = 5000;
-
   // create and draw the layer
   let wallsLayer;
 

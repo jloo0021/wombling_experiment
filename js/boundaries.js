@@ -1,5 +1,4 @@
-import { csvAreaCode, indicatorsData, optionsData } from "./index.js";
-import { getSelectValues } from "./variableOptions.js";
+import { csvAreaCode, indicatorsData, selectedVariables } from "./index.js";
 
 /**
  * Draws a map layer of the user's selected boundaries. No heights or colours are drawn yet.
@@ -123,23 +122,23 @@ export function initClickableAreaBehaviour(map) {
       return indicatorsCode == areaCode;
     });
 
-    let selectedIndicators = getSelectValues(optionsData);
+    // let selectedIndicators = selectedVariables;
     correspondingIndicators = Object.entries(correspondingIndicators); // convert indicators object to an array
 
     // filter out any indicators that were NOT selected by user, i.e. keep only selected indicators
-    correspondingIndicators = correspondingIndicators.filter(([key, value]) =>
-      selectedIndicators.includes(key)
+    correspondingIndicators = correspondingIndicators.filter(
+      ([key, value]) => selectedVariables.includes(key) // selectedVariables is a global
     );
     console.log(correspondingIndicators);
 
-    let description = `Area ID: ${areaCode}, <br>`;
+    let description = `Area ID: ${areaCode}, <br> Selected Indicators: <br>`;
 
     for (let [key, value] of correspondingIndicators) {
       description += `${key}: ${value}, <br>`;
     }
 
     // create popup
-    let popup = new mapboxgl.Popup();
+    let popup = new mapboxgl.Popup({ closeOnClick: false });
     popup.setLngLat(e.lngLat);
     popup.setHTML(description);
     popup.addClassName("area-popup");
