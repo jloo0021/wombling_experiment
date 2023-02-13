@@ -1,0 +1,107 @@
+/* code adapted from: https://www.youtube.com/watch?v=DfSYmk_6vk8 */
+
+.dual-slider-container {
+    position: relative;
+    height: 60px;
+}
+
+.dual-slider-container input[type="range"]{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    outline: none;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    background-color: transparent;
+    pointer-events: none;
+}
+
+.dual-slider-track {
+    width: 100%;
+    height: 5px;
+    background-color: #3264fe;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    border-radius: 5px;
+}
+
+.dual-slider-container input[type="range"]::-webkit-slider-runnable-track{
+    -webkit-appearance: none;
+    height: 5px
+}
+
+.dual-slider-container input[type="range"]::-moz-range-track{
+    -moz-appearance: none;
+    height: 5px
+}
+
+.dual-slider-container input[type="range"]::-ms-range-track{
+    appearance: none;
+    height: 5px
+}
+
+.dual-slider-container input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    height: 1.5em;
+    width: 1.5em;
+    background-color: #3264fe;
+    cursor: ew-resize;
+    border-radius: 10px;
+    pointer-events: auto;
+    margin-top: -7px
+}
+
+.dual-slider-container input[type="range"]::-moz-range-thumb{
+    -webkit-appearance: none;
+    height: 1.5em;
+    width: 1.5em;
+    background-color: #3264fe;
+    cursor: ew-resize;
+    border-radius: 50%;
+    pointer-events: auto;
+}
+
+.dual-slider-container input[type="range"]::-ms-thumb{
+    -webkit-appearance: none;
+    height: 1.5em;
+    width: 1.5em;
+    background-color: #3264fe;
+    cursor: ew-resize;
+    border-radius: 50%;
+    pointer-events: auto;
+}
+
+.dual-slider-container input[type="range"]:active::-webkit-slider-thumb{
+    background-color: white;
+    border: 3px solid #3264fe
+}
+
+.dual-slider-values {
+    background-color: #3264fe;
+    width: 30%;
+    position: relative;
+    margin: auto;
+    padding: 10px 0;
+    border-radius: 5px;
+    text-align: center;
+    color: white
+}
+
+.dual-slider-values:before {
+    content: "";
+    position: absolute;
+    height: 0;
+    width: 0;
+    border-top: 15px solid #3264fe;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    margin: auto;
+    bottom: -14px;
+    left: 0;
+    right: 0;
+}

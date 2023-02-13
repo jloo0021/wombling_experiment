@@ -195,6 +195,9 @@ function transparencySliderHandler(map) {
     "transparency-slider-value"
   );
 
+  // value indicator
+  transparencySliderValue.textContent = transparencySlider.value + "%";
+
   if (!map.getLayer("walls")) {
     console.log("Layer doesn't exist");
     return;
@@ -214,9 +217,6 @@ function transparencySliderHandler(map) {
       parseInt(transparencySlider.value, 10) / 100
     );
   }
-
-  // value indicator
-  transparencySliderValue.textContent = transparencySlider.value + "%";
 }
 
 function minMaxSliderHandler(map) {
@@ -227,12 +227,15 @@ function minMaxSliderHandler(map) {
   let minSliderValue = document.getElementById("min-slider-value");
   let maxSlider = document.getElementById("max-slider");
   let maxSliderValue = document.getElementById("max-slider-value");
+  let sliderTrack = document.getElementById("min-max-slider-track");
+
+  fillDualSliderColour(minSlider, maxSlider, sliderTrack, 1);
 
   // automatically adjust slider if user makes min > max
   if (parseFloat(minSlider.value) > parseFloat(maxSlider.value)) {
     console.log("Max must be greater than or equal to min");
-    maxSlider.value = minSlider.value;
-    // minSlider.value = maxSlider.value;
+    // maxSlider.value = minSlider.value;
+    minSlider.value = maxSlider.value;
   }
 
   let min = parseFloat(minSlider.value);
@@ -263,6 +266,12 @@ function minMaxSliderHandler(map) {
   ];
 
   map.setFilter("walls", filterExpression);
+}
+
+function fillDualSliderColour(slider1, slider2, sliderTrack, maxValue) {
+  let percent1 = (slider1.value / maxValue) * 100;
+  let percent2 = (slider2.value / maxValue) * 100;
+  sliderTrack.style.background = `linear-gradient(to right, #e4e4e4 ${percent1}%, #3264fe ${percent1}%, #3264fe ${percent2}%, #e4e4e4 ${percent2}%)`;
 }
 
 // TODO: move control buttons into one file together?
