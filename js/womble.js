@@ -13,7 +13,7 @@ import { runAllInputHandlers } from "./filter.js";
 import {
   getColourExpression,
   getHeightExpression,
-  getWidthExpression,
+  getVariableWidthExpression,
 } from "./expressions.js";
 import { getSelectValues } from "./variableOptions.js";
 
@@ -169,7 +169,7 @@ export function addWallsLayer(map) {
       },
       paint: {
         "line-color": getColourExpression(),
-        "line-width": getWidthExpression(),
+        "line-width": getVariableWidthExpression(),
       },
     };
   }

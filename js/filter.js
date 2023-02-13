@@ -1,8 +1,9 @@
 import { Dimensions, LightModes } from "./enums.js";
 import {
   getColourExpression,
+  getConstantWidthExpression,
   getHeightExpression,
-  getWidthExpression,
+  getVariableWidthExpression,
 } from "./expressions.js";
 import { appDimension } from "./index.js";
 
@@ -108,7 +109,7 @@ function colourCheckboxHandler(map) {
     }
 
     if (appDimension == Dimensions.TWO_D) {
-      map.setPaintProperty("walls", "line-width", getWidthExpression());
+      map.setPaintProperty("walls", "line-width", getVariableWidthExpression());
     } else if (appDimension == Dimensions.THREE_D) {
       map.setPaintProperty(
         "walls",
@@ -131,7 +132,7 @@ function heightCheckboxHandler(map) {
   // if the checkbox is checked, set all heights/widths to be the same
   if (checkbox.checked) {
     if (appDimension == Dimensions.TWO_D) {
-      map.setPaintProperty("walls", "line-width", 4);
+      map.setPaintProperty("walls", "line-width", getConstantWidthExpression());
     } else if (appDimension == Dimensions.THREE_D) {
       map.setPaintProperty("walls", "fill-extrusion-height", 250);
     }
@@ -170,7 +171,7 @@ function colorAndHeightHandler(map) {
   // if the checkbox is checked, set all heights/widths to be variable and apply colour
   if (checkbox.checked) {
     if (appDimension == Dimensions.TWO_D) {
-      map.setPaintProperty("walls", "line-width", getWidthExpression());
+      map.setPaintProperty("walls", "line-width", getVariableWidthExpression());
     } else if (appDimension == Dimensions.THREE_D) {
       map.setPaintProperty(
         "walls",

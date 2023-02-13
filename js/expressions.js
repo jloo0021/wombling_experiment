@@ -13,7 +13,7 @@ export function getColourExpression() {
   ];
 }
 
-export function getWidthExpression() {
+export function getVariableWidthExpression() {
   // mapbox expression to use interpolation to adjust line width at different zoom levels
   // exponential function is used to create an effect where as you zoom in, the max line width increases while maintaining the min line width
   // lower zoom levels also use a division expression to make the minimum thickness even smaller
@@ -49,6 +49,43 @@ export function getWidthExpression() {
     // at zoom lvl 16+, the line width range is (1, 15]
     16,
     ["^", 15, ["get", "womble_scaled"]],
+  ];
+}
+
+export function getConstantWidthExpression() {
+  // used when colour only is selected
+  // all lines should have the same width, but this width needs to be adjusted based on zoom level
+  return [
+    "interpolate",
+    ["linear"],
+    ["zoom"],
+    // at zoom lvl 8, line width is 0.1
+    8,
+    0.1,
+    // at zoom lvl 9, line width is 0.2
+    9,
+    0.2,
+    // at zoom lvl 10, line width is 0.4
+    10,
+    0.4,
+    // at zoom lvl 11, line width is 0.8
+    11,
+    0.8,
+    // at zoom lvl 12, line width is 1.6
+    12,
+    1.6,
+    // at zoom lvl 13, line width is 3.2
+    13,
+    3.2,
+    // at zoom lvl 14, line width is 6.4
+    14,
+    6.4,
+    // at zoom lvl 15, line width is 12.8
+    15,
+    12.8,
+    // at zoom lvl 16, line width is 25.6
+    16,
+    25.6,
   ];
 }
 
