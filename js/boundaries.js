@@ -12,7 +12,12 @@ export function initMapBoundaries(map, sourceData) {
   };
 
   map.addSource("boundariesSource", source);
+  addBoundariesLayer(map);
 
+  console.log("Map boundaries initialised");
+}
+
+export function addBoundariesLayer(map) {
   // layer defines how to display the source
   let boundaries = {
     id: "boundaries", // this needs to be unique
@@ -25,7 +30,6 @@ export function initMapBoundaries(map, sourceData) {
   };
 
   map.addLayer(boundaries);
-  console.log("Map boundaries initialised");
 }
 
 export function initMapAreas(map, sourceData) {
@@ -36,7 +40,12 @@ export function initMapAreas(map, sourceData) {
   };
 
   map.addSource("areasSource", source);
+  addAreasLayer(map);
 
+  console.log("Map areas initialised");
+}
+
+export function addAreasLayer(map) {
   // layer defines how to display the source
   let areas = {
     id: "areas", // this needs to be unique
@@ -50,8 +59,6 @@ export function initMapAreas(map, sourceData) {
   };
 
   map.addLayer(areas);
-
-  console.log("Map areas initialised");
 }
 
 /**

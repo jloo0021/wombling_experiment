@@ -272,7 +272,7 @@ function minMaxSliderHandler(map) {
 function fillDualSliderColour(slider1, slider2, sliderTrack, maxValue) {
   let percent1 = (slider1.value / maxValue) * 100;
   let percent2 = (slider2.value / maxValue) * 100;
-  sliderTrack.style.background = `linear-gradient(to right, #e4e4e4 ${percent1}%, #3264fe ${percent1}%, #3264fe ${percent2}%, #e4e4e4 ${percent2}%)`;
+  sliderTrack.style.background = `linear-gradient(to right, #efefef ${percent1}%, #0075ff ${percent1}%, #0075ff ${percent2}%, #efefef ${percent2}%)`;
 }
 
 // TODO: move control buttons into one file together?

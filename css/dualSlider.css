@@ -22,7 +22,7 @@
 .dual-slider-track {
     width: 100%;
     height: 5px;
-    background-color: #3264fe;
+    background-color: #0075ff;
     position: absolute;
     margin: auto;
     top: 0;
@@ -49,7 +49,7 @@
     -webkit-appearance: none;
     height: 1.5em;
     width: 1.5em;
-    background-color: #3264fe;
+    background-color: #0075ff;
     cursor: ew-resize;
     border-radius: 10px;
     pointer-events: auto;
@@ -60,7 +60,7 @@
     -webkit-appearance: none;
     height: 1.5em;
     width: 1.5em;
-    background-color: #3264fe;
+    background-color: #0075ff;
     cursor: ew-resize;
     border-radius: 50%;
     pointer-events: auto;
@@ -70,7 +70,7 @@
     -webkit-appearance: none;
     height: 1.5em;
     width: 1.5em;
-    background-color: #3264fe;
+    background-color: #0075ff;
     cursor: ew-resize;
     border-radius: 50%;
     pointer-events: auto;
@@ -78,11 +78,11 @@
 
 .dual-slider-container input[type="range"]:active::-webkit-slider-thumb{
     background-color: white;
-    border: 3px solid #3264fe
+    border: 3px solid #0075ff;
 }
 
 .dual-slider-values {
-    background-color: #3264fe;
+    background-color: #0075ff;
     width: 30%;
     position: relative;
     margin: auto;
@@ -97,7 +97,7 @@
     position: absolute;
     height: 0;
     width: 0;
-    border-top: 15px solid #3264fe;
+    border-top: 15px solid #0075ff;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
     margin: auto;

@@ -22,6 +22,7 @@ import {
 import areas_SA1_2016 from "../SA1_2016_Greater_Melbourne.geojson" assert { type: "json" };
 import { initCollapsibleBehaviour } from "./collapsible.js";
 import { Dimensions } from "./enums.js";
+import { addStyleListeners } from "./styleOptions.js";
 // console.log(geoJsonData);
 
 // Could also use fetch instead of import
@@ -176,8 +177,9 @@ map.on("load", () => {
   map.addSource("bufferedSource", bufferedSource);
 
   addInputListeners(map);
+  addStyleListeners(map);
 });
 
 // document.getElementById("test").addEventListener("click", () => {
-//   console.log(map.getZoom());
+//   console.log(map.getStyle());
 // });
