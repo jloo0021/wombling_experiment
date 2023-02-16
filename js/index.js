@@ -103,30 +103,6 @@ map.addControl(new DimensionToggle({ pitch: 45 }));
 let resetWeightsButton = document.getElementById("reset-weights-button");
 resetWeightsButton.addEventListener("click", setDefaultWeights);
 
-// button for drawing the edge heights based on womble calculation
-// TODO: this event listener should be set in the function that handles the user's choice of boundaries. That function is not written yet, so the boundaries source is hardcoded.
-// we need to pass the user's selected boundaries to the drawHeights function
-let runWombleButton = document.getElementById("run-womble-button");
-runWombleButton.addEventListener("click", () => {
-  if (indicatorsData) {
-    document.getElementById("loader").removeAttribute("hidden"); // show loading spinner
-
-    // draw walls if in 3d mode, using buffered source (polygon features)
-    if (appDimension == Dimensions.THREE_D) {
-      // TODO: loading spinner is broken sometimes?
-      setTimeout(runWomble, 1, map, boundaries_SA1_2016_buffered); // 1 ms delay is required so that the loading spinner appears immediately before drawWalls is called, maybe see if there's a better way to do this
-    }
-    // draw thicknesses if in 2d mode, using unbuffered source (line features)
-    else if (appDimension == Dimensions.TWO_D) {
-      setTimeout(runWomble, 1, map, boundaries_SA1_2016);
-    }
-
-    // drawWalls(map, boundaries_SA1_2016);
-  } else {
-    console.log("Indicators data not found");
-  }
-});
-
 // Legend logic
 // create legend
 const legend = document.getElementById("legend");
@@ -161,25 +137,10 @@ map.on("load", () => {
   document.getElementById("areasSelect").addEventListener("change", () => {
     areaDropDownHandler(map);
   });
-  initMapBoundaries(map, areas_SA1_2016);
-  initMapAreas(map, areas_SA1_2016);
+  areaDropDownHandler(map);
+
   initClickableWallBehaviour(map);
   initClickableAreaBehaviour(map);
-
-  // unbuffered source is used for the 2d walls, since we can add thickness to lines
-  let unbufferedSource = {
-    type: "geojson",
-    data: boundaries_SA1_2016,
-  };
-
-  // buffered source is used for the 3d walls, because fill-extrusion only works on polygons, i.e. a buffered source
-  let bufferedSource = {
-    type: "geojson",
-    data: boundaries_SA1_2016_buffered,
-  };
-
-  map.addSource("unbufferedSource", unbufferedSource);
-  map.addSource("bufferedSource", bufferedSource);
 
   addInputListeners(map);
   addStyleListeners(map);
@@ -212,8 +173,9 @@ export function areaDropDownHandler(map) {
   initMapAreas(map, selectedAreas);
 
   // re-init unbuffered and buffered sources
-  if (map.getLayer("walls")) {
+  if (map.getSource("wallsSource")) {
     map.removeLayer("walls");
+    map.removeSource("wallsSource");
   }
 
   if (map.getSource("unbufferedSource")) {
@@ -235,6 +197,35 @@ export function areaDropDownHandler(map) {
     };
     map.addSource("bufferedSource", bufferedSource);
   }
+
+  // button for drawing the edge heights based on womble calculation
+  // TODO: this event listener should be set in the function that handles the user's choice of boundaries. That function is not written yet, so the boundaries source is hardcoded.
+  // we need to pass the user's selected boundaries to the drawHeights function
+  let runWombleButton = document.getElementById("run-womble-button");
+
+  // clone the button to remove existing listeners
+  let newRunWombleButton = runWombleButton.cloneNode(true);
+  runWombleButton.parentNode.replaceChild(newRunWombleButton, runWombleButton);
+
+  newRunWombleButton.addEventListener("click", () => {
+    if (indicatorsData) {
+      document.getElementById("loader").removeAttribute("hidden"); // show loading spinner
+
+      // draw walls if in 3d mode, using buffered source (polygon features)
+      if (appDimension == Dimensions.THREE_D) {
+        // TODO: loading spinner is broken sometimes?
+        setTimeout(runWomble, 1, map, selectedBuffered); // 1 ms delay is required so that the loading spinner appears immediately before drawWalls is called, maybe see if there's a better way to do this
+      }
+      // draw thicknesses if in 2d mode, using unbuffered source (line features)
+      else if (appDimension == Dimensions.TWO_D) {
+        setTimeout(runWomble, 1, map, selectedUnbuffered);
+      }
+
+      // drawWalls(map, boundaries_SA1_2016);
+    } else {
+      console.log("Indicators data not found");
+    }
+  });
 
   // console.log(selectedUnbuffered);
 
