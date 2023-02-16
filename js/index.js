@@ -6,11 +6,13 @@ import {
   initMapAreas,
   initMapBoundaries,
 } from "./boundaries.js";
-import { drawWalls, DimensionToggle } from "./womble.js";
-// import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
-// import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
+import { runWomble, DimensionToggle } from "./womble.js";
+import boundaries_SA1_2011_buffered from "../boundaries_SA1_2011_dist_wgs84_buffered7.geojson" assert { type: "json" };
+import boundaries_SA1_2011 from "../boundaries_SA1_2011_dist_wgs84.geojson" assert { type: "json" };
+import areas_SA1_2011 from "../SA1_2011_Greater_Melbourne.geojson" assert { type: "json" };
 import boundaries_SA1_2016_buffered from "../boundaries_SA1_2016_wgs84_buffered7.geojson" assert { type: "json" };
 import boundaries_SA1_2016 from "../boundaries_SA1_2016_wgs84.geojson" assert { type: "json" };
+import areas_SA1_2016 from "../SA1_2016_Greater_Melbourne.geojson" assert { type: "json" };
 import { addInputListeners } from "./filter.js";
 // import geoJsonData from "../liveability_sa1_2011_difference_buffered_transformed.geojson" assert { type: "json" };
 // import boundaries_SA1_2011 from "../boundaries_SA1_2011_wgs84_buffered.geojson" assert { type: "json" };
@@ -19,7 +21,7 @@ import {
   removeIndicatorOptions,
   getValues,
 } from "./indicatorOptions.js";
-import areas_SA1_2016 from "../SA1_2016_Greater_Melbourne.geojson" assert { type: "json" };
+
 import { initCollapsibleBehaviour } from "./collapsible.js";
 import { Dimensions } from "./enums.js";
 import { addStyleListeners } from "./styleOptions.js";
@@ -112,11 +114,11 @@ runWombleButton.addEventListener("click", () => {
     // draw walls if in 3d mode, using buffered source (polygon features)
     if (appDimension == Dimensions.THREE_D) {
       // TODO: loading spinner is broken sometimes?
-      setTimeout(drawWalls, 1, map, boundaries_SA1_2016_buffered); // 1 ms delay is required so that the loading spinner appears immediately before drawWalls is called, maybe see if there's a better way to do this
+      setTimeout(runWomble, 1, map, boundaries_SA1_2016_buffered); // 1 ms delay is required so that the loading spinner appears immediately before drawWalls is called, maybe see if there's a better way to do this
     }
     // draw thicknesses if in 2d mode, using unbuffered source (line features)
     else if (appDimension == Dimensions.TWO_D) {
-      setTimeout(drawWalls, 1, map, boundaries_SA1_2016);
+      setTimeout(runWomble, 1, map, boundaries_SA1_2016);
     }
 
     // drawWalls(map, boundaries_SA1_2016);
@@ -156,6 +158,9 @@ for (let i = 0; i < colors.length; i++) {
 
 // when map loads, do...
 map.on("load", () => {
+  document.getElementById("areasSelect").addEventListener("change", () => {
+    areaDropDownHandler(map);
+  });
   initMapBoundaries(map, areas_SA1_2016);
   initMapAreas(map, areas_SA1_2016);
   initClickableWallBehaviour(map);
@@ -183,3 +188,56 @@ map.on("load", () => {
 // document.getElementById("test").addEventListener("click", () => {
 //   console.log(map.getStyle());
 // });
+
+export function areaDropDownHandler(map) {
+  let areaTypes = {
+    sa1_2011: {
+      unbuffered: boundaries_SA1_2011,
+      buffered: boundaries_SA1_2011_buffered,
+      areas: areas_SA1_2011,
+    },
+    sa1_2016: {
+      unbuffered: boundaries_SA1_2016,
+      buffered: boundaries_SA1_2016_buffered,
+      areas: areas_SA1_2016,
+    },
+  };
+  let selection = document.getElementById("areasSelect").value;
+  let selectedUnbuffered = areaTypes[selection].unbuffered;
+  let selectedBuffered = areaTypes[selection].buffered;
+  let selectedAreas = areaTypes[selection].areas;
+
+  // re-init map boundaries
+  initMapBoundaries(map, selectedAreas);
+  initMapAreas(map, selectedAreas);
+
+  // re-init unbuffered and buffered sources
+  if (map.getLayer("walls")) {
+    map.removeLayer("walls");
+  }
+
+  if (map.getSource("unbufferedSource")) {
+    map.getSource("unbufferedSource").setData(selectedUnbuffered);
+  } else {
+    let unbufferedSource = {
+      type: "geojson",
+      data: selectedUnbuffered,
+    };
+    map.addSource("unbufferedSource", unbufferedSource);
+  }
+
+  if (map.getSource("bufferedSource")) {
+    map.getSource("bufferedSource").setData(selectedBuffered);
+  } else {
+    let bufferedSource = {
+      type: "geojson",
+      data: selectedBuffered,
+    };
+    map.addSource("bufferedSource", bufferedSource);
+  }
+
+  // console.log(selectedUnbuffered);
+
+  // console.log(selectedBuffered);
+  // console.log(selectedAreas);
+}

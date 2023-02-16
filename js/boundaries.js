@@ -11,6 +11,11 @@ export function initMapBoundaries(map, sourceData) {
     data: sourceData,
   };
 
+  if (map.getSource("boundariesSource")) {
+    map.removeLayer("boundaries");
+    map.removeSource("boundariesSource");
+  }
+
   map.addSource("boundariesSource", source);
   addBoundariesLayer(map);
 
@@ -38,6 +43,11 @@ export function initMapAreas(map, sourceData) {
     type: "geojson",
     data: sourceData,
   };
+
+  if (map.getSource("areasSource")) {
+    map.removeLayer("areas");
+    map.removeSource("areasSource");
+  }
 
   map.addSource("areasSource", source);
   addAreasLayer(map);

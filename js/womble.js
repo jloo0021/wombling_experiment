@@ -122,7 +122,7 @@ import { getSelectValues } from "./variableOptions.js";
  * @param {*} map mapbox map object that the walls will be drawn on
  * @param {*} source geojson source for the boundaries upon which walls will be drawn
  */
-export function drawWalls(map, source) {
+export function runWomble(map, source) {
   closeExistingPopups(map);
   setSelectedVariables(getSelectValues(optionsData));
 

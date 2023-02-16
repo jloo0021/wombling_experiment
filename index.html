@@ -24,6 +24,12 @@
     <div class="map-overlay top">
         <button id="menu-collapsible" class="collapsible">Menu</button>
         <div id="menu-contents" class="map-overlay-inner" style="overflow-y:auto;">
+            <!-- <label for="areasSelect">Select an area type:</label> -->
+            <select name="areasSelect" id="areasSelect">
+                <option value="sa1_2011">SA1 2011</option>
+                <option value="sa1_2016" selected>SA1 2016</option>
+            </select>
+
             <div class="block">
                 <label for="csvInput" class="custom-file-upload btn">
                     Choose a CSV file to upload.
