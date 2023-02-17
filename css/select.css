@@ -1,0 +1,14 @@
+.dropdown-large {
+    display: inline-block;
+    font-size: 18px;
+    font-weight: bold;
+    width: 275px;
+    height: auto;
+    cursor: pointer;
+    color: #2a68a5;
+    padding: 8px;
+    font-family: Arial;
+    background-color: #cff0f2;
+    border-radius: 25px;
+}
+
