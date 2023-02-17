@@ -1,4 +1,9 @@
-import { csvAreaCode, indicatorsData, selectedVariables } from "./index.js";
+import {
+  csvAreaCode,
+  getGeojsonAreaCode,
+  indicatorsData,
+  selectedVariables,
+} from "./index.js";
 
 /**
  * Draws a map layer of the user's selected boundaries. No heights or colours are drawn yet.
@@ -109,7 +114,11 @@ export function initClickableWallBehaviour(map) {
     // uses setFilter to display only the features in the "areas" layer which match the area IDs adjacent to the clicked wall
     // here we're using the property SA1_MAIN16 as the area ID
     // TODO: maybe modify this/future sa1 area files to use a more homogenous property name (e.g. area_id)
-    map.setFilter("areas", ["in", ["get", "SA1_MAIN16"], ["literal", areaIds]]);
+    map.setFilter("areas", [
+      "in",
+      ["get", getGeojsonAreaCode()],
+      ["literal", areaIds],
+    ]);
   });
 
   // change mouse pointer upon hovering over walls
@@ -125,7 +134,7 @@ export function initClickableAreaBehaviour(map) {
   map.on("click", "areas", (e) => {
     let area = e.features[0];
     console.log(area);
-    let areaCode = area["properties"]["SA1_MAIN16"];
+    let areaCode = area["properties"][getGeojsonAreaCode()];
 
     // find indicators that correspond with the area that was clicked on
     let correspondingIndicators = indicatorsData.find((indicators) => {

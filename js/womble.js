@@ -368,8 +368,6 @@ function calculateWomble(edge) {
       return null;
     }
 
-    const DUMMY_DIST = 100; // TODO: remove this when we have real distance properties
-
     // womble += indicatorWeights[i] * absolute difference of (area1's selectedIndicator[i] value and area2's selectedIndicator[i] value)
     if (isDistanceWeighted()) {
       womble +=
@@ -378,8 +376,7 @@ function calculateWomble(edge) {
             parseFloat(area1[selectedIndicators[i]]) -
               parseFloat(area2[selectedIndicators[i]])
           )) /
-        DUMMY_DIST; // TODO: replace this w real distance when it exists in dataset
-      // edge.properties.distance; // divide by a distance property that we assume exists in the edge data
+        edge["properties"]["distance"]; // divide by a distance property that we assume exists in the edge data
     } else {
       womble +=
         indicatorWeights[i] *

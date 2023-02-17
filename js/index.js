@@ -1,6 +1,7 @@
 import { createIndicatorSliders, setDefaultWeights } from "./sliders.js";
 import { createVariables, getSelectValues } from "./variableOptions.js";
 import {
+  closeExistingPopups,
   initClickableAreaBehaviour,
   initClickableWallBehaviour,
   initMapAreas,
@@ -49,6 +50,14 @@ export function setIndicatorsData(data) {
   optionsData = headers;
 
   createVariables(headers);
+}
+
+export let geojsonAreaCode;
+export function setGeojsonAreaCode(areaCode) {
+  geojsonAreaCode = areaCode;
+}
+export function getGeojsonAreaCode() {
+  return geojsonAreaCode;
 }
 
 // stores the user's selected variables for running the womble calc
@@ -156,17 +165,21 @@ export function areaDropDownHandler(map) {
       unbuffered: boundaries_SA1_2011,
       buffered: boundaries_SA1_2011_buffered,
       areas: areas_SA1_2011,
+      areaCodeProp: "SA1_7DIG11", // idk why but the boundaries file im using uses the 7 digit codes
     },
     sa1_2016: {
       unbuffered: boundaries_SA1_2016,
       buffered: boundaries_SA1_2016_buffered,
       areas: areas_SA1_2016,
+      areaCodeProp: "SA1_MAIN16",
     },
   };
   let selection = document.getElementById("areasSelect").value;
   let selectedUnbuffered = areaTypes[selection].unbuffered;
   let selectedBuffered = areaTypes[selection].buffered;
   let selectedAreas = areaTypes[selection].areas;
+  let selectedAreaCodeProp = areaTypes[selection].areaCodeProp;
+  setGeojsonAreaCode(selectedAreaCodeProp);
 
   // re-init map boundaries
   initMapBoundaries(map, selectedAreas);
@@ -199,8 +212,6 @@ export function areaDropDownHandler(map) {
   }
 
   // button for drawing the edge heights based on womble calculation
-  // TODO: this event listener should be set in the function that handles the user's choice of boundaries. That function is not written yet, so the boundaries source is hardcoded.
-  // we need to pass the user's selected boundaries to the drawHeights function
   let runWombleButton = document.getElementById("run-womble-button");
 
   // clone the button to remove existing listeners
@@ -227,8 +238,7 @@ export function areaDropDownHandler(map) {
     }
   });
 
-  // console.log(selectedUnbuffered);
+  closeExistingPopups(map);
 
-  // console.log(selectedBuffered);
-  // console.log(selectedAreas);
+  document.getElementById("boundaries-checkbox").checked = true;
 }
