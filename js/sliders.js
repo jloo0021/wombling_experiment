@@ -3,12 +3,12 @@
  * @param {*} indicators array of strings, each string is an indicator that the user has selected for the wombling calculation
  */
 export function createIndicatorSliders(indicators) {
-  let wombleSlidersDiv = document.getElementById("womble-indicators-sliders"); // the element that all the sliders will be contained in
+  let wombleSliders = document.querySelectorAll(".slider-container");
 
   // remove existing indicator sliders
-  while (wombleSlidersDiv.firstChild) {
-    wombleSlidersDiv.removeChild(wombleSlidersDiv.lastChild);
-  }
+  wombleSliders.forEach((element) => {
+    element.remove();
+  });
 
   // create the HTML elements required for each slider
   for (let i = 0; i < indicators.length; i++) {
@@ -23,10 +23,11 @@ export function createIndicatorSliders(indicators) {
     // </div>
 
     let sliderContainer = document.createElement("div");
+    sliderContainer.classList.add("slider-container");
 
-    // indicator name
-    let indicatorName = document.createElement("span");
-    indicatorName.innerText = `${indicator}: `;
+    // // indicator name
+    // let indicatorName = document.createElement("span");
+    // indicatorName.innerText = `${indicator}: `;
 
     // slider display value
     let sliderValue = document.createElement("span");
@@ -44,17 +45,25 @@ export function createIndicatorSliders(indicators) {
     sliderInput.setAttribute("indicatorname", indicator); // attribute that tells us which indicator this slider is associated with
 
     // append elements accordingly
-    sliderContainer.appendChild(indicatorName);
+    // sliderContainer.appendChild(indicatorName);
     sliderContainer.appendChild(sliderValue);
     sliderContainer.appendChild(sliderInput);
-    wombleSlidersDiv.appendChild(sliderContainer);
+
+    // append the slider underneath its corresponding checkbox
+    // this code below is dependent on the way the variable checkboxes are coded, so probably not the cleanest code here
+    let options = document.getElementById("options");
+    for (let option of options.children) {
+      if (option.children[0].innerText == indicator) {
+        option.children[0].after(sliderContainer);
+      }
+    }
   }
   setDefaultWeights();
   addDependendentSliderBehaviour();
 
-  // Add the womble indicators buttons 
+  // Add the womble indicators buttons
   // document.getElementById('womble-indicators-sliders').classList.remove("hide");
-  document.getElementById('womble-indicators-buttons').classList.remove("hide");
+  document.getElementById("womble-indicators-buttons").classList.remove("hide");
 }
 
 /**
@@ -80,7 +89,7 @@ function updateSliderDisplayValue(slider, value) {
  */
 export function retrieveIndicatorSliders() {
   // this is the div that contains all the sliders
-  let wombleSlidersDiv = document.getElementById("womble-indicators-sliders");
+  let wombleSliders = document.querySelectorAll(".slider-container");
 
   // an example slider container should look like:
   // <div class="slider-container">
@@ -92,8 +101,8 @@ export function retrieveIndicatorSliders() {
   // get all slider input elements into one array, so that they can be accessed easily later
 
   let sliders = [];
-  for (let i = 0; i < wombleSlidersDiv.childElementCount; i++) {
-    let sliderContainer = wombleSlidersDiv.children[i];
+  for (let i = 0; i < wombleSliders.length; i++) {
+    let sliderContainer = wombleSliders[i];
     for (let j = 0; j < sliderContainer.childElementCount; j++) {
       let elem = sliderContainer.children[j];
       if (elem.hasAttribute("sliderinput")) {
@@ -168,15 +177,15 @@ function addDependendentSliderBehaviour() {
  * Dependent on the current slider container structure, where each container is a div containing a span element for the slider display value and an input element for the slider
  */
 export function setDefaultWeights() {
-  let wombleSlidersDiv = document.getElementById("womble-indicators-sliders"); // the element that all the sliders will be contained in
-  let numIndicators = wombleSlidersDiv.childElementCount;
+  let wombleSliders = document.querySelectorAll(".slider-container");
+  let numIndicators = wombleSliders.length;
   const MAX = 100;
   const DEFAULT_WEIGHT = parseFloat((MAX / numIndicators).toFixed(2)); // all sliders should start off equally weighted (rounded to 2 dp)
   let currentSum = 0; // tracks current sum of the indicator weights; used to help ensure a total sum of 100 by the end
 
   // loop over each slider container
   for (let i = 0; i < numIndicators; i++) {
-    let container = wombleSlidersDiv.children[i];
+    let container = wombleSliders[i];
     let sliderValue;
     let sliderInput;
 

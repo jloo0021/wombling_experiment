@@ -1,0 +1,26 @@
+.womble-indicators-buttons-container {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    font-size: 12px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    min-height: 1.5rem;
+    padding-left: 1.5em;
+    margin-bottom: 0.125rem
+}
+
+.womble-indicators-button {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    width: 30%;
+    height: auto;
+    cursor: pointer;
+    color: #2a68a5;
+    padding: 2px;
+    font-family: Arial;
+    background-color: #cff0f2;
+    border-radius: 10px;
+}

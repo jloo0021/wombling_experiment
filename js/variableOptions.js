@@ -62,10 +62,6 @@ function variableCheckboxHandler() {
     }
   }
   createIndicatorSliders(selectedVariables);
-
-  // scrolls menu to bottom
-  let menu = document.getElementById("menu-contents");
-  menu.scroll({ top: menu.scrollHeight, behavior: "smooth" });
 }
 
 function getSelectValues(optionsArray) {

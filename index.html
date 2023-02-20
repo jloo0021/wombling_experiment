@@ -46,10 +46,27 @@
             </div>
             <hr>
             <div id="selectionBlock">
-                <label for="options"> 
-                    <h5>Select Womble Indicators</h5> 
-                </label>
+                <span class="indicator-options-tooltip">
+                    <h5>Womble Indicator Options &#x1F6C8;</h5> 
+                    <span class="mytooltiptext">Womble indicator options below will only take effect upon clicking "Run".</span>
+                </span>
+                
+                <h6>Select Womble Indicators:</h6>
+               
                 <div id="options"></div>
+                 <!-- This div contains the reset and run buttons for the indicator sliders. Initially hidden until the user selects their indicators -->
+                <div id="womble-indicators-buttons" class="hide">
+                    <div class="womble-indicators-buttons-container">
+                        <hr>
+                        <label class="checkbox-container" for="distance-weight-checkbox">Distance Weight
+                            <input type="checkbox" id="distance-weight-checkbox">
+                            <span class="checkmark"></span>
+                        </label>
+                        <br>
+                        <button id="reset-weights-button" class="womble-indicators-button">Reset Weights</button>
+                        <button id="run-womble-button" class="womble-indicators-button">Run</button> 
+                    </div>
+                </div>
                 <!-- <br>
                 <button id="submitOptions">Confirm selection</button> -->
             </div>
@@ -144,29 +161,6 @@
                     </div>  
                 </fieldset>
             </div>
-            <hr>
-            
-            <span class="indicator-options-tooltip">
-                <h5>Womble Indicator Options &#x1F6C8;</h5> 
-                <span class="mytooltiptext">The selected options below will only take effect upon clicking "Run".</span>
-            </span>
-            
-            <h6>Womble Indicators:</h6>
-
-            <!-- This div contains the sliders for the user's indicator weight inputs. Initially empty until the user selects their indicators -->
-            <div id="womble-indicators-sliders"></div>
-
-            <!-- This div contains the reset and run buttons for the indicator sliders. Initially hidden until the user selects their indicators -->
-            <div id="womble-indicators-buttons" class="hide">
-                <label class="checkbox-container" for="distance-weight-checkbox">Distance Weight
-                    <input type="checkbox" id="distance-weight-checkbox">
-                    <span class="checkmark"></span>
-                </label>
-                <br>
-                <button id="reset-weights-button">Reset Weights</button>
-                <button id="run-womble-button">Run</button> 
-            </div>
-            <br>
             <!-- <button id="test">test</button> -->
         </div>
     </div>
@@ -184,6 +178,7 @@
     <link rel="stylesheet" type="text/css" href="css/checkbox.css">
     <link rel="stylesheet" type="text/css" href="css/dualSlider.css">
     <link rel="stylesheet" type="text/css" href="css/select.css">
+    <link rel="stylesheet" type="text/css" href="css/wombleIndicatorButtons.css">
 </body>
 
 </html>
