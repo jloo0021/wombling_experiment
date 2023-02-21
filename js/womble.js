@@ -462,8 +462,7 @@ export class DimensionToggle {
       // the raw source data will have more features than the existing walls data, b/c the walls data will have filtered out edges where the womble cannot be calculated
       // therefore, we need to "find" the features in the raw source that correspond with our existing walls
       let rawFeature = rawFeatures.find(
-        (feature) =>
-          feature["properties"]["ogc_fid"] == wall["properties"]["ogc_fid"]
+        (feature) => feature["properties"]["id"] == wall["properties"]["id"]
       );
 
       rawFeature = JSON.parse(JSON.stringify(rawFeature)); // deep copy so we don't somehow modify raw source
